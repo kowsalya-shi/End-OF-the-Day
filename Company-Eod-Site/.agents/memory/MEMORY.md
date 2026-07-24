@@ -1,0 +1,3 @@
+- [Python scheduler column names](py-scheduler-columns.md) — psycopg2 reads snake_case from PostgreSQL; Drizzle schema camelCase maps to snake_case DB columns.
+- [Export CSV type safety](export-csv-types.md) — use `unknown` type for row values before instanceof Date check to avoid TS2358.
+- [HR portal separation](hr-portal.md) — HR portal is fully separate from manager (dedicated pages, violet accent, same API access level).

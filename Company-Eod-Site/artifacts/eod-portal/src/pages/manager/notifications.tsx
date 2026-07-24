@@ -1,0 +1,190 @@
+import { useState } from "react";
+import { format } from "date-fns";
+import {
+  useSendReminder, useSendEscalation, useListTeams, getListTeamsQueryKey,
+  useListPendingEod, getListPendingEodQueryKey,
+} from "@workspace/api-client-react";
+import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Bell, AlertTriangle, Mail, Users } from "lucide-react";
+
+export default function ManagerNotifications() {
+  const { toast } = useToast();
+  const today = format(new Date(), "yyyy-MM-dd");
+  
+  const [targetTeam, setTargetTeam] = useState<string>("all");
+  
+  const { data: teams } = useListTeams({ query: { queryKey: getListTeamsQueryKey() } });
+  
+  // Get unique team leaders
+  const uniqueTeamLeaders = teams?.filter((team, index, self) => 
+    team.tlName && index === self.findIndex(t => t.tlName === team.tlName)
+  ) || [];
+  
+  const { data: pendingList, isLoading: pendingLoading } = useListPendingEod(
+    { date: today, teamId: targetTeam !== "all" ? parseInt(targetTeam) : undefined },
+    {
+      query: {
+        queryKey: getListPendingEodQueryKey({
+          date: today,
+          teamId: targetTeam !== "all" ? parseInt(targetTeam) : undefined,
+        }),
+      },
+    },
+  );
+  
+  const reminderMutation = useSendReminder();
+  const escalationMutation = useSendEscalation();
+
+  const handleRemind = () => {
+    reminderMutation.mutate(
+      { data: { date: today, teamId: targetTeam === "all" ? null : parseInt(targetTeam) } },
+      {
+        onSuccess: res => {
+          toast({
+            title: "Reminders Sent",
+            description: `Sent ${res.sent} reminders${res.failed > 0 ? ` (${res.failed} failed)` : ""}.`,
+          });
+        },
+      },
+    );
+  };
+
+  const handleEscalate = () => {
+    escalationMutation.mutate(
+      { data: { date: today, teamId: targetTeam === "all" ? null : parseInt(targetTeam) } },
+      {
+        onSuccess: res => {
+          toast({
+            title: "Escalations Sent",
+            description: `Sent ${res.sent} escalations to Employee + TL + Manager${res.failed > 0 ? ` (${res.failed} failed)` : ""}.`,
+          });
+        },
+      },
+    );
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <div className="flex items-center gap-2 mb-1">
+          <span className="bg-blue-100 text-blue-700 text-xs font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wide">
+            MANAGER PORTAL
+          </span>
+        </div>
+        <h1 className="text-2xl font-bold text-gray-900">Notifications</h1>
+        <p className="text-gray-500 mt-1">
+          Manual reminders and escalations. Automated notifications run at 5:30 PM, 5:45 PM, 6:00 PM, and 6:15 PM.
+        </p>
+      </div>
+
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Mail className="h-5 w-5 text-blue-600" /> Manual Triggers
+            </CardTitle>
+            <CardDescription>
+              Send notifications for today&apos;s pending EODs &mdash; {today}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Target Team</label>
+              <Select value={targetTeam} onValueChange={setTargetTeam}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select team" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Teams (Company-wide)</SelectItem>
+                  {uniqueTeamLeaders.map(t => (
+                    <SelectItem key={t.id} value={t.id.toString()}>
+                      {t.tlName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 pt-3 border-t">
+              <Button
+                variant="outline"
+                className="h-24 flex flex-col items-center justify-center gap-2 border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-800"
+                onClick={handleRemind}
+                disabled={reminderMutation.isPending}
+              >
+                <Bell className="h-6 w-6" />
+                <span className="text-sm font-medium">Send Reminder</span>
+              </Button>
+              <Button
+                variant="outline"
+                className="h-24 flex flex-col items-center justify-center gap-2 border-red-200 bg-red-50 hover:bg-red-100 text-red-800"
+                onClick={handleEscalate}
+                disabled={escalationMutation.isPending}
+              >
+                <AlertTriangle className="h-6 w-6" />
+                <span className="text-sm font-medium">Escalate to Manager</span>
+              </Button>
+            </div>
+
+            <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
+              <p className="text-xs font-semibold text-blue-700 mb-1">Automated Schedule</p>
+              <ul className="text-xs text-blue-600 space-y-1">
+                <li>🕠 <strong>5:30 PM</strong> — Reminder to pending employees</li>
+                <li>🕔 <strong>5:45 PM</strong> — Urgent reminder</li>
+                <li>🕕 <strong>6:00 PM</strong> — Escalation: Employee + TL + Manager</li>
+                <li>🕕 <strong>6:15 PM</strong> — Summary report to Manager &amp; CEO</li>
+              </ul>
+              <p className="text-xs text-blue-500 mt-2">Manager Summary email: shinydora753152@gmail.com</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Users className="h-5 w-5 text-blue-600" /> Pending Today
+            </CardTitle>
+            <CardDescription>
+              Employees who have not submitted EOD for {today}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {pendingLoading ? (
+              <div className="space-y-2">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="h-10 bg-gray-100 animate-pulse rounded" />
+                ))}
+              </div>
+            ) : pendingList && pendingList.length > 0 ? (
+              <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
+                {pendingList.map(emp => (
+                  <div key={emp.userId} className="flex items-center justify-between p-3 bg-red-50 border border-red-100 rounded-md">
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">{emp.userName}</p>
+                      <p className="text-xs text-gray-500">{emp.email}</p>
+                    </div>
+                    <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">
+                      Pending
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-10 text-center">
+                <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center mb-3">
+                  <Bell className="h-6 w-6 text-green-600" />
+                </div>
+                <p className="text-sm font-medium text-gray-900">All caught up!</p>
+                <p className="text-xs text-gray-500">No pending EODs for today.</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+

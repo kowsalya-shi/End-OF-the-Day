@@ -1,0 +1,1540 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: EOD Management Portal API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: auth
+    description: Authentication
+  - name: users
+    description: User management
+  - name: teams
+    description: Team management
+  - name: eod
+    description: EOD submissions
+  - name: tasks
+    description: Internal task management
+  - name: dailyWork
+    description: Daily work tracker
+  - name: training
+    description: Training records
+  - name: dashboard
+    description: Dashboard statistics
+  - name: notifications
+    description: Notification management
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  # ── AUTH ──────────────────────────────────────────────────────────────────
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout
+      responses:
+        "200":
+          description: Logged out
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Not authenticated
+
+  # ── USERS ─────────────────────────────────────────────────────────────────
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List users
+      parameters:
+        - name: role
+          in: query
+          schema:
+            type: string
+        - name: teamId
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+    post:
+      operationId: createUser
+      tags: [users]
+      summary: Create user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /users/{id}:
+    get:
+      operationId: getUser
+      tags: [users]
+      summary: Get user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    patch:
+      operationId: updateUser
+      tags: [users]
+      summary: Update user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    delete:
+      operationId: deleteUser
+      tags: [users]
+      summary: Delete user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ── TEAMS ─────────────────────────────────────────────────────────────────
+  /teams:
+    get:
+      operationId: listTeams
+      tags: [teams]
+      summary: List teams
+      responses:
+        "200":
+          description: List of teams
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Team"
+    post:
+      operationId: createTeam
+      tags: [teams]
+      summary: Create team
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TeamInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Team"
+
+  /teams/{id}:
+    get:
+      operationId: getTeam
+      tags: [teams]
+      summary: Get team
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Team
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Team"
+    patch:
+      operationId: updateTeam
+      tags: [teams]
+      summary: Update team
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TeamUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Team"
+    delete:
+      operationId: deleteTeam
+      tags: [teams]
+      summary: Delete team
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ── EOD ───────────────────────────────────────────────────────────────────
+  /eod:
+    get:
+      operationId: listEod
+      tags: [eod]
+      summary: List EOD submissions
+      parameters:
+        - name: date
+          in: query
+          schema:
+            type: ["string", "null"]
+        - name: userId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: teamId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: month
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: year
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: List of EODs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EodSubmission"
+    post:
+      operationId: createEod
+      tags: [eod]
+      summary: Submit EOD
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EodInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EodSubmission"
+
+  /eod/pending:
+    get:
+      operationId: listPendingEod
+      tags: [eod]
+      summary: List employees who haven't submitted EOD today
+      parameters:
+        - name: date
+          in: query
+          schema:
+            type: ["string", "null"]
+        - name: teamId
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Pending EOD list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PendingEod"
+
+  /eod/{id}:
+    get:
+      operationId: getEod
+      tags: [eod]
+      summary: Get EOD submission
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: EOD
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EodSubmission"
+    patch:
+      operationId: updateEod
+      tags: [eod]
+      summary: Update EOD
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EodUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EodSubmission"
+    delete:
+      operationId: deleteEod
+      tags: [eod]
+      summary: Delete EOD
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ── INTERNAL TASKS ────────────────────────────────────────────────────────
+  /tasks:
+    get:
+      operationId: listTasks
+      tags: [tasks]
+      summary: List internal tasks
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: ["string", "null"]
+        - name: userId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: teamId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: month
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: year
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: priority
+          in: query
+          schema:
+            type: ["string", "null"]
+        - name: assignedBy
+          in: query
+          schema:
+            type: ["string", "null"]
+      responses:
+        "200":
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InternalTask"
+    post:
+      operationId: createTask
+      tags: [tasks]
+      summary: Create internal task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InternalTaskInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalTask"
+
+  /tasks/status-summary:
+    get:
+      operationId: getTaskStatusSummary
+      tags: [tasks]
+      summary: Get task status counts grouped by status
+      parameters:
+        - name: teamId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: month
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: year
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Status summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskStatusSummary"
+
+  /tasks/{id}:
+    get:
+      operationId: getTask
+      tags: [tasks]
+      summary: Get task
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Task
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalTask"
+    patch:
+      operationId: updateTask
+      tags: [tasks]
+      summary: Update task
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InternalTaskUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalTask"
+    delete:
+      operationId: deleteTask
+      tags: [tasks]
+      summary: Delete task
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ── DAILY WORK ────────────────────────────────────────────────────────────
+  /daily-work:
+    get:
+      operationId: listDailyWork
+      tags: [dailyWork]
+      summary: List daily work items
+      parameters:
+        - name: userId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: teamId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: date
+          in: query
+          schema:
+            type: ["string", "null"]
+        - name: month
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: year
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: status
+          in: query
+          schema:
+            type: ["string", "null"]
+        - name: week
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Daily work items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DailyWorkItem"
+    post:
+      operationId: createDailyWork
+      tags: [dailyWork]
+      summary: Add daily work item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DailyWorkInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DailyWorkItem"
+
+  /daily-work/{id}:
+    get:
+      operationId: getDailyWork
+      tags: [dailyWork]
+      summary: Get daily work item
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Daily work item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DailyWorkItem"
+    patch:
+      operationId: updateDailyWork
+      tags: [dailyWork]
+      summary: Update daily work item
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DailyWorkUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DailyWorkItem"
+    delete:
+      operationId: deleteDailyWork
+      tags: [dailyWork]
+      summary: Delete daily work item
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ── TRAINING ──────────────────────────────────────────────────────────────
+  /training:
+    get:
+      operationId: listTraining
+      tags: [training]
+      summary: List training records
+      parameters:
+        - name: userId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: teamId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: status
+          in: query
+          schema:
+            type: ["string", "null"]
+        - name: month
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: year
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: trainer
+          in: query
+          schema:
+            type: ["string", "null"]
+        - name: topic
+          in: query
+          schema:
+            type: ["string", "null"]
+      responses:
+        "200":
+          description: Training records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TrainingRecord"
+    post:
+      operationId: createTraining
+      tags: [training]
+      summary: Add training record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrainingInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrainingRecord"
+
+  /training/{id}:
+    get:
+      operationId: getTraining
+      tags: [training]
+      summary: Get training record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Training record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrainingRecord"
+    patch:
+      operationId: updateTraining
+      tags: [training]
+      summary: Update training record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrainingUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrainingRecord"
+    delete:
+      operationId: deleteTraining
+      tags: [training]
+      summary: Delete training record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ── DASHBOARD ─────────────────────────────────────────────────────────────
+  /dashboard/stats:
+    get:
+      operationId: getDashboardStats
+      tags: [dashboard]
+      summary: Get dashboard statistics
+      parameters:
+        - name: date
+          in: query
+          schema:
+            type: ["string", "null"]
+        - name: teamId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: month
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: year
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  /dashboard/team-summary:
+    get:
+      operationId: getTeamSummary
+      tags: [dashboard]
+      summary: Team-wise EOD completion summary
+      parameters:
+        - name: date
+          in: query
+          schema:
+            type: ["string", "null"]
+      responses:
+        "200":
+          description: Team summary
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TeamSummary"
+
+  /dashboard/monthly-trend:
+    get:
+      operationId: getMonthlyTrend
+      tags: [dashboard]
+      summary: Monthly EOD and task completion trend
+      parameters:
+        - name: year
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: teamId
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Monthly trend
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MonthlyTrend"
+
+  # ── NOTIFICATIONS ─────────────────────────────────────────────────────────
+  /notifications/send-reminder:
+    post:
+      operationId: sendReminder
+      tags: [notifications]
+      summary: Send EOD reminder to pending employees
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReminderInput"
+      responses:
+        "200":
+          description: Reminder sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationResult"
+
+  /notifications/send-escalation:
+    post:
+      operationId: sendEscalation
+      tags: [notifications]
+      summary: Send escalation email to manager/TL for missing EOD
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EscalationInput"
+      responses:
+        "200":
+          description: Escalation sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationResult"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    # ── AUTH ──────────────────────────────────────────────────────────────
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    AuthResponse:
+      type: object
+      required: [user, token]
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        token:
+          type: string
+
+    # ── USER ──────────────────────────────────────────────────────────────
+    User:
+      type: object
+      required: [id, name, email, role]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          description: "employee | tl | manager | hr"
+        teamId:
+          type: ["integer", "null"]
+        teamName:
+          type: ["string", "null"]
+        employeeId:
+          type: ["string", "null"]
+        department:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    UserInput:
+      type: object
+      required: [name, email, role, password]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+        password:
+          type: string
+        teamId:
+          type: ["integer", "null"]
+        employeeId:
+          type: ["string", "null"]
+        department:
+          type: ["string", "null"]
+
+    UserUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+        teamId:
+          type: ["integer", "null"]
+        employeeId:
+          type: ["string", "null"]
+        department:
+          type: ["string", "null"]
+
+    # ── TEAM ──────────────────────────────────────────────────────────────
+    Team:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        tlId:
+          type: ["integer", "null"]
+        tlName:
+          type: ["string", "null"]
+        managerId:
+          type: ["integer", "null"]
+        managerName:
+          type: ["string", "null"]
+        memberCount:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+
+    TeamInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        tlId:
+          type: ["integer", "null"]
+        managerId:
+          type: ["integer", "null"]
+
+    TeamUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        tlId:
+          type: ["integer", "null"]
+        managerId:
+          type: ["integer", "null"]
+
+    # ── EOD ───────────────────────────────────────────────────────────────
+    EodSubmission:
+      type: object
+      required: [id, userId, date, attendanceStatus, submittedAt]
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        userName:
+          type: ["string", "null"]
+        teamId:
+          type: ["integer", "null"]
+        teamName:
+          type: ["string", "null"]
+        date:
+          type: string
+        attendanceStatus:
+          type: string
+          description: "present | absent | leave | half-day"
+        remarks:
+          type: ["string", "null"]
+        submittedAt:
+          type: string
+        tasksCompleted:
+          type: ["integer", "null"]
+        trainingAttended:
+          type: ["boolean", "null"]
+        trainingTopic:
+          type: ["string", "null"]
+        internalWork:
+          type: ["string", "null"]
+        challenges:
+          type: ["string", "null"]
+        tomorrowPlan:
+          type: ["string", "null"]
+
+    EodInput:
+      type: object
+      required: [date, attendanceStatus]
+      properties:
+        date:
+          type: string
+        attendanceStatus:
+          type: string
+        remarks:
+          type: ["string", "null"]
+        tasksCompleted:
+          type: ["integer", "null"]
+        trainingAttended:
+          type: ["boolean", "null"]
+        trainingTopic:
+          type: ["string", "null"]
+        internalWork:
+          type: ["string", "null"]
+        challenges:
+          type: ["string", "null"]
+        tomorrowPlan:
+          type: ["string", "null"]
+
+    EodUpdate:
+      type: object
+      properties:
+        attendanceStatus:
+          type: string
+        remarks:
+          type: ["string", "null"]
+        tasksCompleted:
+          type: ["integer", "null"]
+        trainingAttended:
+          type: ["boolean", "null"]
+        trainingTopic:
+          type: ["string", "null"]
+        internalWork:
+          type: ["string", "null"]
+        challenges:
+          type: ["string", "null"]
+        tomorrowPlan:
+          type: ["string", "null"]
+
+    PendingEod:
+      type: object
+      required: [userId, userName, teamId, teamName]
+      properties:
+        userId:
+          type: integer
+        userName:
+          type: string
+        email:
+          type: string
+        teamId:
+          type: integer
+        teamName:
+          type: string
+        tlEmail:
+          type: ["string", "null"]
+        managerEmail:
+          type: ["string", "null"]
+
+    # ── INTERNAL TASK ─────────────────────────────────────────────────────
+    InternalTask:
+      type: object
+      required: [id, taskName, status]
+      properties:
+        id:
+          type: integer
+        taskCode:
+          type: ["string", "null"]
+        taskName:
+          type: string
+        how:
+          type: ["string", "null"]
+        who:
+          type: ["string", "null"]
+        assignedBy:
+          type: ["string", "null"]
+        priority:
+          type: ["string", "null"]
+          description: "high | medium | low"
+        plannedStartDate:
+          type: ["string", "null"]
+        plannedEndDate:
+          type: ["string", "null"]
+        actualStartDate:
+          type: ["string", "null"]
+        actualEndDate:
+          type: ["string", "null"]
+        status:
+          type: string
+          description: "completed | wip | yts | hold | cancelled"
+        completionPct:
+          type: ["integer", "null"]
+        dependency:
+          type: ["string", "null"]
+        remarks:
+          type: ["string", "null"]
+        etc:
+          type: ["string", "null"]
+        userId:
+          type: ["integer", "null"]
+        teamId:
+          type: ["integer", "null"]
+        userName:
+          type: ["string", "null"]
+        teamName:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    InternalTaskInput:
+      type: object
+      required: [taskName, status]
+      properties:
+        taskCode:
+          type: ["string", "null"]
+        taskName:
+          type: string
+        how:
+          type: ["string", "null"]
+        who:
+          type: ["string", "null"]
+        assignedBy:
+          type: ["string", "null"]
+        priority:
+          type: ["string", "null"]
+        plannedStartDate:
+          type: ["string", "null"]
+        plannedEndDate:
+          type: ["string", "null"]
+        actualStartDate:
+          type: ["string", "null"]
+        actualEndDate:
+          type: ["string", "null"]
+        status:
+          type: string
+        completionPct:
+          type: ["integer", "null"]
+        dependency:
+          type: ["string", "null"]
+        remarks:
+          type: ["string", "null"]
+        etc:
+          type: ["string", "null"]
+        userId:
+          type: ["integer", "null"]
+        teamId:
+          type: ["integer", "null"]
+
+    InternalTaskUpdate:
+      type: object
+      properties:
+        taskCode:
+          type: ["string", "null"]
+        taskName:
+          type: string
+        how:
+          type: ["string", "null"]
+        who:
+          type: ["string", "null"]
+        assignedBy:
+          type: ["string", "null"]
+        priority:
+          type: ["string", "null"]
+        plannedStartDate:
+          type: ["string", "null"]
+        plannedEndDate:
+          type: ["string", "null"]
+        actualStartDate:
+          type: ["string", "null"]
+        actualEndDate:
+          type: ["string", "null"]
+        status:
+          type: string
+        completionPct:
+          type: ["integer", "null"]
+        dependency:
+          type: ["string", "null"]
+        remarks:
+          type: ["string", "null"]
+        etc:
+          type: ["string", "null"]
+        userId:
+          type: ["integer", "null"]
+        teamId:
+          type: ["integer", "null"]
+
+    TaskStatusSummary:
+      type: object
+      required: [completed, wip, yts, hold, cancelled, total]
+      properties:
+        completed:
+          type: integer
+        wip:
+          type: integer
+        yts:
+          type: integer
+        hold:
+          type: integer
+        cancelled:
+          type: integer
+        total:
+          type: integer
+
+    # ── DAILY WORK ────────────────────────────────────────────────────────
+    DailyWorkItem:
+      type: object
+      required: [id, action, date, status]
+      properties:
+        id:
+          type: integer
+        action:
+          type: string
+        how:
+          type: ["string", "null"]
+        who:
+          type: ["string", "null"]
+        date:
+          type: string
+        startDate:
+          type: ["string", "null"]
+        completionDate:
+          type: ["string", "null"]
+        status:
+          type: string
+          description: "completed | wip | yts | hold"
+        completionPct:
+          type: ["integer", "null"]
+        remarks:
+          type: ["string", "null"]
+        userId:
+          type: ["integer", "null"]
+        teamId:
+          type: ["integer", "null"]
+        userName:
+          type: ["string", "null"]
+        teamName:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    DailyWorkInput:
+      type: object
+      required: [action, date, status]
+      properties:
+        action:
+          type: string
+        how:
+          type: ["string", "null"]
+        who:
+          type: ["string", "null"]
+        date:
+          type: string
+        startDate:
+          type: ["string", "null"]
+        completionDate:
+          type: ["string", "null"]
+        status:
+          type: string
+        completionPct:
+          type: ["integer", "null"]
+        remarks:
+          type: ["string", "null"]
+        userId:
+          type: ["integer", "null"]
+        teamId:
+          type: ["integer", "null"]
+
+    DailyWorkUpdate:
+      type: object
+      properties:
+        action:
+          type: string
+        how:
+          type: ["string", "null"]
+        who:
+          type: ["string", "null"]
+        date:
+          type: string
+        startDate:
+          type: ["string", "null"]
+        completionDate:
+          type: ["string", "null"]
+        status:
+          type: string
+        completionPct:
+          type: ["integer", "null"]
+        remarks:
+          type: ["string", "null"]
+
+    # ── TRAINING ──────────────────────────────────────────────────────────
+    TrainingRecord:
+      type: object
+      required: [id, topic, status]
+      properties:
+        id:
+          type: integer
+        topic:
+          type: string
+        category:
+          type: ["string", "null"]
+        trainer:
+          type: ["string", "null"]
+        startDate:
+          type: ["string", "null"]
+        endDate:
+          type: ["string", "null"]
+        status:
+          type: string
+          description: "yts | practicing | learning | completed | hold"
+        progressPct:
+          type: ["integer", "null"]
+        remarks:
+          type: ["string", "null"]
+        userId:
+          type: ["integer", "null"]
+        teamId:
+          type: ["integer", "null"]
+        userName:
+          type: ["string", "null"]
+        teamName:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    TrainingInput:
+      type: object
+      required: [topic, status]
+      properties:
+        topic:
+          type: string
+        category:
+          type: ["string", "null"]
+        trainer:
+          type: ["string", "null"]
+        startDate:
+          type: ["string", "null"]
+        endDate:
+          type: ["string", "null"]
+        status:
+          type: string
+        progressPct:
+          type: ["integer", "null"]
+        remarks:
+          type: ["string", "null"]
+        userId:
+          type: ["integer", "null"]
+        teamId:
+          type: ["integer", "null"]
+
+    TrainingUpdate:
+      type: object
+      properties:
+        topic:
+          type: string
+        category:
+          type: ["string", "null"]
+        trainer:
+          type: ["string", "null"]
+        startDate:
+          type: ["string", "null"]
+        endDate:
+          type: ["string", "null"]
+        status:
+          type: string
+        progressPct:
+          type: ["integer", "null"]
+        remarks:
+          type: ["string", "null"]
+
+    # ── DASHBOARD ─────────────────────────────────────────────────────────
+    DashboardStats:
+      type: object
+      required: [totalEmployees, submittedEod, pendingEod, absentEmployees, onLeave, trainingAttended, completedTasks, wipTasks, holdTasks, ytsTasks, teamCount]
+      properties:
+        totalEmployees:
+          type: integer
+        submittedEod:
+          type: integer
+        pendingEod:
+          type: integer
+        absentEmployees:
+          type: integer
+        onLeave:
+          type: integer
+        trainingAttended:
+          type: integer
+        completedTasks:
+          type: integer
+        wipTasks:
+          type: integer
+        holdTasks:
+          type: integer
+        ytsTasks:
+          type: integer
+        teamCount:
+          type: integer
+        completionRate:
+          type: ["number", "null"]
+
+    TeamSummary:
+      type: object
+      required: [teamId, teamName, totalMembers, submitted, pending, absent]
+      properties:
+        teamId:
+          type: integer
+        teamName:
+          type: string
+        totalMembers:
+          type: integer
+        submitted:
+          type: integer
+        pending:
+          type: integer
+        absent:
+          type: integer
+        completionPct:
+          type: number
+
+    MonthlyTrend:
+      type: object
+      required: [month, year, submitted, pending, totalTasks, completedTasks]
+      properties:
+        month:
+          type: integer
+        year:
+          type: integer
+        monthLabel:
+          type: string
+        submitted:
+          type: integer
+        pending:
+          type: integer
+        totalTasks:
+          type: integer
+        completedTasks:
+          type: integer
+
+    # ── NOTIFICATIONS ─────────────────────────────────────────────────────
+    ReminderInput:
+      type: object
+      required: [date]
+      properties:
+        date:
+          type: string
+        teamId:
+          type: ["integer", "null"]
+
+    EscalationInput:
+      type: object
+      required: [date]
+      properties:
+        date:
+          type: string
+        teamId:
+          type: ["integer", "null"]
+
+    NotificationResult:
+      type: object
+      required: [success, sent, failed]
+      properties:
+        success:
+          type: boolean
+        sent:
+          type: integer
+        failed:
+          type: integer
+        message:
+          type: string

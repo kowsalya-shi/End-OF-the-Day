@@ -1,0 +1,385 @@
+HII Good Morning :
+
+can you work now
+
+i nedd like internel task is excel and daily work in one excel and training class if there not sending eod daily the nodification should go to the manager and there team leader and the manager can see all the eod and team leader have the limited access for there tema memeber only access it should pop up the before 5 45 for thr eod sumbit and and under tl there team member portal like that adn if there absent there should mention there for that some button in there or any identification if there absent for thus date and if someone not sending eod it should automatically send notification mail to manager and if tl for the team leader .....like this i needd give the detsila plan to work on tis plw help me with meEmployee Portal
+
+Employees can:
+
+Submit Daily EOD
+
+Update Task Status
+
+Mention Training Attended
+
+Mention Internal Work
+
+Mention Leave/Absent
+
+Add Remarks
+
+Submit before 5:45 PM. Reminder Notification
+
+At 5:30 PM
+
+Power Automate checks:
+
+Who has not submitted EOD
+
+Send reminder:
+
+Dear Employee,
+
+Please submit today's EOD before 5:45 PM.3. Escalation Notification
+
+At 6:00 PM
+
+System checks:
+
+Employees who did not submit EOD
+
+Automatically send email to:
+
+Employee
+
+Team Leader
+
+Manager
+
+Example:
+Employee John has not submitted EOD for 06-Jun-2026.Team Leader Portal
+
+Team Leader can:
+
+View only their team members
+
+Review EODs
+
+View absent employees
+
+View pending submissions
+
+View training records
+
+Cannot access other teams.5. Manager Portal
+
+Manager can:
+
+View all teams
+
+View all EODs
+
+View attendance
+
+View pending EODs
+
+View training reports
+
+View productivity dashboard6. Attendance / Leave Tracking
+
+Employee can select:
+
+✅ Present
+
+❌ Absent
+
+🏖 Leave
+
+If Absent:7. Dashboard
+
+Manager Dashboard:
+
+Total Employees
+
+Submitted EOD
+
+Pending EOD
+
+Absent Employees
+
+Training Attended
+
+Team-wise Completion %
+
+Example Cards:Export to Excel/PDF
+
+Teams Notification instead of EmailMonthly Performance Reportnd one more thing i need the excel format to export in the portal and it should be like form filling i will send the our internal task and daily work status ... and training i will say what to dothese are the file like this ineed in the portal for filling the from and edit optionand you see the status we have highlighted in the color like that also i need in the filter i nedd the status has completed, wip, yts, hold like i need for the month also i need the filter and for the training portal it should the tipoic start date end date completed and wip practiceing like this it should there for training also there should be import excel lifePortal Structure
+
+Internal Task Portal
+
+Based on your "Internal Team Tasks Plan" Excel:
+
+Field
+
+Task ID
+
+Task Name
+
+How
+
+Who
+
+Assigned By
+
+Priority
+
+Planned Start Date
+
+Planned End Date
+
+Actual Start Date
+
+Actual End Date
+
+Status
+
+Completion %
+
+Dependency
+
+Remarks
+
+ETCStatus Dropdown
+
+Instead of free text:
+
+🟢 Completed
+
+🟡 WIP (Work In Progress)
+
+🔵 YTS (Yet To Start)
+
+🔴 Hold
+
+⚫ Cancelled
+
+These colors should automatically appear in:
+
+Forms
+
+Grid View
+
+Dashboard
+
+Excel Export
+
+Daily Work Status Portal
+
+Based on your Daily Work Tracker:
+
+Field
+
+Action
+
+How
+
+Who
+
+Date
+
+Start Date
+
+Completion Date
+
+Status
+
+Completion %
+
+Remarks
+
+Assignment
+
+Update
+
+Features
+
+Add Row
+
+Edit Row
+
+Delete Row
+
+Copy Previous Day Task
+
+Bulk Update
+
+Training Portal
+
+Separate module.
+
+Field
+
+Topic
+
+Category
+
+Trainer
+
+Start Date
+
+End Date
+
+Status
+
+Progress %
+
+Remarks
+
+Training Status
+
+🔵 Yet To Start
+
+🟡 Practicing
+
+🟠 Learning
+
+🟢 Completed
+
+🔴 Hold
+
+Filters
+
+Internal Tasks
+
+Filter by:
+
+Employee
+
+Team
+
+Status
+
+Month
+
+Year
+
+Priority
+
+Assigned By
+
+Daily Work
+
+Filter by:
+
+Date
+
+Week
+
+Month
+
+Status
+
+Employee
+
+Training
+
+Filter by:
+
+Topic
+
+Month
+
+Status
+
+Trainer
+
+Excel Import
+
+You specifically requested Excel Import.
+
+Import Button
+
+Upload:
+Internal Tasks Excel
+
+Daily Work Excel
+
+Training Excel
+
+System should:
+
+Read Excel
+
+Validate Data
+
+Show Preview
+
+Import to Database
+
+No manual entry required.
+
+Excel Export
+
+Employee
+
+Can export own records.
+
+TL
+
+Can export team records.
+
+Manager
+
+Can export all records.
+
+Formats:
+Excel
+
+CSV
+
+PDF
+
+Dashboard
+
+Manager Dashboard
+
+Cards:
+Total Employees
+
+Submitted EOD
+
+Pending EOD
+
+Completed Tasks
+
+WIP Tasks
+
+Hold Tasks
+
+Training Completed
+
+Absent Employees
+
+Charts:
+Month Wise Task Progress
+
+Team Wise Productivity
+
+Training Completion %
+
+Attendance Integration
+
+Before EOD submission:
+
+Employee chooses:
+
+Present
+
+Absent
+
+Leave
+
+Half Day
+
+If Absent:
+
+System marks:
+
+EOD Not Required
+
+Visible to:
+
+TL
+
+Manager
+

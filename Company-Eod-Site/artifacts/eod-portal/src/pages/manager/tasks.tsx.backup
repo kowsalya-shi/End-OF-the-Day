@@ -1,0 +1,188 @@
+import { useState } from "react";
+import { useAuth } from "@/lib/auth";
+import { 
+  useListTasks, 
+  getListTasksQueryKey, 
+  useListTeams, 
+  getListTeamsQueryKey,
+  useCreateTask,
+  useUpdateTask,
+  useDeleteTask,
+  useListUsers,
+  getListUsersQueryKey
+} from "@workspace/api-client-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
+import { exportToCsv } from "@/lib/export-csv";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { useToast } from "@/hooks/use-toast";
+import { Download, Filter, Plus, Edit2, Trash2 } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+
+const taskSchema = z.object({
+  taskCode: z.string().optional(),
+  taskName: z.string().min(1, "Task name is required"),
+  priority: z.string().optional(),
+  plannedStartDate: z.string().optional(),
+  plannedEndDate: z.string().optional(),
+  status: z.string().min(1, "Status is required"),
+  completionPct: z.coerce.number().min(0).max(100).optional(),
+  remarks: z.string().optional(),
+  userId: z.coerce.number().optional(),
+  teamId: z.coerce.number().optional(),
+  assignedBy: z.string().optional(),
+});
+
+type TaskFormData = z.infer<typeof taskSchema>;
+
+export default function ManagerTasks() {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [teamFilter, setTeamFilter] = useState<string>("all");
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<any>(null);
+
+  const { data: teams } = useListTeams({ query: { queryKey: getListTeamsQueryKey() } });
+
+  // Get all employees for assignment
+  const { data: allEmployees } = useListUsers(
+    {},
+    { query: { queryKey: getListUsersQueryKey({}) } }
+  );
+
+  const { data: tasks, isLoading } = useListTasks(
+    { 
+      status: statusFilter !== "all" ? statusFilter : undefined,
+      teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined
+    },
+    { query: { 
+      queryKey: getListTasksQueryKey({ 
+        status: statusFilter !== "all" ? statusFilter : undefined,
+        teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined
+      })
+    } }
+  );
+
+  const handleExport = () => {
+    if (tasks) {
+      exportToCsv("all_tasks.csv", tasks.map(t => ({
+        ID: t.id,
+        Team: t.teamName || '',
+        'Assigned To': t.userName || '',
+        Code: t.taskCode || '',
+        Name: t.taskName,
+        Priority: t.priority || '',
+        Status: t.status,
+        Progress: `${t.completionPct || 0}%`,
+      })));
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">All Company Tasks</h1>
+          <p className="text-gray-500 mt-1">View and filter all internal tasks across teams.</p>
+        </div>
+        <Button variant="outline" onClick={handleExport}>
+          <Download className="mr-2 h-4 w-4" /> Export
+        </Button>
+      </div>
+
+      <div className="bg-white p-4 rounded-lg shadow-sm border flex flex-wrap gap-4 items-center">
+        <div className="flex items-center text-sm font-medium text-gray-500">
+          <Filter className="w-4 h-4 mr-2" /> Filters
+        </div>
+        <div className="w-48">
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger><SelectValue placeholder="Status" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="wip">WIP</SelectItem>
+              <SelectItem value="yts">YTS</SelectItem>
+              <SelectItem value="hold">Hold</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="w-48">
+          <Select value={teamFilter} onValueChange={setTeamFilter}>
+            <SelectTrigger><SelectValue placeholder="Team" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Teams</SelectItem>
+              {teams?.map(t => (
+                <SelectItem key={t.id} value={t.id.toString()}>{t.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-gray-50">
+                <TableHead>Team</TableHead>
+                <TableHead>Assignee</TableHead>
+                <TableHead>Code</TableHead>
+                <TableHead className="min-w-[200px]">Task</TableHead>
+                <TableHead>Priority</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Progress</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                <TableRow><TableCell colSpan={7} className="h-32 text-center text-gray-500">Loading...</TableCell></TableRow>
+              ) : tasks && tasks.length > 0 ? (
+                tasks.map((task) => (
+                  <TableRow key={task.id}>
+                    <TableCell className="text-xs text-gray-500">{task.teamName || "-"}</TableCell>
+                    <TableCell className="font-medium">{task.userName || "-"}</TableCell>
+                    <TableCell className="font-mono text-xs text-gray-500">{task.taskCode || "-"}</TableCell>
+                    <TableCell className="font-medium">{task.taskName}</TableCell>
+                    <TableCell>
+                      <span className={`text-xs uppercase font-medium ${
+                        task.priority === 'high' ? 'text-red-600' : 
+                        task.priority === 'medium' ? 'text-amber-600' : 'text-blue-600'
+                      }`}>{task.priority || "-"}</span>
+                    </TableCell>
+                    <TableCell><StatusBadge status={task.status} /></TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
+                          <div className="h-full bg-primary" style={{ width: `${task.completionPct || 0}%` }} />
+                        </div>
+                        <span className="text-xs text-gray-500">{task.completionPct || 0}%</span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow><TableCell colSpan={7} className="h-32 text-center text-gray-500">No tasks found.</TableCell></TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
