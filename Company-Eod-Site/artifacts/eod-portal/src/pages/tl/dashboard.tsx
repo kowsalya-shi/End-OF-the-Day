@@ -1,38 +1,101 @@
+import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { format } from "date-fns";
 import { 
   useGetTeamSummary, getGetTeamSummaryQueryKey,
-  useListPendingEod, getListPendingEodQueryKey,
-  useGetTaskStatusSummary, getGetTaskStatusSummaryQueryKey
+  useGetTaskStatusSummary, getGetTaskStatusSummaryQueryKey,
+  useListTeams, getListTeamsQueryKey
 } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, FileText, CheckSquare, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Users, FileText, CheckCircle, Clock, XCircle } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useToast } from "@/hooks/use-toast";
+import { PortalNotifications } from "@/components/portal-notifications";
 
 export default function TLDashboard() {
   const { user } = useAuth();
+  const { toast } = useToast();
   const today = format(new Date(), "yyyy-MM-dd");
+  const [pendingApprovals, setPendingApprovals] = useState<any[]>([]);
+  const [approvalLoading, setApprovalLoading] = useState(true);
+  const [selectedEod, setSelectedEod] = useState<any>(null);
+  const [rejectionReason, setRejectionReason] = useState("");
 
   const { data: teamSummary, isLoading: summaryLoading } = useGetTeamSummary(
     { date: today },
     { query: { queryKey: getGetTeamSummaryQueryKey({ date: today }) } }
   );
 
-  const { data: pendingEod, isLoading: pendingLoading } = useListPendingEod(
-    { tlId: user?.id, date: today },
-    { query: { queryKey: getListPendingEodQueryKey({ tlId: user?.id, date: today }), enabled: !!user?.id } }
+  const { data: teams, isLoading: teamsLoading } = useListTeams(
+    { query: { queryKey: getListTeamsQueryKey() } },
   );
+
+  const loadPendingApprovals = async () => {
+    if (!user?.id) return;
+    setApprovalLoading(true);
+    try {
+      const token = localStorage.getItem("auth_token");
+      const response = await fetch(`http://localhost:8080/api/eod/approvals/pending?tlId=${user.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) throw new Error("Unable to load EOD approvals");
+      setPendingApprovals(await response.json());
+    } catch {
+      toast({ title: "Unable to load approvals", variant: "destructive" });
+    } finally {
+      setApprovalLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadPendingApprovals();
+  }, [user?.id]);
+
+  const handleApprove = async (eodId: number) => {
+    try {
+      const token = localStorage.getItem("auth_token");
+      const response = await fetch(`http://localhost:8080/api/eod/${eodId}/approve`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ approvedBy: user?.id }),
+      });
+      if (!response.ok) throw new Error("Unable to approve EOD");
+      toast({ title: "EOD approved" });
+      loadPendingApprovals();
+    } catch {
+      toast({ title: "Approval failed", variant: "destructive" });
+    }
+  };
+
+  const handleReject = async () => {
+    if (!selectedEod || !rejectionReason.trim()) return;
+    try {
+      const token = localStorage.getItem("auth_token");
+      const response = await fetch(`http://localhost:8080/api/eod/${selectedEod.id}/reject`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ approvedBy: user?.id, reason: rejectionReason.trim() }),
+      });
+      if (!response.ok) throw new Error("Unable to reject EOD");
+      toast({ title: "EOD rejected" });
+      setSelectedEod(null);
+      setRejectionReason("");
+      loadPendingApprovals();
+    } catch {
+      toast({ title: "Rejection failed", variant: "destructive" });
+    }
+  };
 
   const { data: taskSummary, isLoading: tasksLoading } = useGetTaskStatusSummary(
     { tlId: user?.id },
     { query: { queryKey: getGetTaskStatusSummaryQueryKey({ tlId: user?.id }), enabled: !!user?.id } }
   );
 
-  // Calculate total members across all teams managed by this TL
-  const myTeams = teamSummary?.filter(t => {
-    // Find teams where this TL is the leader
-    return user?.id && t.teamId; // We'll need to check team leadership on backend
-  });
+  const myTeamIds = new Set(teams?.filter((team) => team.tlId === user?.id).map((team) => team.id) ?? []);
+  const myTeams = teamSummary?.filter((team) => myTeamIds.has(team.teamId));
   
   const totalMembers = myTeams?.reduce((sum, team) => sum + (team.totalMembers || 0), 0) || 0;
   const totalSubmitted = myTeams?.reduce((sum, team) => sum + (team.submitted || 0), 0) || 0;
@@ -43,8 +106,8 @@ export default function TLDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Team Leader Dashboard</h1>
-        <p className="text-gray-500 mt-1">Overview of your team's performance for {format(new Date(), "MMMM d, yyyy")}</p>
+        <h1 className="text-2xl font-bold text-gray-900">{user?.name}</h1>
+        <p className="text-gray-500 mt-1">Team Leader dashboard overview for {format(new Date(), "MMMM d, yyyy")}</p>
       </div>
 
       <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
@@ -54,7 +117,7 @@ export default function TLDashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {summaryLoading ? (
+            {summaryLoading || teamsLoading ? (
               <div className="h-7 bg-gray-200 rounded animate-pulse w-16"></div>
             ) : (
               <div className="text-2xl font-bold">{totalMembers}</div>
@@ -68,7 +131,7 @@ export default function TLDashboard() {
             <FileText className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            {summaryLoading ? (
+            {summaryLoading || teamsLoading ? (
               <div className="h-7 bg-gray-200 rounded animate-pulse w-24"></div>
             ) : (
               <>
@@ -87,7 +150,7 @@ export default function TLDashboard() {
             <Clock className="h-4 w-4 text-amber-600" />
           </CardHeader>
           <CardContent>
-            {summaryLoading ? (
+            {summaryLoading || teamsLoading ? (
               <div className="h-7 bg-gray-200 rounded animate-pulse w-16"></div>
             ) : (
               <div className="text-2xl font-bold text-amber-600">{totalPending}</div>
@@ -101,7 +164,7 @@ export default function TLDashboard() {
             <Users className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
-            {summaryLoading ? (
+            {summaryLoading || teamsLoading ? (
               <div className="h-7 bg-gray-200 rounded animate-pulse w-16"></div>
             ) : (
               <div className="text-2xl font-bold text-red-600">{totalAbsent}</div>
@@ -110,30 +173,43 @@ export default function TLDashboard() {
         </Card>
       </div>
 
+      <PortalNotifications />
+
       <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
         <Card className="col-span-1">
           <CardHeader>
-            <CardTitle>Pending EOD Submissions</CardTitle>
+            <CardTitle>Awaiting EOD Approval</CardTitle>
           </CardHeader>
           <CardContent>
-            {pendingLoading ? (
+            {approvalLoading ? (
               <div className="space-y-3">
                 {[1, 2, 3].map(i => <div key={i} className="h-12 bg-gray-100 rounded animate-pulse"></div>)}
               </div>
-            ) : pendingEod && pendingEod.length > 0 ? (
+            ) : pendingApprovals.length > 0 ? (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Team Member</TableHead>
-                      <TableHead>Email</TableHead>
+                      <TableHead>Submitted</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {pendingEod.map((p) => (
-                      <TableRow key={p.userId}>
-                        <TableCell className="font-medium">{p.userName}</TableCell>
-                        <TableCell className="text-sm text-gray-500">{p.email}</TableCell>
+                    {pendingApprovals.map((eod) => (
+                      <TableRow key={eod.id}>
+                        <TableCell className="font-medium">{eod.userName}</TableCell>
+                        <TableCell className="text-sm text-gray-500">{new Date(eod.submittedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => handleApprove(eod.id)}>
+                              <CheckCircle className="mr-1 h-4 w-4" /> Approve
+                            </Button>
+                            <Button size="sm" variant="destructive" onClick={() => setSelectedEod(eod)}>
+                              <XCircle className="mr-1 h-4 w-4" /> Reject
+                            </Button>
+                          </div>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -141,7 +217,7 @@ export default function TLDashboard() {
               </div>
             ) : (
               <div className="text-center py-6 text-green-600 font-medium">
-                All team members have submitted their EODs today! 🎉
+                No EOD submissions are awaiting approval.
               </div>
             )}
           </CardContent>
@@ -185,6 +261,23 @@ export default function TLDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      <Dialog open={!!selectedEod} onOpenChange={(open) => { if (!open) { setSelectedEod(null); setRejectionReason(""); } }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reject EOD</DialogTitle>
+          </DialogHeader>
+          <Textarea
+            value={rejectionReason}
+            onChange={(event) => setRejectionReason(event.target.value)}
+            placeholder="Reason for rejection"
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setSelectedEod(null); setRejectionReason(""); }}>Cancel</Button>
+            <Button variant="destructive" disabled={!rejectionReason.trim()} onClick={handleReject}>Reject EOD</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

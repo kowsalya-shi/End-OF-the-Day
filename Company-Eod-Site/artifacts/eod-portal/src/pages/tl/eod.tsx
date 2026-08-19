@@ -707,6 +707,10 @@ export default function TLEod() {
                               <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
                                 ❌ Rejected
                               </span>
+                            ) : eod.approvalStatus === "resubmitted" ? (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                Resubmitted
+                              </span>
                             ) : eod.approvalStatus === "sent_back" ? (
                               <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-800">
                                 🔄 Sent Back
@@ -727,7 +731,7 @@ export default function TLEod() {
                               >
                                 <Eye className="h-4 w-4 mr-1" /> View
                               </Button>
-                              {eod.approvalStatus === "pending" && (
+                              {(eod.approvalStatus === "pending" || eod.approvalStatus === "resubmitted") && (
                                 <>
                                   <Button 
                                     variant="default"
@@ -949,4 +953,3 @@ export default function TLEod() {
     </div>
   );
 }
-

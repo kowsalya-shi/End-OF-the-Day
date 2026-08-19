@@ -55,7 +55,7 @@ export default function Login() {
           {/* Company Logo */}
           <div className="flex items-center justify-center">
             <img 
-              src="https://media.licdn.com/dms/image/v2/C560BAQFq8JopmyGh6A/company-logo_200_200/company-logo_200_200/0/1630645196025/arraafi_infotech_pvt_ltd_logo?e=1785369600&v=beta&t=Hzh-9-cW0xnMPneaOpeiApTTuLeuRFmgo4w1TSKXnhs"
+              src="/arraafi-logo.png"
               alt="Arraafi Infotech"
               className="h-24 w-24 object-contain rounded-lg bg-white/10 p-2"
             />
@@ -105,8 +105,8 @@ export default function Login() {
         <div className="w-full max-w-sm">
           {/* Mobile logo */}
           <div className="flex items-center gap-3 mb-8 lg:hidden">
-            <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Building2 className="h-5 w-5 text-primary" />
+            <div className="h-9 w-9 rounded-lg overflow-hidden bg-white flex items-center justify-center">
+              <img src="/arraafi-logo.png" alt="Arraafi Infotech" className="h-full w-full object-contain" />
             </div>
             <span className="text-foreground font-bold text-lg">Arraafi Infotech</span>
           </div>
@@ -178,4 +178,3 @@ export default function Login() {
     </div>
   );
 }
-

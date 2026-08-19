@@ -1,8 +1,43 @@
 import { Router } from "express";
-import { db, dailyWorkTable, usersTable, teamsTable } from "@workspace/db";
+import { db, dailyWorkTable, internalTasksTable, usersTable, teamsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 
 const router = Router();
+
+const dailyWorkTaskCode = (dailyWorkId: number) => `DAILY-WORK-${dailyWorkId}`;
+const optionalDate = (value: unknown) => typeof value === "string" && value.trim() === "" ? null : value;
+
+function toTaskValues(work: typeof dailyWorkTable.$inferSelect) {
+  return {
+    taskCode: dailyWorkTaskCode(work.id),
+    taskName: work.action,
+    how: work.how,
+    who: work.who,
+    priority: "medium",
+    plannedStartDate: work.date,
+    actualStartDate: work.startDate,
+    actualEndDate: work.completionDate,
+    status: work.status,
+    completionPct: work.completionPct,
+    remarks: work.remarks,
+    userId: work.userId,
+    teamId: work.teamId,
+  };
+}
+
+async function syncTaskFromDailyWork(database: Pick<typeof db, "select" | "insert" | "update">, work: typeof dailyWorkTable.$inferSelect) {
+  const taskCode = dailyWorkTaskCode(work.id);
+  const [existingTask] = await database
+    .select({ id: internalTasksTable.id })
+    .from(internalTasksTable)
+    .where(eq(internalTasksTable.taskCode, taskCode));
+
+  if (existingTask) {
+    await database.update(internalTasksTable).set(toTaskValues(work)).where(eq(internalTasksTable.id, existingTask.id));
+  } else {
+    await database.insert(internalTasksTable).values(toTaskValues(work));
+  }
+}
 
 async function enrichWork(item: typeof dailyWorkTable.$inferSelect) {
   let userName: string | null = null;
@@ -87,19 +122,23 @@ router.post("/daily-work", async (req, res) => {
   const { action, date, status, ...rest } = req.body;
   if (!action || !date) return res.status(400).json({ error: "action and date required" });
 
-  const [item] = await db.insert(dailyWorkTable).values({
-    action,
-    date,
-    status: status ?? "yts",
-    how: rest.how ?? null,
-    who: rest.who ?? null,
-    startDate: rest.startDate ?? null,
-    completionDate: rest.completionDate ?? null,
-    completionPct: rest.completionPct ?? 0,
-    remarks: rest.remarks ?? null,
-    userId: rest.userId ?? null,
-    teamId: rest.teamId ?? null,
-  }).returning();
+  const item = await db.transaction(async (tx) => {
+    const [dailyWork] = await tx.insert(dailyWorkTable).values({
+      action,
+      date,
+      status: status ?? "yts",
+      how: rest.how ?? null,
+      who: rest.who ?? null,
+      startDate: optionalDate(rest.startDate) ?? null,
+      completionDate: optionalDate(rest.completionDate) ?? null,
+      completionPct: rest.completionPct ?? 0,
+      remarks: rest.remarks ?? null,
+      userId: rest.userId ?? null,
+      teamId: rest.teamId ?? null,
+    }).returning();
+    await syncTaskFromDailyWork(tx, dailyWork);
+    return dailyWork;
+  });
 
   res.status(201).json(await enrichWork(item));
 });
@@ -116,16 +155,25 @@ router.patch("/daily-work/:id", async (req, res) => {
   const updates: Partial<typeof dailyWorkTable.$inferInsert> = {};
   const fields = ["action", "how", "who", "date", "startDate", "completionDate", "status", "completionPct", "remarks"];
   for (const f of fields) {
-    if (req.body[f] !== undefined) (updates as any)[f] = req.body[f];
+    if (req.body[f] !== undefined) {
+      (updates as any)[f] = f === "startDate" || f === "completionDate" ? optionalDate(req.body[f]) : req.body[f];
+    }
   }
-  const [item] = await db.update(dailyWorkTable).set(updates).where(eq(dailyWorkTable.id, id)).returning();
+  const item = await db.transaction(async (tx) => {
+    const [dailyWork] = await tx.update(dailyWorkTable).set(updates).where(eq(dailyWorkTable.id, id)).returning();
+    if (dailyWork) await syncTaskFromDailyWork(tx, dailyWork);
+    return dailyWork;
+  });
   if (!item) return res.status(404).json({ error: "Not found" });
   res.json(await enrichWork(item));
 });
 
 router.delete("/daily-work/:id", async (req, res) => {
   const id = parseInt(req.params.id);
-  await db.delete(dailyWorkTable).where(eq(dailyWorkTable.id, id));
+  await db.transaction(async (tx) => {
+    await tx.delete(internalTasksTable).where(eq(internalTasksTable.taskCode, dailyWorkTaskCode(id)));
+    await tx.delete(dailyWorkTable).where(eq(dailyWorkTable.id, id));
+  });
   res.status(204).send();
 });
 

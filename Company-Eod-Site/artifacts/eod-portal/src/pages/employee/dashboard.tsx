@@ -2,9 +2,8 @@ import { useAuth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useListEod, getListEodQueryKey, useListTasks, getListTasksQueryKey, useListDailyWork, getListDailyWorkQueryKey } from "@workspace/api-client-react";
 import { format } from "date-fns";
-import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import { CheckSquare, Clock, FileText, ListTodo } from "lucide-react";
+import { CheckSquare, FileText, ListTodo } from "lucide-react";
 import { StatusBadge, AttendanceBadge } from "@/components/ui/status-badge";
 
 export default function EmployeeDashboard() {
@@ -36,14 +35,9 @@ export default function EmployeeDashboard() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Good morning, {user?.name}</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{user?.name}</h1>
           <p className="text-gray-500 mt-1">Here is what's happening with your work today.</p>
         </div>
-        {!todayEod && (
-          <Link href="/employee/eod" className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-primary text-primary-foreground hover:bg-primary/90 h-10 py-2 px-4 shadow-sm">
-            <Clock className="mr-2 h-4 w-4" /> Submit Today's EOD
-          </Link>
-        )}
       </div>
 
       <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">

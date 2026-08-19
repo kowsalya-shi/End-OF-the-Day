@@ -2,18 +2,15 @@ import { format } from "date-fns";
 import {
   useGetDashboardStats, getGetDashboardStatsQueryKey,
   useGetTeamSummary, getGetTeamSummaryQueryKey,
-  useGetMonthlyTrend, getGetMonthlyTrendQueryKey,
 } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, FileText, CheckSquare, Clock, Download, AlertTriangle, GraduationCap } from "lucide-react";
 import { exportToCsv } from "@/lib/export-csv";
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  LineChart, Line, Legend,
-} from "recharts";
+import { useAuth } from "@/lib/auth";
 
 export default function HRDashboard() {
+  const { user } = useAuth();
   const today = format(new Date(), "yyyy-MM-dd");
 
   const { data: stats, isLoading: statsLoading } = useGetDashboardStats(
@@ -24,11 +21,6 @@ export default function HRDashboard() {
   const { data: teamSummary, isLoading: summaryLoading } = useGetTeamSummary(
     { date: today },
     { query: { queryKey: getGetTeamSummaryQueryKey({ date: today }) } },
-  );
-
-  const { data: trendData, isLoading: trendLoading } = useGetMonthlyTrend(
-    { year: new Date().getFullYear() },
-    { query: { queryKey: getGetMonthlyTrendQueryKey({ year: new Date().getFullYear() }) } },
   );
 
   const handleExport = () => {
@@ -69,8 +61,8 @@ export default function HRDashboard() {
           <div className="flex items-center gap-2 mb-1">
             <span className="bg-violet-100 text-violet-700 text-xs font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wide">CEO Portal</span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">CEO Dashboard</h1>
-          <p className="text-gray-500 mt-1">People &amp; attendance overview for {format(new Date(), "MMMM d, yyyy")}</p>
+          <h1 className="text-2xl font-bold text-gray-900">{user?.name}</h1>
+          <p className="text-gray-500 mt-1">CEO dashboard overview for {format(new Date(), "MMMM d, yyyy")}</p>
         </div>
         <Button variant="outline" onClick={handleExport}>
           <Download className="mr-2 h-4 w-4" /> Export Summary
@@ -100,52 +92,6 @@ export default function HRDashboard() {
           icon={CheckSquare} color="text-amber-700" bg="bg-amber-50" loading={statsLoading} />
         <StatCard title="Tasks On Hold" value={stats?.holdTasks ?? 0}
           icon={CheckSquare} color="text-red-700" bg="bg-red-50" loading={statsLoading} />
-      </div>
-
-      <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
-        <Card>
-          <CardHeader><CardTitle className="text-base">Team EOD Completion %</CardTitle></CardHeader>
-          <CardContent>
-            <div className="h-72">
-              {summaryLoading ? (
-                <div className="h-full bg-gray-100 animate-pulse rounded" />
-              ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={teamSummary ?? []} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="teamName" tick={{ fontSize: 12 }} />
-                    <YAxis tickFormatter={v => `${v}%`} tick={{ fontSize: 12 }} />
-                    <Tooltip formatter={v => [`${v}%`, "Completion"]} />
-                    <Bar dataKey="completionPct" fill="#7c3aed" radius={[4, 4, 0, 0]} name="Completion %" />
-                  </BarChart>
-                </ResponsiveContainer>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader><CardTitle className="text-base">Monthly EOD Trend</CardTitle></CardHeader>
-          <CardContent>
-            <div className="h-72">
-              {trendLoading ? (
-                <div className="h-full bg-gray-100 animate-pulse rounded" />
-              ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={trendData ?? []} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="monthLabel" tick={{ fontSize: 12 }} />
-                    <YAxis tick={{ fontSize: 12 }} />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="submitted" stroke="#7c3aed" name="Submitted EODs" dot={false} />
-                    <Line type="monotone" dataKey="totalTasks" stroke="#16a34a" name="Tasks Logged" dot={false} />
-                  </LineChart>
-                </ResponsiveContainer>
-              )}
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
       {teamSummary && teamSummary.length > 0 && (

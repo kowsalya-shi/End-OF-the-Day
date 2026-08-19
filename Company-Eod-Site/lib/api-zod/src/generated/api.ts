@@ -253,7 +253,13 @@ export const ListEodResponseItem = zod.object({
   "trainingTopic": zod.string().nullish(),
   "internalWork": zod.string().nullish(),
   "challenges": zod.string().nullish(),
-  "tomorrowPlan": zod.string().nullish()
+  "tomorrowPlan": zod.string().nullish(),
+  "approvalStatus": zod.string().nullish().describe('pending | approved | rejected | sent_back | resubmitted'),
+  "approvedBy": zod.number().nullish(),
+  "approvedByName": zod.string().nullish(),
+  "approvedAt": zod.string().nullish(),
+  "rejectionReason": zod.string().nullish(),
+  "tlComments": zod.string().nullish()
 })
 export const ListEodResponse = zod.array(ListEodResponseItem)
 
@@ -316,7 +322,13 @@ export const GetEodResponse = zod.object({
   "trainingTopic": zod.string().nullish(),
   "internalWork": zod.string().nullish(),
   "challenges": zod.string().nullish(),
-  "tomorrowPlan": zod.string().nullish()
+  "tomorrowPlan": zod.string().nullish(),
+  "approvalStatus": zod.string().nullish().describe('pending | approved | rejected | sent_back | resubmitted'),
+  "approvedBy": zod.number().nullish(),
+  "approvedByName": zod.string().nullish(),
+  "approvedAt": zod.string().nullish(),
+  "rejectionReason": zod.string().nullish(),
+  "tlComments": zod.string().nullish()
 })
 
 
@@ -353,7 +365,13 @@ export const UpdateEodResponse = zod.object({
   "trainingTopic": zod.string().nullish(),
   "internalWork": zod.string().nullish(),
   "challenges": zod.string().nullish(),
-  "tomorrowPlan": zod.string().nullish()
+  "tomorrowPlan": zod.string().nullish(),
+  "approvalStatus": zod.string().nullish().describe('pending | approved | rejected | sent_back | resubmitted'),
+  "approvedBy": zod.number().nullish(),
+  "approvedByName": zod.string().nullish(),
+  "approvedAt": zod.string().nullish(),
+  "rejectionReason": zod.string().nullish(),
+  "tlComments": zod.string().nullish()
 })
 
 

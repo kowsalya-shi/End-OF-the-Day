@@ -7,8 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, FileText, CheckSquare, Clock, Download, AlertTriangle } from "lucide-react";
 import { exportToCsv } from "@/lib/export-csv";
+import { useAuth } from "@/lib/auth";
 
 export default function ManagerDashboard() {
+  const { user } = useAuth();
   const today = format(new Date(), "yyyy-MM-dd");
 
   const { data: stats, isLoading: statsLoading } = useGetDashboardStats(
@@ -37,8 +39,8 @@ export default function ManagerDashboard() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Executive Dashboard</h1>
-          <p className="text-gray-500 mt-1">Company-wide overview for {format(new Date(), "MMMM d, yyyy")}</p>
+          <h1 className="text-2xl font-bold text-gray-900">{user?.name}</h1>
+          <p className="text-gray-500 mt-1">Manager dashboard overview for {format(new Date(), "MMMM d, yyyy")}</p>
         </div>
         <Button variant="outline" onClick={handleExport}>
           <Download className="mr-2 h-4 w-4" /> Export Summary

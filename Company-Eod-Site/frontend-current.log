@@ -1,0 +1,23 @@
+3:01:59 pm [vite] (client) Re-optimizing dependencies because lockfile has changed
+
+  VITE v7.3.3  ready in 8040 ms
+
+  ➜  Local:   http://localhost:23881/
+  ➜  Network: http://192.168.15.73:23881/
+  ➜  press h + enter to show help
+4:06:40 pm [vite] (client) hmr update /src/pages/manager/users.tsx, /src/index.css
+4:06:41 pm [vite] (client) hmr update /src/pages/ceo/users.tsx, /src/index.css
+4:07:45 pm [vite] (client) hmr update /src/pages/manager/users.tsx, /src/index.css
+4:07:46 pm [vite] (client) hmr update /src/pages/ceo/users.tsx, /src/index.css
+4:17:32 pm [vite] (client) hmr update /src/pages/employee/daily-work.tsx, /src/index.css
+4:17:33 pm [vite] (client) hmr update /src/pages/tl/daily-work.tsx, /src/index.css
+4:25:30 pm [vite] (client) hmr update /src/pages/employee/dashboard.tsx, /src/index.css
+4:25:31 pm [vite] (client) hmr update /src/pages/tl/dashboard.tsx, /src/index.css
+9:05:59 pm [vite] (client) hmr update /src/pages/tl/dashboard.tsx, /src/index.css
+9:06:00 pm [vite] (client) hmr update /src/pages/manager/notifications.tsx, /src/index.css
+9:06:02 pm [vite] (client) hmr update /src/pages/ceo/notifications.tsx, /src/index.css
+9:12:26 pm [vite] (client) hmr update /src/pages/manager/notifications.tsx, /src/index.css
+9:12:27 pm [vite] (client) hmr update /src/pages/ceo/notifications.tsx, /src/index.css
+9:16:13 pm [vite] (client) hmr update /src/components/layout/MainLayout.tsx, /src/index.css
+9:16:13 pm [vite] (client) hmr update /src/pages/login.tsx, /src/index.css
+9:18:54 pm [vite] (client) page reload index.html

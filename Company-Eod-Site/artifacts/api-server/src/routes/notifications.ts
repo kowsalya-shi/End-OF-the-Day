@@ -1,8 +1,18 @@
-import { Router } from "express";
-import { db, usersTable, teamsTable, eodSubmissionsTable } from "@workspace/db";
-import { eq, inArray } from "drizzle-orm";
+import { Router, type Request } from "express";
+import {
+  db,
+  usersTable,
+  teamsTable,
+  eodSubmissionsTable,
+  portalNotificationsTable,
+  internalTasksTable,
+  dailyWorkTable,
+  trainingRecordsTable,
+} from "@workspace/db";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import nodemailer from "nodemailer";
 import { logger } from "../lib/logger";
+import { sessions } from "./auth";
 
 const router = Router();
 
@@ -39,6 +49,123 @@ async function getPendingEmployees(date: string, teamId?: number) {
 
   return employees.filter(e => !submittedIds.has(e.id));
 }
+
+function getSession(req: Request) {
+  const authHeader = req.headers.authorization;
+  return authHeader?.startsWith("Bearer ") ? sessions.get(authHeader.slice(7)) : undefined;
+}
+
+async function createPortalNotification(recipientUserId: number, employeeId: number, type: string, title: string, message: string, targetDate: string) {
+  const [existing] = await db.select({ id: portalNotificationsTable.id }).from(portalNotificationsTable).where(and(
+    eq(portalNotificationsTable.recipientUserId, recipientUserId),
+    eq(portalNotificationsTable.employeeId, employeeId),
+    eq(portalNotificationsTable.type, type),
+    eq(portalNotificationsTable.targetDate, targetDate),
+  ));
+  if (existing) return false;
+
+  await db.insert(portalNotificationsTable).values({ recipientUserId, employeeId, type, title, message, targetDate });
+  return true;
+}
+
+export async function processMissingEodNotifications(targetDate: string) {
+  const pending = await getPendingEmployees(targetDate);
+  let created = 0;
+
+  for (const employee of pending) {
+    if (!employee.teamId) continue;
+    const [team] = await db.select().from(teamsTable).where(eq(teamsTable.id, employee.teamId));
+    if (!team?.tlId) continue;
+
+    const message = `${employee.name} did not submit an EOD for ${targetDate}.`;
+    if (await createPortalNotification(team.tlId, employee.id, "missing_eod_tl", "Missing EOD", message, targetDate)) created++;
+
+    const misses = await db.select({ id: portalNotificationsTable.id }).from(portalNotificationsTable).where(and(
+      eq(portalNotificationsTable.employeeId, employee.id),
+      eq(portalNotificationsTable.type, "missing_eod_tl"),
+    ));
+    if (misses.length < 3) continue;
+
+    const ceos = await db.select({ id: usersTable.id }).from(usersTable).where(eq(usersTable.role, "ceo"));
+    const recipients = [team.managerId, ...ceos.map((ceo) => ceo.id)].filter((id): id is number => id !== null);
+    const escalationMessage = `${employee.name} has missed EOD submission three times. Please follow up with the employee.`;
+    for (const recipientId of new Set(recipients)) {
+      if (await createPortalNotification(recipientId, employee.id, "missing_eod_escalation", "EOD Escalation", escalationMessage, targetDate)) created++;
+    }
+  }
+
+  return { pending: pending.length, created };
+}
+
+function isMoreThanOneWeekOld(itemDate: string | null, targetDate: string) {
+  if (!itemDate) return false;
+  const ageMs = Date.parse(`${targetDate}T00:00:00Z`) - Date.parse(`${itemDate}T00:00:00Z`);
+  return ageMs > 7 * 24 * 60 * 60 * 1000;
+}
+
+async function notifyTlAboutOverdueItem(
+  kind: "task" | "daily_work" | "training",
+  itemId: number,
+  title: string,
+  itemDate: string | null,
+  status: string,
+  employeeId: number | null,
+  teamId: number | null,
+  targetDate: string,
+) {
+  if (!employeeId || !teamId || !isMoreThanOneWeekOld(itemDate, targetDate)) return 0;
+  if (status === "completed" || status === "cancelled") return 0;
+
+  const [team] = await db.select().from(teamsTable).where(eq(teamsTable.id, teamId));
+  const [employee] = await db.select().from(usersTable).where(eq(usersTable.id, employeeId));
+  if (!team?.tlId || !employee || !itemDate) return 0;
+
+  const notificationType = `overdue_${kind}_${itemId}`;
+  const notificationTitle = `Overdue ${kind === "daily_work" ? "Daily Work" : kind === "training" ? "Training" : "Task"}`;
+  const message = `${employee.name}'s ${kind === "daily_work" ? "daily work" : kind} "${title}" has been pending since ${itemDate}.`;
+  return (await createPortalNotification(team.tlId, employeeId, notificationType, notificationTitle, message, itemDate)) ? 1 : 0;
+}
+
+export async function processOverdueWorkNotifications(targetDate: string) {
+  let created = 0;
+  const [tasks, dailyWork, training] = await Promise.all([
+    db.select().from(internalTasksTable),
+    db.select().from(dailyWorkTable),
+    db.select().from(trainingRecordsTable),
+  ]);
+
+  for (const task of tasks) {
+    created += await notifyTlAboutOverdueItem(
+      "task", task.id, task.taskName, task.plannedEndDate ?? task.plannedStartDate,
+      task.status, task.userId, task.teamId, targetDate,
+    );
+  }
+  for (const work of dailyWork) {
+    created += await notifyTlAboutOverdueItem(
+      "daily_work", work.id, work.action, work.date,
+      work.status, work.userId, work.teamId, targetDate,
+    );
+  }
+  for (const record of training) {
+    created += await notifyTlAboutOverdueItem(
+      "training", record.id, record.topic, record.endDate ?? record.startDate,
+      record.status, record.userId, record.teamId, targetDate,
+    );
+  }
+
+  return { created };
+}
+
+router.get("/notifications", async (req, res) => {
+  const session = getSession(req);
+  if (!session) return res.status(401).json({ error: "Not authenticated" });
+
+  const notifications = await db.select().from(portalNotificationsTable)
+    .where(eq(portalNotificationsTable.recipientUserId, session.userId))
+    .orderBy(desc(portalNotificationsTable.createdAt))
+    .limit(50);
+  res.json(notifications);
+});
 
 router.post("/notifications/send-reminder", async (req, res) => {
   const { date, teamId } = req.body;

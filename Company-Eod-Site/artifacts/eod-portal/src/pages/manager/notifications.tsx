@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Bell, AlertTriangle, Mail, Users } from "lucide-react";
+import { PortalNotifications } from "@/components/portal-notifications";
 
 export default function ManagerNotifications() {
   const { toast } = useToast();
@@ -76,7 +77,7 @@ export default function ManagerNotifications() {
         </div>
         <h1 className="text-2xl font-bold text-gray-900">Notifications</h1>
         <p className="text-gray-500 mt-1">
-          Manual reminders and escalations. Automated notifications run at 5:30 PM, 5:45 PM, 6:00 PM, and 6:15 PM.
+          Employees can submit EOD until 9:00 PM. Portal escalation begins after the deadline.
         </p>
       </div>
 
@@ -87,7 +88,7 @@ export default function ManagerNotifications() {
               <Mail className="h-5 w-5 text-blue-600" /> Manual Triggers
             </CardTitle>
             <CardDescription>
-              Send notifications for today&apos;s pending EODs &mdash; {today}
+              Optional email reminders for pending EODs &mdash; {today}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
@@ -132,12 +133,11 @@ export default function ManagerNotifications() {
             <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
               <p className="text-xs font-semibold text-blue-700 mb-1">Automated Schedule</p>
               <ul className="text-xs text-blue-600 space-y-1">
-                <li>🕠 <strong>5:30 PM</strong> — Reminder to pending employees</li>
-                <li>🕔 <strong>5:45 PM</strong> — Urgent reminder</li>
-                <li>🕕 <strong>6:00 PM</strong> — Escalation: Employee + TL + Manager</li>
-                <li>🕕 <strong>6:15 PM</strong> — Summary report to Manager &amp; CEO</li>
+                <li><strong>5:30 PM to 9:00 PM</strong> — EOD submission remains open</li>
+                <li><strong>9:00 PM</strong> — Missing EOD alert in the Team Leader portal</li>
+                <li><strong>Third missed day</strong> — Escalation in the Manager and CEO portals</li>
               </ul>
-              <p className="text-xs text-blue-500 mt-2">Manager Summary email: shinydora753152@gmail.com</p>
+              <p className="text-xs text-blue-500 mt-2">Portal alerts are visible in the alert panel below.</p>
             </div>
           </CardContent>
         </Card>
@@ -184,6 +184,8 @@ export default function ManagerNotifications() {
           </CardContent>
         </Card>
       </div>
+
+      <PortalNotifications />
     </div>
   );
 }

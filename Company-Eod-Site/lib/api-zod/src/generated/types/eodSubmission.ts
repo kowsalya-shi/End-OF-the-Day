@@ -33,4 +33,19 @@ export interface EodSubmission {
   challenges?: string | null;
   /** @nullable */
   tomorrowPlan?: string | null;
+  /**
+     * pending | approved | rejected | sent_back | resubmitted
+     * @nullable
+     */
+  approvalStatus?: string | null;
+  /** @nullable */
+  approvedBy?: number | null;
+  /** @nullable */
+  approvedByName?: string | null;
+  /** @nullable */
+  approvedAt?: string | null;
+  /** @nullable */
+  rejectionReason?: string | null;
+  /** @nullable */
+  tlComments?: string | null;
 }

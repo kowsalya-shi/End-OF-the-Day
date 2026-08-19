@@ -6,6 +6,7 @@ import {
   useCreateDailyWork, 
   useUpdateDailyWork,
   useDeleteDailyWork,
+  getListTasksQueryKey,
   useListUsers,
   getListUsersQueryKey
 } from "@workspace/api-client-react";
@@ -199,6 +200,7 @@ export default function TLDailyWork() {
         {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: getListDailyWorkQueryKey() });
+            queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
             setIsEditOpen(false);
             toast({ title: "Success", description: "Daily work updated successfully" });
           }
@@ -210,6 +212,7 @@ export default function TLDailyWork() {
         {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: getListDailyWorkQueryKey() });
+            queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
             setIsCreateOpen(false);
             form.reset();
             toast({ title: "Success", description: "Daily work added successfully" });
@@ -226,6 +229,7 @@ export default function TLDailyWork() {
         {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: getListDailyWorkQueryKey() });
+            queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
             setIsDeleteOpen(false);
             toast({ title: "Success", description: "Daily work deleted successfully" });
           }

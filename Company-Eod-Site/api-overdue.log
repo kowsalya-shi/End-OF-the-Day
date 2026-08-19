@@ -1,0 +1,4637 @@
+[20:57:33.830] [32mINFO[39m (31016): [36mServer listening[39m
+    [35mport[39m: 8080
+[20:57:45.383] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 1,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2253
+[20:58:55.698] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 2,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 526
+[21:00:00.622] [32mINFO[39m (31016): [36mProcessed 9 PM EOD notifications[39m
+    [35mpending[39m: 28
+    [35mcreated[39m: 28
+[21:00:00.753] [32mINFO[39m (31016): [36mProcessed overdue work notifications[39m
+    [35mcreated[39m: 6
+[21:00:47.878] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 3,
+      "method": "OPTIONS",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 6
+[21:00:48.031] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 4,
+      "method": "POST",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 401
+    }
+    [35mresponseTime[39m: 151
+[21:00:49.359] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 5,
+      "method": "POST",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 401
+    }
+    [35mresponseTime[39m: 5
+[21:00:55.934] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 6,
+      "method": "OPTIONS",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:00:55.941] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 7,
+      "method": "POST",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 4
+[21:00:56.024] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 8,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:00:56.030] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 9,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:00:56.032] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 10,
+      "method": "OPTIONS",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:00:56.114] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 11,
+      "method": "GET",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 82
+[21:00:56.216] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 13,
+      "method": "GET",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 168
+[21:00:56.232] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 12,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 186
+[21:01:07.466] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 14,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/top-performers"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:01:07.469] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 15,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/recent-activity"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:01:07.469] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 16,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/pending-employees"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:01:07.470] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 17,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/weekly-heatmap"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:01:07.587] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 18,
+      "method": "GET",
+      "url": "/api/dashboard/top-performers"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 116
+[21:01:07.589] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 19,
+      "method": "GET",
+      "url": "/api/dashboard/pending-employees"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 116
+[21:01:07.607] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 20,
+      "method": "GET",
+      "url": "/api/dashboard/recent-activity"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 133
+[21:01:07.626] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 21,
+      "method": "GET",
+      "url": "/api/dashboard/weekly-heatmap"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 149
+[21:01:07.637] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 22,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:01:07.638] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 23,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:01:07.638] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 24,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/monthly-trend"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:01:07.652] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 26,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 12
+[21:01:07.655] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 27,
+      "method": "GET",
+      "url": "/api/dashboard/monthly-trend"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 14
+[21:01:07.660] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 25,
+      "method": "GET",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 21
+[21:01:15.491] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 28,
+      "method": "OPTIONS",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:01:15.493] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 29,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:01:15.508] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 31,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 11
+[21:01:15.685] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 30,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 191
+[21:01:20.298] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 32,
+      "method": "OPTIONS",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:01:20.299] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 33,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:01:20.340] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 35,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 37
+[21:01:20.357] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 36,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 53
+[21:01:20.362] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 34,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 62
+[21:01:23.850] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 37,
+      "method": "OPTIONS",
+      "url": "/api/tasks/21"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:01:23.895] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 38,
+      "method": "DELETE",
+      "url": "/api/tasks/21"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 39
+[21:01:23.904] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 39,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 4
+[21:01:31.906] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 40,
+      "method": "OPTIONS",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:01:32.072] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 41,
+      "method": "GET",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 401
+    }
+    [35mresponseTime[39m: 2
+[21:01:40.528] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 42,
+      "method": "OPTIONS",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:01:40.614] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 43,
+      "method": "POST",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 83
+[21:01:40.725] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 44,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:01:40.728] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 45,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 2
+[21:01:40.729] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 46,
+      "method": "OPTIONS",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:01:40.766] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 47,
+      "method": "GET",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 31
+[21:01:40.843] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 49,
+      "method": "GET",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 104
+[21:01:40.844] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 48,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 106
+[21:01:42.877] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 50,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/top-performers"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:01:42.878] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 51,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/recent-activity"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:01:42.880] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 52,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/pending-employees"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:01:42.882] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 53,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/weekly-heatmap"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:01:42.902] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 56,
+      "method": "GET",
+      "url": "/api/dashboard/pending-employees"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 12
+[21:01:42.904] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 55,
+      "method": "GET",
+      "url": "/api/dashboard/recent-activity"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 16
+[21:01:42.905] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 54,
+      "method": "GET",
+      "url": "/api/dashboard/top-performers"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 18
+[21:01:42.994] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 57,
+      "method": "GET",
+      "url": "/api/dashboard/weekly-heatmap"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 100
+[21:01:43.009] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 58,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/monthly-trend"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:01:43.022] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 60,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 11
+[21:01:43.024] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 61,
+      "method": "GET",
+      "url": "/api/dashboard/monthly-trend"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 11
+[21:01:43.028] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 59,
+      "method": "GET",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 19
+[21:01:44.371] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 62,
+      "method": "GET",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 16
+[21:01:44.373] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 63,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 16
+[21:01:47.482] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 64,
+      "method": "GET",
+      "url": "/api/dashboard/top-performers"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 18
+[21:01:47.485] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 65,
+      "method": "GET",
+      "url": "/api/dashboard/recent-activity"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 19
+[21:01:47.486] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 66,
+      "method": "GET",
+      "url": "/api/dashboard/pending-employees"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 18
+[21:01:47.510] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 67,
+      "method": "GET",
+      "url": "/api/dashboard/weekly-heatmap"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 40
+[21:01:47.522] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 68,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:01:47.523] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 69,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:01:47.534] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 70,
+      "method": "GET",
+      "url": "/api/dashboard/monthly-trend"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 9
+[21:01:47.544] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 72,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 15
+[21:01:47.545] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 71,
+      "method": "GET",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 17
+[21:01:48.784] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 73,
+      "method": "OPTIONS",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:01:48.785] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 74,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:01:48.809] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 76,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 18
+[21:01:48.947] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 75,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 158
+[21:01:50.667] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 77,
+      "method": "OPTIONS",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:01:50.668] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 78,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:01:50.694] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 81,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 20
+[21:01:50.725] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 80,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 53
+[21:01:50.732] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 79,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 63
+[21:01:52.107] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 82,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:01:52.157] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 83,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 48
+[21:01:52.165] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 84,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 38
+[21:01:55.488] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 85,
+      "method": "OPTIONS",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:01:55.488] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 86,
+      "method": "OPTIONS",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:01:55.529] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 87,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 37
+[21:01:55.530] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 88,
+      "method": "GET",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 36
+[21:01:57.026] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 89,
+      "method": "OPTIONS",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:01:57.086] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 91,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 40
+[21:01:57.088] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 90,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 60
+[21:01:57.988] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 93,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 37
+[21:01:57.998] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 92,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 47
+[21:01:58.613] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 94,
+      "method": "OPTIONS",
+      "url": "/api/notifications"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:01:58.640] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 96,
+      "method": "OPTIONS",
+      "url": "/api/eod/pending"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:01:58.666] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 95,
+      "method": "GET",
+      "url": "/api/notifications"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 40
+[21:01:58.730] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 97,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 88
+[21:01:58.744] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 98,
+      "method": "GET",
+      "url": "/api/eod/pending"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 82
+[21:02:23.281] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 99,
+      "method": "OPTIONS",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 4
+[21:02:23.456] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 100,
+      "method": "POST",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 172
+[21:02:23.506] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 101,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:02:23.507] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 102,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:02:23.509] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 103,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:02:23.510] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 104,
+      "method": "OPTIONS",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:02:23.528] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 105,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 13
+[21:02:23.614] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 106,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 98
+[21:02:23.629] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 107,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 111
+[21:02:23.641] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 108,
+      "method": "GET",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 121
+[21:02:24.953] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 109,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 6
+[21:02:28.518] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 110,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 9
+[21:02:31.846] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 111,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:02:31.856] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 112,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 7
+[21:02:32.620] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 113,
+      "method": "OPTIONS",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:02:32.643] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 114,
+      "method": "GET",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 17
+[21:02:35.504] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 115,
+      "method": "OPTIONS",
+      "url": "/api/training/2"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:02:35.542] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 116,
+      "method": "DELETE",
+      "url": "/api/training/2"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 33
+[21:02:35.557] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 117,
+      "method": "GET",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 4
+[21:02:36.782] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 118,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:02:36.785] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 119,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:02:36.792] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 120,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 4
+[21:02:36.806] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 121,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 11
+[21:02:36.891] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 122,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 93
+[21:02:39.835] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 123,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 8
+[21:02:44.581] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 124,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:02:44.585] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 125,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:02:44.587] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 126,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:02:44.602] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 127,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 8
+[21:02:44.603] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 128,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 7
+[21:02:44.663] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 129,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 64
+[21:03:19.474] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 130,
+      "method": "OPTIONS",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 2
+[21:03:19.606] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 131,
+      "method": "POST",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 130
+[21:03:19.653] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 132,
+      "method": "OPTIONS",
+      "url": "/api/notifications"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:03:19.656] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 133,
+      "method": "OPTIONS",
+      "url": "/api/eod/approvals/pending"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:03:19.692] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 136,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:03:19.693] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 137,
+      "method": "OPTIONS",
+      "url": "/api/tasks/status-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:03:19.693] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 138,
+      "method": "OPTIONS",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:03:19.700] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 134,
+      "method": "GET",
+      "url": "/api/notifications"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 40
+[21:03:19.748] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 139,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 46
+[21:03:19.811] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 135,
+      "method": "GET",
+      "url": "/api/eod/approvals/pending"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 132
+[21:03:19.830] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 140,
+      "method": "GET",
+      "url": "/api/tasks/status-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 125
+[21:03:19.850] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 141,
+      "method": "GET",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 140
+[21:03:27.506] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 142,
+      "method": "OPTIONS",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:03:27.593] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 144,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 3
+[21:03:27.595] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 145,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 2
+[21:03:27.611] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 146,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 10
+[21:03:27.624] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 147,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 20
+[21:03:27.706] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 143,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 193
+[21:03:29.077] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 149,
+      "method": "OPTIONS",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 6
+[21:03:29.091] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 150,
+      "method": "OPTIONS",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 4
+[21:03:29.114] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 148,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 117
+[21:03:29.140] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 151,
+      "method": "GET",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 24
+[21:03:29.143] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 152,
+      "method": "GET",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 10
+[21:03:30.615] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 154,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 8
+[21:03:30.621] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 155,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:03:30.657] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 153,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 65
+[21:03:30.782] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 157,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 138
+[21:03:30.791] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 156,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 152
+[21:03:31.660] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 158,
+      "method": "OPTIONS",
+      "url": "/api/notifications"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:03:31.661] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 159,
+      "method": "OPTIONS",
+      "url": "/api/eod/approvals/pending"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:03:31.673] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 162,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:03:31.677] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 163,
+      "method": "OPTIONS",
+      "url": "/api/tasks/status-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 4
+[21:03:31.681] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 160,
+      "method": "GET",
+      "url": "/api/notifications"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 15
+[21:03:31.684] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 161,
+      "method": "GET",
+      "url": "/api/eod/approvals/pending"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 14
+[21:03:31.704] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 165,
+      "method": "GET",
+      "url": "/api/tasks/status-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 9
+[21:03:31.710] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 164,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 24
+[21:03:37.430] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 166,
+      "method": "OPTIONS",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:03:37.447] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 167,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 13
+[21:03:37.471] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 168,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:03:37.472] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 169,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:03:37.479] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 170,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 4
+[21:03:37.487] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 171,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 11
+[21:03:40.242] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 172,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 13
+[21:03:40.265] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 173,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:03:40.266] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 174,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:03:40.281] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 175,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 9
+[21:03:40.288] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 176,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 13
+[21:03:41.125] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 177,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 6
+[21:03:41.138] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 178,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:03:41.139] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 179,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:03:41.155] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 180,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 12
+[21:03:41.169] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 181,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 23
+[21:03:41.654] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 182,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 18
+[21:03:41.660] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 183,
+      "method": "OPTIONS",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:03:41.663] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 184,
+      "method": "OPTIONS",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:03:41.673] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 185,
+      "method": "GET",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 7
+[21:03:41.676] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 186,
+      "method": "GET",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 9
+[21:03:42.469] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 187,
+      "method": "OPTIONS",
+      "url": "/api/notifications"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:03:42.469] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 188,
+      "method": "OPTIONS",
+      "url": "/api/eod/approvals/pending"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:03:42.480] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 189,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:03:42.481] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 190,
+      "method": "OPTIONS",
+      "url": "/api/tasks/status-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:03:42.554] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 193,
+      "method": "GET",
+      "url": "/api/tasks/status-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 64
+[21:03:42.569] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 191,
+      "method": "GET",
+      "url": "/api/notifications"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 81
+[21:03:42.611] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 192,
+      "method": "GET",
+      "url": "/api/eod/approvals/pending"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 122
+[21:03:42.714] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 194,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 98
+[21:03:44.613] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 195,
+      "method": "OPTIONS",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:03:44.630] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 196,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 14
+[21:03:44.645] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 197,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:03:44.645] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 198,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:03:44.652] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 199,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 3
+[21:03:44.653] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 200,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 3
+[21:03:46.568] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 201,
+      "method": "GET",
+      "url": "/api/notifications"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 5
+[21:03:46.588] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 204,
+      "method": "GET",
+      "url": "/api/tasks/status-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 12
+[21:03:46.588] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 202,
+      "method": "GET",
+      "url": "/api/eod/approvals/pending"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 19
+[21:03:46.592] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 203,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 17
+[21:04:00.960] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 205,
+      "method": "OPTIONS",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:04:01.000] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 207,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:04:01.002] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 208,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:04:01.095] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 209,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 85
+[21:04:01.099] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 210,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 87
+[21:04:01.190] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 206,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 225
+[21:04:01.724] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 211,
+      "method": "OPTIONS",
+      "url": "/api/notifications"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:04:01.725] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 212,
+      "method": "OPTIONS",
+      "url": "/api/eod/approvals/pending"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:04:01.739] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 213,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 5
+[21:04:01.741] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 215,
+      "method": "OPTIONS",
+      "url": "/api/tasks/status-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:04:01.764] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 214,
+      "method": "GET",
+      "url": "/api/notifications"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 25
+[21:04:01.768] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 218,
+      "method": "GET",
+      "url": "/api/tasks/status-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 13
+[21:04:01.775] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 216,
+      "method": "GET",
+      "url": "/api/eod/approvals/pending"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 31
+[21:04:01.782] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 217,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 35
+[21:04:05.463] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 219,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 23
+[21:04:05.489] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 220,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 3
+[21:04:05.497] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 221,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 10
+[21:04:07.784] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 222,
+      "method": "OPTIONS",
+      "url": "/api/notifications"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:04:07.785] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 223,
+      "method": "OPTIONS",
+      "url": "/api/eod/approvals/pending"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:04:07.793] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 224,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:04:07.795] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 225,
+      "method": "OPTIONS",
+      "url": "/api/tasks/status-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 2
+[21:04:07.842] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 226,
+      "method": "GET",
+      "url": "/api/eod/approvals/pending"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 41
+[21:04:07.852] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 228,
+      "method": "GET",
+      "url": "/api/tasks/status-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 38
+[21:04:07.871] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 229,
+      "method": "GET",
+      "url": "/api/notifications"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 47
+[21:04:07.887] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 227,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 83
+[21:05:40.687] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 230,
+      "method": "OPTIONS",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 20
+[21:05:40.944] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 231,
+      "method": "POST",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 253
+[21:05:41.181] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 232,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:05:41.198] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 233,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:05:41.201] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 234,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:05:41.228] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 236,
+      "method": "OPTIONS",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:05:41.242] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 235,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 39
+[21:05:41.249] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 239,
+      "method": "GET",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 7
+[21:05:41.335] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 237,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 106
+[21:05:41.464] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 238,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 229
+[21:05:43.997] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 240,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 15
+[21:05:45.630] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 241,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 8
+[21:05:46.782] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 242,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:05:46.794] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 243,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 7
+[21:05:47.592] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 244,
+      "method": "OPTIONS",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:05:47.627] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 245,
+      "method": "GET",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 31
+[21:05:50.393] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 246,
+      "method": "OPTIONS",
+      "url": "/api/training/1"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:05:50.440] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 247,
+      "method": "DELETE",
+      "url": "/api/training/1"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 41
+[21:05:50.451] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 248,
+      "method": "GET",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 4
+[21:05:55.229] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 249,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:05:55.235] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 250,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:05:55.235] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 251,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:05:55.240] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 252,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 3
+[21:05:55.247] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 254,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 5
+[21:05:55.331] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 253,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 93
+[21:05:56.271] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 255,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 12
+[21:05:57.099] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 256,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 4
+[21:05:57.850] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 257,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 7
+[21:05:59.411] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 258,
+      "method": "OPTIONS",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:05:59.423] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 259,
+      "method": "GET",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 7
+[21:06:00.434] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 260,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:06:00.439] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 261,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 2
+[21:06:02.952] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 262,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:06:02.956] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 263,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:06:02.967] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 264,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 10
+[21:06:02.983] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 265,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 13
+[21:06:02.984] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 266,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 6
+[21:06:30.479] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 267,
+      "method": "OPTIONS",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:06:30.638] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 268,
+      "method": "POST",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 154
+[21:06:30.713] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 269,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:06:30.717] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 270,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:06:30.720] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 271,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/monthly-trend"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:06:30.721] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 272,
+      "method": "OPTIONS",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:06:30.818] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 273,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 87
+[21:06:30.929] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 275,
+      "method": "GET",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 181
+[21:06:30.970] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 276,
+      "method": "GET",
+      "url": "/api/dashboard/monthly-trend"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 220
+[21:06:30.972] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 274,
+      "method": "GET",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 235
+[21:06:33.351] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 277,
+      "method": "GET",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 29
+[21:06:33.353] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 279,
+      "method": "GET",
+      "url": "/api/dashboard/monthly-trend"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 27
+[21:06:33.354] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 278,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 31
+[21:08:21.525] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 280,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/top-performers"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 22
+[21:08:21.539] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 281,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/monthly-trend"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:08:21.549] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 282,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/recent-activity"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:08:21.552] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 283,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/pending-employees"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:08:21.555] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 284,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/weekly-heatmap"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:08:21.556] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 285,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:08:21.560] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 286,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:08:21.936] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 289,
+      "method": "GET",
+      "url": "/api/dashboard/recent-activity"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 307
+[21:08:21.939] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 288,
+      "method": "GET",
+      "url": "/api/dashboard/monthly-trend"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 316
+[21:08:21.941] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 290,
+      "method": "GET",
+      "url": "/api/dashboard/pending-employees"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 309
+[21:08:21.944] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 287,
+      "method": "GET",
+      "url": "/api/dashboard/top-performers"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 376
+[21:08:21.964] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 292,
+      "method": "GET",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 286
+[21:08:21.980] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 293,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 33
+[21:08:21.988] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 291,
+      "method": "GET",
+      "url": "/api/dashboard/weekly-heatmap"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 314
+[21:08:38.930] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 294,
+      "method": "OPTIONS",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 6
+[21:08:38.944] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 295,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:08:39.299] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 297,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 323
+[21:08:39.855] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 296,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 911
+[21:08:40.273] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 298,
+      "method": "OPTIONS",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:08:40.274] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 299,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:08:40.359] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 301,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 81
+[21:08:40.363] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 302,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 32
+[21:08:40.370] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 300,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 95
+[21:08:41.585] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 304,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 38
+[21:08:41.589] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 303,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 42
+[21:08:47.662] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 305,
+      "method": "OPTIONS",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:08:47.664] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 306,
+      "method": "OPTIONS",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:08:47.668] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 307,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:08:47.730] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 308,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 58
+[21:08:47.748] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 310,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 56
+[21:08:47.762] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 309,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 87
+[21:08:51.352] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 312,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 2
+[21:08:51.411] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 311,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 63
+[21:08:51.414] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 313,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 48
+[21:08:58.963] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 314,
+      "method": "OPTIONS",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:08:58.966] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 315,
+      "method": "OPTIONS",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:08:58.996] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 316,
+      "method": "GET",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 27
+[21:08:59.007] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 317,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 35
+[21:09:00.200] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 318,
+      "method": "OPTIONS",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 2
+[21:09:00.360] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 320,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 82
+[21:09:00.361] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 319,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 158
+[21:09:24.540] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 321,
+      "method": "OPTIONS",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 4
+[21:09:24.718] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 322,
+      "method": "POST",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 177
+[21:09:24.758] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 323,
+      "method": "OPTIONS",
+      "url": "/api/notifications"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:09:24.762] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 324,
+      "method": "OPTIONS",
+      "url": "/api/eod/approvals/pending"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:09:24.797] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 325,
+      "method": "GET",
+      "url": "/api/notifications"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 29
+[21:09:24.810] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 327,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:09:24.817] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 328,
+      "method": "OPTIONS",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:09:24.818] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 329,
+      "method": "OPTIONS",
+      "url": "/api/tasks/status-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:09:24.827] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 332,
+      "method": "OPTIONS",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:09:24.891] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 333,
+      "method": "GET",
+      "url": "/api/tasks/status-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 38
+[21:09:24.933] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 334,
+      "method": "GET",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 50
+[21:09:24.966] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 326,
+      "method": "GET",
+      "url": "/api/eod/approvals/pending"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 188
+[21:09:25.056] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 331,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 232
+[21:09:25.112] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 330,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 290
+[21:09:26.217] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 335,
+      "method": "OPTIONS",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:09:26.227] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 337,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:09:26.232] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 338,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 2
+[21:09:26.247] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 336,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 25
+[21:09:26.253] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 339,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 13
+[21:09:26.254] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 340,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 11
+[21:09:43.518] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 341,
+      "method": "OPTIONS",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:09:43.657] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 342,
+      "method": "POST",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 401
+    }
+    [35mresponseTime[39m: 125
+[21:09:49.325] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 343,
+      "method": "OPTIONS",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:09:49.336] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 344,
+      "method": "POST",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 401
+    }
+    [35mresponseTime[39m: 6
+[21:10:08.388] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 345,
+      "method": "OPTIONS",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:08.534] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 346,
+      "method": "POST",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 144
+[21:10:08.581] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 347,
+      "method": "OPTIONS",
+      "url": "/api/notifications"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:10:08.585] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 348,
+      "method": "OPTIONS",
+      "url": "/api/eod/approvals/pending"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:08.593] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 349,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 4
+[21:10:08.597] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 350,
+      "method": "OPTIONS",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:08.606] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 352,
+      "method": "OPTIONS",
+      "url": "/api/tasks/status-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:08.608] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 353,
+      "method": "OPTIONS",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:08.659] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 351,
+      "method": "GET",
+      "url": "/api/eod/approvals/pending"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 55
+[21:10:08.822] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 354,
+      "method": "GET",
+      "url": "/api/notifications"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 212
+[21:10:08.859] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 356,
+      "method": "GET",
+      "url": "/api/tasks/status-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 240
+[21:10:08.908] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 357,
+      "method": "GET",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 285
+[21:10:08.922] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 358,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 297
+[21:10:09.031] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 355,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 416
+[21:10:13.759] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 359,
+      "method": "OPTIONS",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:13.766] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 360,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:13.767] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 362,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:10:13.787] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 363,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 13
+[21:10:13.788] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 364,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 13
+[21:10:13.791] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 361,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 25
+[21:10:18.216] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 365,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 18
+[21:10:18.221] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 366,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 3
+[21:10:18.224] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 367,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:18.235] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 368,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 11
+[21:10:18.237] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 369,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 11
+[21:10:20.479] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 370,
+      "method": "OPTIONS",
+      "url": "/api/notifications"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:10:20.480] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 371,
+      "method": "OPTIONS",
+      "url": "/api/eod/approvals/pending"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:10:20.487] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 372,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:10:20.488] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 373,
+      "method": "OPTIONS",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:10:20.489] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 374,
+      "method": "OPTIONS",
+      "url": "/api/tasks/status-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:20.524] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 375,
+      "method": "GET",
+      "url": "/api/notifications"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 26
+[21:10:20.535] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 376,
+      "method": "GET",
+      "url": "/api/eod/approvals/pending"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 27
+[21:10:20.537] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 379,
+      "method": "GET",
+      "url": "/api/tasks/status-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 23
+[21:10:20.556] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 377,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 47
+[21:10:20.646] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 378,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 133
+[21:10:28.240] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 380,
+      "method": "OPTIONS",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:10:28.249] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 381,
+      "method": "POST",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 4
+[21:10:28.308] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 382,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:10:28.311] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 383,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:28.313] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 384,
+      "method": "OPTIONS",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:28.323] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 387,
+      "method": "GET",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 3
+[21:10:28.335] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 386,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 16
+[21:10:28.347] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 385,
+      "method": "GET",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 30
+[21:10:29.839] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 388,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/top-performers"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:29.840] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 389,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/recent-activity"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:10:29.842] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 390,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/pending-employees"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:29.845] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 391,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/weekly-heatmap"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:29.869] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 392,
+      "method": "GET",
+      "url": "/api/dashboard/top-performers"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 15
+[21:10:29.872] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 393,
+      "method": "GET",
+      "url": "/api/dashboard/pending-employees"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 17
+[21:10:29.877] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 394,
+      "method": "GET",
+      "url": "/api/dashboard/recent-activity"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 21
+[21:10:29.897] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 395,
+      "method": "GET",
+      "url": "/api/dashboard/weekly-heatmap"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 40
+[21:10:29.903] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 396,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/monthly-trend"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:10:29.917] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 398,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 10
+[21:10:29.923] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 397,
+      "method": "GET",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 19
+[21:10:29.923] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 399,
+      "method": "GET",
+      "url": "/api/dashboard/monthly-trend"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 10
+[21:10:30.270] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 400,
+      "method": "OPTIONS",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:30.271] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 401,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:30.285] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 403,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 11
+[21:10:30.305] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 402,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 32
+[21:10:33.694] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 404,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:10:33.736] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 405,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 41
+[21:10:33.741] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 406,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 35
+[21:10:36.362] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 407,
+      "method": "OPTIONS",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:36.364] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 408,
+      "method": "OPTIONS",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:36.399] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 410,
+      "method": "GET",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 15
+[21:10:36.401] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 409,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 32
+[21:10:40.483] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 412,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:40.515] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 411,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 35
+[21:10:40.518] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 413,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 28
+[21:10:42.350] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 414,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:42.392] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 415,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 37
+[21:10:44.554] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 416,
+      "method": "OPTIONS",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:10:44.558] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 417,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:44.585] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 419,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 15
+[21:10:44.591] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 418,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 22
+[21:10:47.608] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 420,
+      "method": "OPTIONS",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:47.622] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 422,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:10:47.656] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 423,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 33
+[21:10:47.657] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 424,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 19
+[21:10:47.658] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 421,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 47
+[21:10:50.309] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 425,
+      "method": "OPTIONS",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:50.316] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 426,
+      "method": "OPTIONS",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:10:50.363] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 428,
+      "method": "GET",
+      "url": "/api/training"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 35
+[21:10:50.367] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 427,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 50
+[21:10:52.612] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 429,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 41
+[21:10:52.631] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 430,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 58
+[21:10:55.027] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 431,
+      "method": "OPTIONS",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:10:55.067] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 433,
+      "method": "GET",
+      "url": "/api/users"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 31
+[21:10:55.069] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 432,
+      "method": "GET",
+      "url": "/api/teams"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 42
+[21:11:12.962] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 434,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:11:12.964] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 435,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:11:13.056] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 437,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 85
+[21:11:13.058] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 436,
+      "method": "GET",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 89
+[21:11:17.273] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 438,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/top-performers"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 2
+[21:11:17.275] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 439,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/recent-activity"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 2
+[21:11:17.277] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 440,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/pending-employees"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:11:17.282] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 441,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/weekly-heatmap"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:11:17.298] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 442,
+      "method": "GET",
+      "url": "/api/dashboard/top-performers"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 11
+[21:11:17.300] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 443,
+      "method": "GET",
+      "url": "/api/dashboard/recent-activity"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 11
+[21:11:17.353] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 447,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/monthly-trend"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:11:17.363] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 448,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 9
+[21:11:17.369] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 446,
+      "method": "GET",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 19
+[21:11:17.398] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 444,
+      "method": "GET",
+      "url": "/api/dashboard/pending-employees"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 108
+[21:11:17.428] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 445,
+      "method": "GET",
+      "url": "/api/dashboard/weekly-heatmap"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 136
+[21:11:17.451] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 449,
+      "method": "GET",
+      "url": "/api/dashboard/monthly-trend"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 92
+[21:11:27.688] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 450,
+      "method": "OPTIONS",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:11:27.783] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 451,
+      "method": "POST",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 86
+[21:11:27.813] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 452,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:11:27.818] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 453,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:11:27.820] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 454,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/monthly-trend"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:11:27.822] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 455,
+      "method": "OPTIONS",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[21:11:27.850] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 456,
+      "method": "GET",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 23
+[21:11:27.936] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 458,
+      "method": "GET",
+      "url": "/api/dashboard/monthly-trend"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 107
+[21:11:27.939] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 459,
+      "method": "GET",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 107
+[21:11:27.943] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 457,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 115
+[21:14:42.051] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 460,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 8
+[21:14:42.087] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 462,
+      "method": "OPTIONS",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[21:14:42.307] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 463,
+      "method": "GET",
+      "url": "/api/dashboard/team-summary"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 216
+[21:14:42.317] [32mINFO[39m (31016): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 461,
+      "method": "GET",
+      "url": "/api/dashboard/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 261

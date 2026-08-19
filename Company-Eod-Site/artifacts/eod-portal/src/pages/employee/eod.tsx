@@ -21,7 +21,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Clock, CheckCircle2, AlertCircle } from "lucide-react";
+import { Clock, CheckCircle2, AlertCircle, PencilLine } from "lucide-react";
 import { AttendanceBadge } from "@/components/ui/status-badge";
 
 const eodSchema = z.object({
@@ -137,6 +137,15 @@ export default function EmployeeEod() {
   }
 
   const isPending = createMutation.isPending || updateMutation.isPending;
+  const approvalStatus = existingEod?.approvalStatus ?? "pending";
+  const approvalPresentation: Record<string, { label: string; className: string }> = {
+    pending: { label: "Pending Approval", className: "bg-amber-50 text-amber-800 border-amber-200" },
+    approved: { label: "Approved", className: "bg-green-50 text-green-800 border-green-200" },
+    rejected: { label: "Rejected — editing will resubmit", className: "bg-red-50 text-red-800 border-red-200" },
+    sent_back: { label: "Changes Requested — editing will resubmit", className: "bg-orange-50 text-orange-800 border-orange-200" },
+    resubmitted: { label: "Resubmitted — awaiting review", className: "bg-blue-50 text-blue-800 border-blue-200" },
+  };
+  const approvalInfo = approvalPresentation[approvalStatus] ?? approvalPresentation.pending;
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -148,10 +157,9 @@ export default function EmployeeEod() {
           </p>
         </div>
         {existingEod && (
-          <div className="flex items-center bg-green-50 text-green-700 px-4 py-2 rounded-md border border-green-200 text-sm font-medium">
-            <CheckCircle2 className="w-4 h-4 mr-2" />
-            Submitted at{" "}
-            {new Date(existingEod.submittedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+          <div className={`flex items-center px-4 py-2 rounded-md border text-sm font-medium ${approvalInfo.className}`}>
+            {approvalStatus === "rejected" || approvalStatus === "sent_back" ? <PencilLine className="w-4 h-4 mr-2" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
+            {approvalInfo.label}
           </div>
         )}
       </div>
@@ -201,6 +209,13 @@ export default function EmployeeEod() {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {existingEod && (approvalStatus === "rejected" || approvalStatus === "sent_back") && (
+              <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-900">
+                <p className="font-semibold">Reason for rejection</p>
+                <p className="mt-1 whitespace-pre-wrap">{existingEod.rejectionReason || "Please update your EOD and submit it again."}</p>
+                <p className="mt-3 font-medium">Update the report below and select Resubmit EOD Report.</p>
+              </div>
+            )}
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 
@@ -390,7 +405,9 @@ export default function EmployeeEod() {
                     {isPending
                       ? "Submitting..."
                       : existingEod
-                        ? isAbsent ? "Update Attendance" : "Update EOD Report"
+                        ? approvalStatus === "rejected" || approvalStatus === "sent_back"
+                          ? "Resubmit EOD Report"
+                          : isAbsent ? "Update Attendance" : "Update EOD Report"
                         : isAbsent ? "Submit Attendance" : "Submit EOD Report"}
                   </Button>
                 </div>

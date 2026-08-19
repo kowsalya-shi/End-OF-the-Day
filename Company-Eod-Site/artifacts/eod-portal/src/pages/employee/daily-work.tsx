@@ -5,7 +5,8 @@ import {
   getListDailyWorkQueryKey, 
   useCreateDailyWork, 
   useUpdateDailyWork,
-  useDeleteDailyWork
+  useDeleteDailyWork,
+  getListTasksQueryKey
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
@@ -144,6 +145,7 @@ export default function EmployeeDailyWork() {
         {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: getListDailyWorkQueryKey() });
+            queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
             setIsEditOpen(false);
             toast({ title: "Success", description: "Daily work updated successfully" });
           }
@@ -155,6 +157,7 @@ export default function EmployeeDailyWork() {
         {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: getListDailyWorkQueryKey() });
+            queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
             setIsCreateOpen(false);
             form.reset();
             toast({ title: "Success", description: "Daily work added successfully" });
@@ -171,6 +174,7 @@ export default function EmployeeDailyWork() {
         {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: getListDailyWorkQueryKey() });
+            queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
             setIsDeleteOpen(false);
             toast({ title: "Success", description: "Daily work deleted successfully" });
           }
@@ -480,4 +484,3 @@ export default function EmployeeDailyWork() {
     </div>
   );
 }
-

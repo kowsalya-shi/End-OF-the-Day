@@ -1066,6 +1066,19 @@ components:
           type: ["string", "null"]
         tomorrowPlan:
           type: ["string", "null"]
+        approvalStatus:
+          type: ["string", "null"]
+          description: "pending | approved | rejected | sent_back | resubmitted"
+        approvedBy:
+          type: ["integer", "null"]
+        approvedByName:
+          type: ["string", "null"]
+        approvedAt:
+          type: ["string", "null"]
+        rejectionReason:
+          type: ["string", "null"]
+        tlComments:
+          type: ["string", "null"]
 
     EodInput:
       type: object

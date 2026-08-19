@@ -183,8 +183,19 @@ router.patch("/eod/:id", async (req, res) => {
   for (const f of fields) {
     if (req.body[f] !== undefined) (updates as any)[f] = req.body[f];
   }
+  const [currentEod] = await db.select().from(eodSubmissionsTable).where(eq(eodSubmissionsTable.id, id));
+  if (!currentEod) return res.status(404).json({ error: "Not found" });
+
+  // A corrected EOD returns to the Team Lead queue and retains no stale rejection feedback.
+  if (currentEod.approvalStatus === "rejected" || currentEod.approvalStatus === "sent_back") {
+    updates.approvalStatus = "resubmitted";
+    updates.approvedBy = null;
+    updates.approvedAt = null;
+    updates.rejectionReason = null;
+    updates.tlComments = null;
+  }
+
   const [eod] = await db.update(eodSubmissionsTable).set(updates).where(eq(eodSubmissionsTable.id, id)).returning();
-  if (!eod) return res.status(404).json({ error: "Not found" });
   res.json(await enrichEod(eod));
 });
 
@@ -224,7 +235,7 @@ router.get("/eod/approvals/pending", async (req, res) => {
     .where(
       and(
         inArray(eodSubmissionsTable.teamId, teamIds),
-        eq(eodSubmissionsTable.approvalStatus, "pending")
+        inArray(eodSubmissionsTable.approvalStatus, ["pending", "resubmitted"])
       )
     );
 

@@ -73,6 +73,7 @@ export default function HRUsers() {
         {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: getListUsersQueryKey() });
+            queryClient.invalidateQueries({ queryKey: getListTeamsQueryKey() });
             setIsEditOpen(false);
             toast({ title: "User updated" });
           },
@@ -85,6 +86,7 @@ export default function HRUsers() {
         {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: getListUsersQueryKey() });
+            queryClient.invalidateQueries({ queryKey: getListTeamsQueryKey() });
             setIsCreateOpen(false);
             form.reset();
             toast({ title: "User created" });
@@ -107,6 +109,7 @@ export default function HRUsers() {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListUsersQueryKey() });
+          queryClient.invalidateQueries({ queryKey: getListTeamsQueryKey() });
           setIsDeleteOpen(false);
           toast({ title: "User deleted" });
         },
@@ -332,4 +335,3 @@ export default function HRUsers() {
     </div>
   );
 }
-

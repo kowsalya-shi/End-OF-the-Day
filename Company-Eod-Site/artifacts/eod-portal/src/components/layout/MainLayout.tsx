@@ -38,14 +38,14 @@ const roleLabels: Record<string, string> = {
   employee: "Employee Portal",
   tl: "Team Leader Portal",
   manager: "Manager Portal",
-  CEO: "CEO Portal",
+  ceo: "CEO Portal",
 };
 
 const roleSubtitle: Record<string, string> = {
   employee: "Employee",
   tl: "Team Leader",
   manager: "Manager",
-  CEO: "ceo",
+  ceo: "CEO",
 };
 
 export function MainLayout({ children }: MainLayoutProps) {
@@ -94,9 +94,9 @@ export function MainLayout({ children }: MainLayoutProps) {
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
             <img 
-              src="https://media.licdn.com/dms/image/v2/C560BAQFq8JopmyGh6A/company-logo_200_200/company-logo_200_200/0/1630645196025/arraafi_infotech_pvt_ltd_logo?e=1785369600&v=beta&t=Hzh-9-cW0xnMPneaOpeiApTTuLeuRFmgo4w1TSKXnhs"
+              src="/arraafi-logo.png"
               alt="Arraafi Infotech"
-              className="h-full w-full object-cover"
+              className="h-full w-full object-contain bg-white"
             />
           </div>
           <div>
@@ -159,8 +159,8 @@ export function MainLayout({ children }: MainLayoutProps) {
         <div className="sticky top-0 z-10 md:hidden bg-sidebar shadow-sm">
           <div className="flex items-center justify-between h-14 px-4">
             <div className="flex items-center gap-2">
-              <div className="h-7 w-7 rounded-md bg-sky-400/20 flex items-center justify-center">
-                <Building2 className="h-4 w-4 text-sky-300" />
+              <div className="h-7 w-7 rounded-md overflow-hidden bg-white flex items-center justify-center">
+                <img src="/arraafi-logo.png" alt="Arraafi Infotech" className="h-full w-full object-contain" />
               </div>
               <span className="text-sm font-bold text-white">
                 Arraafi Infotech
@@ -188,4 +188,3 @@ export function MainLayout({ children }: MainLayoutProps) {
     </div>
   );
 }
-
