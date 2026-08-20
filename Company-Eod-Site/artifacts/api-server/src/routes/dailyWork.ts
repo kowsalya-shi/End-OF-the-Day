@@ -1,10 +1,12 @@
 import { Router } from "express";
 import { db, dailyWorkTable, internalTasksTable, usersTable, teamsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
+import { notifyEmployeeRecordDeleted } from "./notifications";
 
 const router = Router();
 
-const dailyWorkTaskCode = (dailyWorkId: number) => `DAILY-WORK-${dailyWorkId}`;
+// Daily Work is shown in the Task module as a regular task, using the task-style code.
+const dailyWorkTaskCode = (dailyWorkId: number) => `TASK-${dailyWorkId}`;
 const optionalDate = (value: unknown) => typeof value === "string" && value.trim() === "" ? null : value;
 
 function toTaskValues(work: typeof dailyWorkTable.$inferSelect) {
@@ -13,6 +15,7 @@ function toTaskValues(work: typeof dailyWorkTable.$inferSelect) {
     taskName: work.action,
     how: work.how,
     who: work.who,
+    assignedBy: work.assignedBy,
     priority: "medium",
     plannedStartDate: work.date,
     actualStartDate: work.startDate,
@@ -57,6 +60,7 @@ async function enrichWork(item: typeof dailyWorkTable.$inferSelect) {
     action: item.action,
     how: item.how,
     who: item.who,
+    assignedBy: item.assignedBy,
     date: item.date,
     startDate: item.startDate,
     completionDate: item.completionDate,
@@ -129,6 +133,7 @@ router.post("/daily-work", async (req, res) => {
       status: status ?? "yts",
       how: rest.how ?? null,
       who: rest.who ?? null,
+      assignedBy: rest.assignedBy ?? null,
       startDate: optionalDate(rest.startDate) ?? null,
       completionDate: optionalDate(rest.completionDate) ?? null,
       completionPct: rest.completionPct ?? 0,
@@ -153,7 +158,7 @@ router.get("/daily-work/:id", async (req, res) => {
 router.patch("/daily-work/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   const updates: Partial<typeof dailyWorkTable.$inferInsert> = {};
-  const fields = ["action", "how", "who", "date", "startDate", "completionDate", "status", "completionPct", "remarks"];
+  const fields = ["action", "how", "who", "assignedBy", "date", "startDate", "completionDate", "status", "completionPct", "remarks"];
   for (const f of fields) {
     if (req.body[f] !== undefined) {
       (updates as any)[f] = f === "startDate" || f === "completionDate" ? optionalDate(req.body[f]) : req.body[f];
@@ -170,10 +175,13 @@ router.patch("/daily-work/:id", async (req, res) => {
 
 router.delete("/daily-work/:id", async (req, res) => {
   const id = parseInt(req.params.id);
+  const [item] = await db.select().from(dailyWorkTable).where(eq(dailyWorkTable.id, id));
+  if (!item) return res.status(404).json({ error: "Not found" });
   await db.transaction(async (tx) => {
     await tx.delete(internalTasksTable).where(eq(internalTasksTable.taskCode, dailyWorkTaskCode(id)));
     await tx.delete(dailyWorkTable).where(eq(dailyWorkTable.id, id));
   });
+  await notifyEmployeeRecordDeleted(item.userId, item.teamId, "Daily Work", item.action, item.id);
   res.status(204).send();
 });
 

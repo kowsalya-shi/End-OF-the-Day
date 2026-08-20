@@ -33,6 +33,7 @@ const dailyWorkSchema = z.object({
   action: z.string().min(1, "Action is required"),
   how: z.string().optional(),
   who: z.string().optional(),
+  assignedBy: z.string().optional(),
   date: z.string().min(1, "Date is required"),
   startDate: z.string().optional(),
   completionDate: z.string().optional(),
@@ -134,6 +135,7 @@ export default function TLDailyWork() {
       action: "",
       how: "",
       who: user?.name || "",
+      assignedBy: user?.name || "",
       date: today,
       startDate: today,
       completionDate: "",
@@ -164,6 +166,7 @@ export default function TLDailyWork() {
         Action: w.action,
         How: w.how || '',
         Who: w.who || '',
+        'Assigned By': w.assignedBy || '',
         Status: w.status,
         Progress: `${w.completionPct || 0}%`,
         'Start Date': w.startDate || '',
@@ -183,6 +186,7 @@ export default function TLDailyWork() {
         Action: w.action,
         How: w.how || '',
         Who: w.who || '',
+        'Assigned By': w.assignedBy || '',
         Status: w.status,
         Progress: `${w.completionPct || 0}%`,
         'Start Date': w.startDate || '',
@@ -194,9 +198,10 @@ export default function TLDailyWork() {
   };
 
   const onSubmit = (values: DailyWorkFormData) => {
+    const workData = { ...values, assignedBy: values.assignedBy || user?.name || "Self" };
     if (selectedWork) {
       updateMutation.mutate(
-        { id: selectedWork.id, data: values },
+        { id: selectedWork.id, data: workData },
         {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: getListDailyWorkQueryKey() });
@@ -208,7 +213,7 @@ export default function TLDailyWork() {
       );
     } else {
       createMutation.mutate(
-        { data: { ...values, userId: user?.id, teamId: user?.teamId } },
+        { data: { ...workData, userId: user?.id, teamId: user?.teamId } },
         {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: getListDailyWorkQueryKey() });
@@ -244,6 +249,7 @@ export default function TLDailyWork() {
       action: work.action,
       how: work.how || "",
       who: work.who || "",
+      assignedBy: work.assignedBy || "",
       date: work.date,
       startDate: work.startDate || "",
       completionDate: work.completionDate || "",
@@ -289,6 +295,14 @@ export default function TLDailyWork() {
         <FormItem>
           <FormLabel>Who</FormLabel>
           <FormControl><Input {...field} /></FormControl>
+          <FormMessage />
+        </FormItem>
+      )} />
+
+      <FormField control={form.control} name="assignedBy" render={({ field }) => (
+        <FormItem>
+          <FormLabel>Assigned By</FormLabel>
+          <FormControl><Input placeholder="Name of person who assigned this work" {...field} /></FormControl>
           <FormMessage />
         </FormItem>
       )} />
@@ -448,6 +462,7 @@ export default function TLDailyWork() {
                       <TableHead>Date</TableHead>
                       <TableHead className="min-w-[200px]">Action</TableHead>
                       <TableHead>Who</TableHead>
+                      <TableHead>Assigned By</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Progress</TableHead>
                       <TableHead>Remarks</TableHead>
@@ -457,7 +472,7 @@ export default function TLDailyWork() {
                   <TableBody>
                     {myLoading ? (
                       <TableRow>
-                        <TableCell colSpan={7} className="h-32 text-center text-gray-500">
+                        <TableCell colSpan={8} className="h-32 text-center text-gray-500">
                           Loading daily work...
                         </TableCell>
                       </TableRow>
@@ -470,6 +485,7 @@ export default function TLDailyWork() {
                             {work.how && <div className="text-xs text-gray-500 font-normal mt-1">via {work.how}</div>}
                           </TableCell>
                           <TableCell>{work.who || "-"}</TableCell>
+                          <TableCell>{work.assignedBy || "-"}</TableCell>
                           <TableCell>
                             <StatusBadge status={work.status} />
                           </TableCell>
@@ -501,7 +517,7 @@ export default function TLDailyWork() {
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell colSpan={7} className="h-32 text-center text-gray-500">
+                        <TableCell colSpan={8} className="h-32 text-center text-gray-500">
                           No daily work records found.
                         </TableCell>
                       </TableRow>
@@ -573,6 +589,7 @@ export default function TLDailyWork() {
                     <TableRow className="bg-gray-50">
                       <TableHead>Date</TableHead>
                       <TableHead>Member</TableHead>
+                      <TableHead>Assigned By</TableHead>
                       <TableHead className="min-w-[200px]">Action</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Progress</TableHead>
@@ -582,7 +599,7 @@ export default function TLDailyWork() {
                   <TableBody>
                     {teamLoading ? (
                       <TableRow>
-                        <TableCell colSpan={6} className="h-32 text-center text-gray-500">
+                        <TableCell colSpan={7} className="h-32 text-center text-gray-500">
                           Loading daily work...
                         </TableCell>
                       </TableRow>
@@ -591,6 +608,7 @@ export default function TLDailyWork() {
                         <TableRow key={work.id}>
                           <TableCell className="whitespace-nowrap">{work.date}</TableCell>
                           <TableCell className="font-medium">{work.userName || "-"}</TableCell>
+                          <TableCell>{work.assignedBy || "-"}</TableCell>
                           <TableCell className="font-medium">
                             <div>{work.action}</div>
                             {work.how && <div className="text-xs text-gray-500 font-normal mt-1">via {work.how}</div>}
@@ -613,7 +631,7 @@ export default function TLDailyWork() {
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell colSpan={6} className="h-32 text-center text-gray-500">
+                        <TableCell colSpan={7} className="h-32 text-center text-gray-500">
                           No daily work records found matching filters.
                         </TableCell>
                       </TableRow>

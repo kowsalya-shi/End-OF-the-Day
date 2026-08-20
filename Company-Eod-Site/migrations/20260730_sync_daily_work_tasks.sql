@@ -1,5 +1,5 @@
 -- Keeps Daily Work and the Task module on the same current schema.
--- Each Daily Work record owns one task identified by task_code = DAILY-WORK-<daily_work.id>.
+-- Each Daily Work record owns one task identified by task_code = TASK-<daily_work.id>.
 
 ALTER TABLE daily_work ADD COLUMN IF NOT EXISTS how TEXT;
 ALTER TABLE daily_work ADD COLUMN IF NOT EXISTS start_date DATE;

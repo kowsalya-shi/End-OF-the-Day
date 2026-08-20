@@ -1,12 +1,782 @@
-[11:26:38.928] [32mINFO[39m (22520): [36mServer listening[39m
+[15:49:11.992] [32mINFO[39m (30816): [36mServer listening[39m
     [35mport[39m: 8080
-[11:26:51.402] [32mINFO[39m (22520): [36mrequest completed[39m
+[15:49:19.810] [32mINFO[39m (30816): [36mrequest completed[39m
     [35mreq[39m: {
       "id": 1,
+      "method": "GET",
+      "url": "/api/healthz"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 12
+[15:49:19.923] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 2,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 64
+[15:54:12.963] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 3,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 17
+[15:54:13.324] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 4,
+      "method": "POST",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 201
+    }
+    [35mresponseTime[39m: 356
+[15:54:13.329] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 5,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:54:13.330] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 6,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:54:13.341] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 7,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 9
+[15:54:13.346] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 8,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 13
+[15:54:25.404] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 9,
+      "method": "OPTIONS",
+      "url": "/api/tasks/32"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:54:25.638] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 10,
+      "method": "PATCH",
+      "url": "/api/tasks/32"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 232
+[15:54:25.641] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 11,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:54:25.642] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 12,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:54:25.647] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 13,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 4
+[15:54:25.658] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 14,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 15
+[15:54:33.655] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 15,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:54:33.666] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 16,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:54:33.667] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 17,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:54:33.692] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 19,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 11
+[15:54:33.697] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 18,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 21
+[15:54:33.701] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 20,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 15
+[15:55:13.101] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 21,
+      "method": "OPTIONS",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:55:13.181] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 22,
+      "method": "POST",
+      "url": "/api/auth/login"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 78
+[15:55:13.292] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 23,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:55:13.296] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 24,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:55:13.299] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 25,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:55:13.300] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 26,
+      "method": "OPTIONS",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:55:13.326] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 27,
       "method": "GET",
       "url": "/api/eod"
     }
     [35mres[39m: {
       "statusCode": 200
     }
-    [35mresponseTime[39m: 591
+    [35mresponseTime[39m: 12
+[15:55:13.402] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 28,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 86
+[15:55:13.428] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 30,
+      "method": "GET",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 106
+[15:55:13.432] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 29,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 113
+[15:58:06.987] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 31,
+      "method": "OPTIONS",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 8
+[15:58:07.393] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 32,
+      "method": "GET",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 393
+[15:58:07.612] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 33,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:58:07.614] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 34,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:58:07.650] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 36,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 12
+[15:58:07.659] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 35,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 43
+[15:58:07.711] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 37,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 47
+[15:58:07.799] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 38,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 132
+[15:58:08.217] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 39,
+      "method": "OPTIONS",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:58:08.226] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 40,
+      "method": "GET",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 401
+    }
+    [35mresponseTime[39m: 3
+[16:18:18.440] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 41,
+      "method": "OPTIONS",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 6
+[16:18:18.735] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 42,
+      "method": "GET",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 292
+[16:18:18.800] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 43,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[16:18:18.801] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 44,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[16:18:18.804] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 45,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[16:18:18.820] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 46,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 16
+[16:18:18.881] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 48,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 72
+[16:18:18.990] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 47,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 184
+[16:19:27.705] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 49,
+      "method": "OPTIONS",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 21
+[16:19:27.774] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 50,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[16:19:27.777] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 51,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[16:19:27.778] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 52,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[16:40:21.287] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 53,
+      "method": "OPTIONS",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 8
+[16:40:21.311] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 54,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[16:40:21.313] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 55,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[16:40:21.315] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 56,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[16:40:21.522] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 59,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 160
+[16:40:21.524] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 58,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 168
+[16:40:21.538] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 57,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 222
+[16:47:36.226] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 60,
+      "method": "OPTIONS",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 10
+[16:47:36.365] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 61,
+      "method": "GET",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 138
+[16:47:36.675] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 62,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[16:47:36.677] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 63,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[16:47:36.679] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 64,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[16:47:36.698] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 65,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 18
+[16:47:36.773] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 67,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 82
+[16:47:36.774] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 66,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 90
+[16:47:39.359] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 68,
+      "method": "GET",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 4
+[16:47:39.496] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 69,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 11
+[16:47:39.502] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 71,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 4
+[16:47:39.506] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 70,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 19
+[16:57:53.397] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 72,
+      "method": "OPTIONS",
+      "url": "/api/auth/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 8
+[16:57:53.422] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 73,
+      "method": "OPTIONS",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[16:57:53.425] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 74,
+      "method": "OPTIONS",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[16:57:53.426] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 75,
+      "method": "OPTIONS",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[16:57:53.592] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 76,
+      "method": "GET",
+      "url": "/api/eod"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 166
+[16:57:53.593] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 78,
+      "method": "GET",
+      "url": "/api/daily-work"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 144
+[16:57:53.609] [32mINFO[39m (30816): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 77,
+      "method": "GET",
+      "url": "/api/tasks"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 165

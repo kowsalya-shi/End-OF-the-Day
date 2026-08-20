@@ -1,8 +1,11 @@
 import { Router } from "express";
 import { db, internalTasksTable, usersTable, teamsTable } from "@workspace/db";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
+import { createPortalNotification } from "./notifications";
 
 const router = Router();
+
+const optionalDate = (value: unknown) => typeof value === "string" && value.trim() === "" ? null : value;
 
 async function enrichTask(task: typeof internalTasksTable.$inferSelect) {
   let userName: string | null = null;
@@ -40,6 +43,36 @@ async function enrichTask(task: typeof internalTasksTable.$inferSelect) {
     teamName,
     createdAt: task.createdAt?.toISOString(),
   };
+}
+
+function todayLocal() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+}
+
+async function notifyTaskChange(task: typeof internalTasksTable.$inferSelect, action: "created" | "updated" | "deleted") {
+  if (!task.userId) return;
+
+  const recipientIds = new Set<number>();
+  if (task.teamId) {
+    const [team] = await db.select().from(teamsTable).where(eq(teamsTable.id, task.teamId));
+    if (team?.tlId) recipientIds.add(team.tlId);
+    if (team?.managerId) recipientIds.add(team.managerId);
+  }
+  const leadership = await db.select({ id: usersTable.id }).from(usersTable)
+    .where(inArray(usersTable.role, ["manager", "ceo"]));
+  leadership.forEach((user) => recipientIds.add(user.id));
+
+  const [employee] = await db.select({ name: usersTable.name }).from(usersTable).where(eq(usersTable.id, task.userId));
+  const actorName = employee?.name ?? "An employee";
+  const title = action === "deleted" ? "Task Deleted" : action === "updated" ? "Task Updated" : "Task Created";
+  const message = `${actorName} ${action} the task "${task.taskName}". The shared task list has been updated.`;
+  const type = `task_${action}_${task.id}`;
+  const targetDate = todayLocal();
+
+  await Promise.all([...recipientIds]
+    .filter((recipientId) => recipientId !== task.userId)
+    .map((recipientId) => createPortalNotification(recipientId, task.userId!, type, title, message, targetDate)));
 }
 
 router.get("/tasks/status-summary", async (req, res) => {
@@ -119,15 +152,15 @@ router.post("/tasks", async (req, res) => {
   const [task] = await db.insert(internalTasksTable).values({
     taskName,
     status: status ?? "yts",
-    taskCode: rest.taskCode ?? null,
+    taskCode: typeof rest.taskCode === "string" && rest.taskCode.trim() === "" ? null : rest.taskCode ?? null,
     how: rest.how ?? null,
     who: rest.who ?? null,
     assignedBy: rest.assignedBy ?? null,
     priority: rest.priority ?? "medium",
-    plannedStartDate: rest.plannedStartDate ?? null,
-    plannedEndDate: rest.plannedEndDate ?? null,
-    actualStartDate: rest.actualStartDate ?? null,
-    actualEndDate: rest.actualEndDate ?? null,
+    plannedStartDate: optionalDate(rest.plannedStartDate) ?? null,
+    plannedEndDate: optionalDate(rest.plannedEndDate) ?? null,
+    actualStartDate: optionalDate(rest.actualStartDate) ?? null,
+    actualEndDate: optionalDate(rest.actualEndDate) ?? null,
     completionPct: rest.completionPct ?? 0,
     dependency: rest.dependency ?? null,
     remarks: rest.remarks ?? null,
@@ -136,6 +169,7 @@ router.post("/tasks", async (req, res) => {
     teamId: rest.teamId ?? null,
   }).returning();
 
+  await notifyTaskChange(task, "created");
   res.status(201).json(await enrichTask(task));
 });
 
@@ -151,16 +185,26 @@ router.patch("/tasks/:id", async (req, res) => {
   const updates: Partial<typeof internalTasksTable.$inferInsert> = {};
   const fields = ["taskCode", "taskName", "how", "who", "assignedBy", "priority", "plannedStartDate", "plannedEndDate", "actualStartDate", "actualEndDate", "status", "completionPct", "dependency", "remarks", "etc", "userId", "teamId"];
   for (const f of fields) {
-    if (req.body[f] !== undefined) (updates as any)[f] = req.body[f];
+    if (req.body[f] !== undefined) {
+      (updates as any)[f] = ["plannedStartDate", "plannedEndDate", "actualStartDate", "actualEndDate"].includes(f)
+        ? optionalDate(req.body[f])
+        : f === "taskCode" && typeof req.body[f] === "string" && req.body[f].trim() === ""
+          ? null
+          : req.body[f];
+    }
   }
   const [task] = await db.update(internalTasksTable).set(updates).where(eq(internalTasksTable.id, id)).returning();
   if (!task) return res.status(404).json({ error: "Not found" });
+  await notifyTaskChange(task, "updated");
   res.json(await enrichTask(task));
 });
 
 router.delete("/tasks/:id", async (req, res) => {
   const id = parseInt(req.params.id);
+  const [task] = await db.select().from(internalTasksTable).where(eq(internalTasksTable.id, id));
+  if (!task) return res.status(404).json({ error: "Not found" });
   await db.delete(internalTasksTable).where(eq(internalTasksTable.id, id));
+  await notifyTaskChange(task, "deleted");
   res.status(204).send();
 });
 

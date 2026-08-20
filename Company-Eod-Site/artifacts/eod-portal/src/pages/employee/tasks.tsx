@@ -410,6 +410,7 @@ export default function EmployeeTasks() {
               <TableRow className="bg-gray-50">
                 <TableHead>Code</TableHead>
                 <TableHead className="min-w-[200px]">Task Name</TableHead>
+                <TableHead>Assigned By</TableHead>
                 <TableHead>Priority</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Progress</TableHead>
@@ -421,7 +422,7 @@ export default function EmployeeTasks() {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="h-32 text-center text-gray-500">
+                  <TableCell colSpan={9} className="h-32 text-center text-gray-500">
                     Loading tasks...
                   </TableCell>
                 </TableRow>
@@ -430,6 +431,7 @@ export default function EmployeeTasks() {
                   <TableRow key={task.id}>
                     <TableCell className="font-mono text-xs">{task.taskCode || "-"}</TableCell>
                     <TableCell className="font-medium">{task.taskName}</TableCell>
+                    <TableCell>{task.assignedBy || "-"}</TableCell>
                     <TableCell>
                       <span className={`text-xs uppercase font-medium ${
                         task.priority === 'high' ? 'text-red-600' : 
@@ -468,7 +470,7 @@ export default function EmployeeTasks() {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={8} className="h-32 text-center text-gray-500">
+                  <TableCell colSpan={9} className="h-32 text-center text-gray-500">
                     No tasks found matching your filters.
                   </TableCell>
                 </TableRow>
@@ -514,4 +516,3 @@ export default function EmployeeTasks() {
     </div>
   );
 }
-

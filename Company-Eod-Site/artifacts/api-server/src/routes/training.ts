@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { db, trainingRecordsTable, usersTable, teamsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
+import { notifyEmployeeRecordDeleted } from "./notifications";
 
 const router = Router();
 
@@ -114,7 +115,10 @@ router.patch("/training/:id", async (req, res) => {
 
 router.delete("/training/:id", async (req, res) => {
   const id = parseInt(req.params.id);
+  const [record] = await db.select().from(trainingRecordsTable).where(eq(trainingRecordsTable.id, id));
+  if (!record) return res.status(404).json({ error: "Not found" });
   await db.delete(trainingRecordsTable).where(eq(trainingRecordsTable.id, id));
+  await notifyEmployeeRecordDeleted(record.userId, record.teamId, "Training Record", record.topic, record.id);
   res.status(204).send();
 });
 

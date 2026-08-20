@@ -2,12 +2,15 @@ import { format } from "date-fns";
 import {
   useGetDashboardStats, getGetDashboardStatsQueryKey,
   useGetTeamSummary, getGetTeamSummaryQueryKey,
+  useListTasks, getListTasksQueryKey,
 } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, FileText, CheckSquare, Clock, Download, AlertTriangle, GraduationCap } from "lucide-react";
 import { exportToCsv } from "@/lib/export-csv";
 import { useAuth } from "@/lib/auth";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { EodEmployeeActivityDashboard } from "@/components/eod-employee-activity-dashboard";
 
 export default function HRDashboard() {
   const { user } = useAuth();
@@ -22,6 +25,12 @@ export default function HRDashboard() {
     { date: today },
     { query: { queryKey: getGetTeamSummaryQueryKey({ date: today }) } },
   );
+
+  const { data: tasks, isLoading: tasksLoading } = useListTasks(
+    {},
+    { query: { queryKey: getListTasksQueryKey() } },
+  );
+  const activeTasks = tasks?.filter((task) => task.status !== "completed" && task.status !== "cancelled") ?? [];
 
   const handleExport = () => {
     if (!teamSummary) return;
@@ -93,6 +102,49 @@ export default function HRDashboard() {
         <StatCard title="Tasks On Hold" value={stats?.holdTasks ?? 0}
           icon={CheckSquare} color="text-red-700" bg="bg-red-50" loading={statsLoading} />
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Who Is Working on What</CardTitle>
+          <p className="text-sm text-muted-foreground">All active tasks across every team.</p>
+        </CardHeader>
+        <CardContent>
+          {tasksLoading ? (
+            <div className="h-32 bg-gray-100 animate-pulse rounded" />
+          ) : activeTasks.length === 0 ? (
+            <p className="py-6 text-center text-sm text-muted-foreground">No active tasks are assigned.</p>
+          ) : (
+            <div className="max-h-96 overflow-auto">
+              <table className="w-full text-sm">
+                <thead className="sticky top-0 bg-gray-50">
+                  <tr className="border-b">
+                    <th className="px-3 py-3 text-left font-semibold text-gray-600">Employee</th>
+                    <th className="px-3 py-3 text-left font-semibold text-gray-600">Task</th>
+                    <th className="px-3 py-3 text-left font-semibold text-gray-600">Team</th>
+                    <th className="px-3 py-3 text-center font-semibold text-gray-600">Progress</th>
+                    <th className="px-3 py-3 text-left font-semibold text-gray-600">Status</th>
+                    <th className="px-3 py-3 text-left font-semibold text-gray-600">Due Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {activeTasks.map((task) => (
+                    <tr key={task.id} className="border-b hover:bg-gray-50">
+                      <td className="px-3 py-3 font-medium">{task.userName || "Unassigned"}</td>
+                      <td className="px-3 py-3">{task.taskName}</td>
+                      <td className="px-3 py-3">{task.teamName || "-"}</td>
+                      <td className="px-3 py-3 text-center">{task.completionPct || 0}%</td>
+                      <td className="px-3 py-3"><StatusBadge status={task.status} /></td>
+                      <td className="px-3 py-3">{task.plannedEndDate || "-"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <EodEmployeeActivityDashboard />
 
       {teamSummary && teamSummary.length > 0 && (
         <Card>

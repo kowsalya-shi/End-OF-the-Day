@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { db, eodSubmissionsTable, usersTable, teamsTable } from "@workspace/db";
 import { eq, and, sql, inArray } from "drizzle-orm";
+import { notifyEmployeeRecordDeleted } from "./notifications";
 
 const router = Router();
 
@@ -201,7 +202,10 @@ router.patch("/eod/:id", async (req, res) => {
 
 router.delete("/eod/:id", async (req, res) => {
   const id = parseInt(req.params.id);
+  const [eod] = await db.select().from(eodSubmissionsTable).where(eq(eodSubmissionsTable.id, id));
+  if (!eod) return res.status(404).json({ error: "Not found" });
   await db.delete(eodSubmissionsTable).where(eq(eodSubmissionsTable.id, id));
+  await notifyEmployeeRecordDeleted(eod.userId, eod.teamId, "EOD Report", `EOD for ${eod.date}`, eod.id);
   res.status(204).send();
 });
 

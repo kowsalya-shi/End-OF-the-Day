@@ -55,7 +55,7 @@ function getSession(req: Request) {
   return authHeader?.startsWith("Bearer ") ? sessions.get(authHeader.slice(7)) : undefined;
 }
 
-async function createPortalNotification(recipientUserId: number, employeeId: number, type: string, title: string, message: string, targetDate: string) {
+export async function createPortalNotification(recipientUserId: number, employeeId: number, type: string, title: string, message: string, targetDate: string) {
   const [existing] = await db.select({ id: portalNotificationsTable.id }).from(portalNotificationsTable).where(and(
     eq(portalNotificationsTable.recipientUserId, recipientUserId),
     eq(portalNotificationsTable.employeeId, employeeId),
@@ -66,6 +66,67 @@ async function createPortalNotification(recipientUserId: number, employeeId: num
 
   await db.insert(portalNotificationsTable).values({ recipientUserId, employeeId, type, title, message, targetDate });
   return true;
+}
+
+function todayLocal() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+}
+
+export async function notifyEmployeeRecordDeleted(
+  employeeId: number | null,
+  teamId: number | null,
+  recordType: "Daily Work" | "EOD Report" | "Training Record",
+  recordName: string,
+  recordId: number,
+) {
+  if (!employeeId) return;
+
+  const [employee] = await db.select().from(usersTable).where(eq(usersTable.id, employeeId));
+  const effectiveTeamId = teamId ?? employee?.teamId;
+  const recipients = new Set<number>();
+  if (effectiveTeamId) {
+    const [team] = await db.select().from(teamsTable).where(eq(teamsTable.id, effectiveTeamId));
+    if (team?.tlId) recipients.add(team.tlId);
+    if (team?.managerId) recipients.add(team.managerId);
+  }
+
+  const leadership = await db.select({ id: usersTable.id }).from(usersTable)
+    .where(inArray(usersTable.role, ["manager", "ceo"]));
+  leadership.forEach((user) => recipients.add(user.id));
+
+  const employeeName = employee?.name ?? "An employee";
+  const message = `${employeeName} deleted ${recordType.toLowerCase()} "${recordName}". Please review if follow-up is needed.`;
+  await Promise.all([...recipients]
+    .filter((recipientId) => recipientId !== employeeId)
+    .map((recipientId) => createPortalNotification(
+      recipientId,
+      employeeId,
+      `deleted_${recordType.toLowerCase().replaceAll(" ", "_")}_${recordId}`,
+      `${recordType} Deleted`,
+      message,
+      todayLocal(),
+    )));
+}
+
+function previousCalendarDate(date: string, daysBefore: number) {
+  const value = new Date(`${date}T00:00:00Z`);
+  value.setUTCDate(value.getUTCDate() - daysBefore);
+  return value.toISOString().slice(0, 10);
+}
+
+async function hasThreeConsecutiveMissedEods(employeeId: number, targetDate: string) {
+  const dates = [0, 1, 2].map((daysBefore) => previousCalendarDate(targetDate, daysBefore));
+  const submissions = await db
+    .select({ date: eodSubmissionsTable.date })
+    .from(eodSubmissionsTable)
+    .where(and(
+      eq(eodSubmissionsTable.userId, employeeId),
+      inArray(eodSubmissionsTable.date, dates),
+    ));
+
+  // Submitting an EOD on any of these days breaks the escalation streak.
+  return submissions.length === 0;
 }
 
 export async function processMissingEodNotifications(targetDate: string) {
@@ -80,15 +141,11 @@ export async function processMissingEodNotifications(targetDate: string) {
     const message = `${employee.name} did not submit an EOD for ${targetDate}.`;
     if (await createPortalNotification(team.tlId, employee.id, "missing_eod_tl", "Missing EOD", message, targetDate)) created++;
 
-    const misses = await db.select({ id: portalNotificationsTable.id }).from(portalNotificationsTable).where(and(
-      eq(portalNotificationsTable.employeeId, employee.id),
-      eq(portalNotificationsTable.type, "missing_eod_tl"),
-    ));
-    if (misses.length < 3) continue;
+    if (!(await hasThreeConsecutiveMissedEods(employee.id, targetDate))) continue;
 
     const ceos = await db.select({ id: usersTable.id }).from(usersTable).where(eq(usersTable.role, "ceo"));
     const recipients = [team.managerId, ...ceos.map((ceo) => ceo.id)].filter((id): id is number => id !== null);
-    const escalationMessage = `${employee.name} has missed EOD submission three times. Please follow up with the employee.`;
+    const escalationMessage = `${employee.name} has not submitted an EOD for three consecutive days ending ${targetDate}. Please follow up with the employee.`;
     for (const recipientId of new Set(recipients)) {
       if (await createPortalNotification(recipientId, employee.id, "missing_eod_escalation", "EOD Escalation", escalationMessage, targetDate)) created++;
     }

@@ -1299,6 +1299,8 @@ components:
           type: ["string", "null"]
         who:
           type: ["string", "null"]
+        assignedBy:
+          type: ["string", "null"]
         date:
           type: string
         startDate:
@@ -1333,6 +1335,8 @@ components:
           type: ["string", "null"]
         who:
           type: ["string", "null"]
+        assignedBy:
+          type: ["string", "null"]
         date:
           type: string
         startDate:
@@ -1358,6 +1362,8 @@ components:
         how:
           type: ["string", "null"]
         who:
+          type: ["string", "null"]
+        assignedBy:
           type: ["string", "null"]
         date:
           type: string

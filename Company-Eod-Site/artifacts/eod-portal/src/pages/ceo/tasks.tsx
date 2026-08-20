@@ -151,7 +151,7 @@ export default function CEOTasks() {
   const onSubmit = (values: TaskFormData) => {
     // Find the selected employee's team if user is selected
     let teamId = values.teamId;
-    if (values.userId && allEmployees && !teamId) {
+    if (values.userId && allEmployees) {
       const assignedUser = allEmployees.find(e => e.id === values.userId);
       if (assignedUser) teamId = assignedUser.teamId || undefined;
     }
@@ -544,4 +544,3 @@ export default function CEOTasks() {
     </div>
   );
 }
-

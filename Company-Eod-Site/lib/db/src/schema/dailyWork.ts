@@ -7,6 +7,7 @@ export const dailyWorkTable = pgTable("daily_work", {
   action: text("action").notNull(),
   how: text("how"),
   who: text("who"),
+  assignedBy: text("assigned_by"),
   date: date("date", { mode: "string" }).notNull(),
   startDate: date("start_date", { mode: "string" }),
   completionDate: date("completion_date", { mode: "string" }),

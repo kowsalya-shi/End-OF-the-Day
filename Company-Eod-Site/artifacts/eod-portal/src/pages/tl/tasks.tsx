@@ -202,29 +202,39 @@ export default function TLTasks() {
   };
 
   const onSubmit = (values: TaskFormData) => {
-    // If a user is selected, find their name for the 'who' field if it's empty
+    if (!isMyTask && !values.userId) {
+      form.setError("userId", { message: "Select a team member before assigning the task." });
+      return;
+    }
+
+    // Assignment must always use the selected employee's name and team.
     let who = values.who;
-    if (!who && values.userId && teamMembers) {
+    let assignedTeamId: number | undefined;
+    if (values.userId && teamMembers) {
       const assignedUser = teamMembers.find(m => m.id === values.userId);
-      if (assignedUser) who = assignedUser.name;
+      if (assignedUser) {
+        who = assignedUser.name;
+        assignedTeamId = assignedUser.teamId || undefined;
+      }
     }
 
     if (selectedTask) {
       updateMutation.mutate(
-        { id: selectedTask.id, data: { ...values, who } },
+        { id: selectedTask.id, data: { ...values, who, assignedBy: values.assignedBy || user?.name || "", teamId: assignedTeamId ?? selectedTask.teamId } },
         {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
             setIsEditOpen(false);
             toast({ title: "Success", description: "Task updated successfully" });
-          }
+          },
+          onError: () => toast({ title: "Unable to update task", description: "Please try again.", variant: "destructive" }),
         }
       );
     } else {
       // Create task for My Tasks or Team Tasks based on context
       const taskData = isMyTask 
-        ? { ...values, who, userId: user?.id, teamId: user?.teamId } 
-        : { ...values, who, teamId: user?.teamId };
+        ? { ...values, who, assignedBy: values.assignedBy || user?.name || "", userId: user?.id, teamId: user?.teamId } 
+        : { ...values, who, assignedBy: values.assignedBy || user?.name || "", teamId: assignedTeamId ?? user?.teamId };
       
       createMutation.mutate(
         { data: taskData },
@@ -234,7 +244,8 @@ export default function TLTasks() {
             setIsCreateOpen(false);
             form.reset();
             toast({ title: "Success", description: isMyTask ? "Task created successfully" : "Task assigned successfully" });
-          }
+          },
+          onError: () => toast({ title: "Unable to assign task", description: "Please try again.", variant: "destructive" }),
         }
       );
     }
@@ -319,6 +330,14 @@ export default function TLTasks() {
           </FormItem>
         )} />
       )}
+
+      <FormField control={form.control} name="assignedBy" render={({ field }) => (
+        <FormItem>
+          <FormLabel>Assigned By</FormLabel>
+          <FormControl><Input placeholder="Person assigning this task" {...field} /></FormControl>
+          <FormMessage />
+        </FormItem>
+      )} />
 
       <FormField control={form.control} name="priority" render={({ field }) => (
         <FormItem>
@@ -496,6 +515,7 @@ export default function TLTasks() {
                     <TableRow className="bg-gray-50">
                       <TableHead>Code</TableHead>
                       <TableHead className="min-w-[200px]">Task Name</TableHead>
+                      <TableHead>Assigned By</TableHead>
                       <TableHead>Priority</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Progress</TableHead>
@@ -508,7 +528,7 @@ export default function TLTasks() {
                   <TableBody>
                     {myLoading ? (
                       <TableRow>
-                        <TableCell colSpan={9} className="h-32 text-center text-gray-500">
+                        <TableCell colSpan={10} className="h-32 text-center text-gray-500">
                           Loading your tasks...
                         </TableCell>
                       </TableRow>
@@ -519,6 +539,7 @@ export default function TLTasks() {
                         <TableRow key={task.id}>
                           <TableCell className="font-mono text-xs text-gray-500">{task.taskCode || "-"}</TableCell>
                           <TableCell className="font-medium">{task.taskName}</TableCell>
+                          <TableCell>{task.assignedBy || "-"}</TableCell>
                           <TableCell>
                             <span className={`text-xs uppercase font-medium ${
                               task.priority === 'high' ? 'text-red-600' : 
@@ -560,7 +581,7 @@ export default function TLTasks() {
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell colSpan={9} className="h-32 text-center text-gray-500">
+                        <TableCell colSpan={10} className="h-32 text-center text-gray-500">
                           No tasks found. Create your first task!
                         </TableCell>
                       </TableRow>
@@ -667,6 +688,7 @@ export default function TLTasks() {
                       <TableHead>Member</TableHead>
                       <TableHead>Code</TableHead>
                       <TableHead className="min-w-[200px]">Task Name</TableHead>
+                      <TableHead>Assigned By</TableHead>
                       <TableHead>Priority</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Progress</TableHead>
@@ -679,7 +701,7 @@ export default function TLTasks() {
                   <TableBody>
                     {teamLoading ? (
                       <TableRow>
-                        <TableCell colSpan={10} className="h-32 text-center text-gray-500">
+                        <TableCell colSpan={11} className="h-32 text-center text-gray-500">
                           Loading team tasks...
                         </TableCell>
                       </TableRow>
@@ -691,6 +713,7 @@ export default function TLTasks() {
                           <TableCell className="font-medium">{task.userName || "-"}</TableCell>
                           <TableCell className="font-mono text-xs text-gray-500">{task.taskCode || "-"}</TableCell>
                           <TableCell className="font-medium">{task.taskName}</TableCell>
+                          <TableCell>{task.assignedBy || "-"}</TableCell>
                           <TableCell>
                             <span className={`text-xs uppercase font-medium ${
                               task.priority === 'high' ? 'text-red-600' : 
@@ -732,7 +755,7 @@ export default function TLTasks() {
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell colSpan={10} className="h-32 text-center text-gray-500">
+                        <TableCell colSpan={11} className="h-32 text-center text-gray-500">
                           No tasks found matching your filters.
                         </TableCell>
                       </TableRow>
@@ -783,4 +806,3 @@ export default function TLTasks() {
     </div>
   );
 }
-

@@ -13,6 +13,8 @@ export interface DailyWorkItem {
   how?: string | null;
   /** @nullable */
   who?: string | null;
+  /** @nullable */
+  assignedBy?: string | null;
   date: string;
   /** @nullable */
   startDate?: string | null;
