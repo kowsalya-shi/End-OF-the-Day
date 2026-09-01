@@ -77,7 +77,7 @@ export function EodEmployeeActivityDashboard() {
                   return (
                     <tr key={employee.id} className="border-b align-top hover:bg-gray-50">
                       <td className="px-3 py-3 font-medium">{employee.name}</td>
-                      <td className="px-3 py-3 text-gray-600">{employee.department || "-"}</td>
+                      <td className="px-3 py-3 text-gray-600">{employee.department?.trim() || employee.teamName || "Not assigned"}</td>
                       <td className="max-w-md px-3 py-3 text-gray-700">{workSummary}</td>
                       <td className="px-3 py-3 text-center font-semibold text-green-700">{completedCount}</td>
                       <td className="px-3 py-3 text-center">

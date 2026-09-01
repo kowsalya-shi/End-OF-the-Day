@@ -24,7 +24,8 @@ export default function HRTraining() {
       teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined,
       month: monthFilter !== "all" ? parseInt(monthFilter) : undefined,
       year: new Date().getFullYear(),
-    },
+      userRole: "employee",
+    } as any,
     {
       query: {
         queryKey: getListTrainingQueryKey({
@@ -32,7 +33,8 @@ export default function HRTraining() {
           teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined,
           month: monthFilter !== "all" ? parseInt(monthFilter) : undefined,
           year: new Date().getFullYear(),
-        }),
+          userRole: "employee",
+        } as any),
       },
     },
   );

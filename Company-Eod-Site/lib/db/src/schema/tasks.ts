@@ -21,6 +21,10 @@ export const internalTasksTable = pgTable("internal_tasks", {
   etc: text("etc"),
   userId: integer("user_id"),
   teamId: integer("team_id"),
+  approvalStatus: text("approval_status").notNull().default("pending"),
+  approvedBy: integer("approved_by"),
+  approvedAt: timestamp("approved_at", { withTimezone: true }),
+  rejectionReason: text("rejection_reason"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 });

@@ -25,6 +25,7 @@ import TLEodApprovals from "@/pages/tl/eod-approvals";
 // Manager
 import ManagerDashboard from "@/pages/manager/dashboard";
 import ManagerEod from "@/pages/manager/eod";
+import ManagerTlEodReports from "@/pages/manager/tl-eod-reports";
 import ManagerTasks from "@/pages/manager/tasks";
 import ManagerDailyWork from "@/pages/manager/daily-work";
 import ManagerTraining from "@/pages/manager/training";
@@ -36,6 +37,7 @@ import ManagerAnalytics from "@/pages/manager/analytics";
 // CEO — dedicated separate portal
 import CEODashboard from "@/pages/ceo/dashboard";
 import CEOEod from "@/pages/ceo/eod";
+import CEOTlEodReports from "@/pages/manager/tl-eod-reports";
 import CEOTasks from "@/pages/ceo/tasks";
 import CEODailyWork from "@/pages/ceo/daily-work";
 import CEOTraining from "@/pages/ceo/training";
@@ -124,6 +126,7 @@ function Router() {
       <ProtectedRoute path="/manager/dashboard" component={ManagerDashboard} allowedRoles={["manager"]} />
       <ProtectedRoute path="/manager/analytics" component={ManagerAnalytics} allowedRoles={["manager"]} />
       <ProtectedRoute path="/manager/eod" component={ManagerEod} allowedRoles={["manager"]} />
+      <ProtectedRoute path="/manager/tl-eod-reports" component={ManagerTlEodReports} allowedRoles={["manager"]} />
       <ProtectedRoute path="/manager/tasks" component={ManagerTasks} allowedRoles={["manager"]} />
       <ProtectedRoute path="/manager/daily-work" component={ManagerDailyWork} allowedRoles={["manager"]} />
       <ProtectedRoute path="/manager/training" component={ManagerTraining} allowedRoles={["manager"]} />
@@ -135,6 +138,7 @@ function Router() {
       <ProtectedRoute path="/ceo/dashboard" component={CEODashboard} allowedRoles={["ceo"]} />
       <ProtectedRoute path="/ceo/analytics" component={CEOAnalytics} allowedRoles={["ceo"]} />
       <ProtectedRoute path="/ceo/eod" component={CEOEod} allowedRoles={["ceo"]} />
+      <ProtectedRoute path="/ceo/tl-eod-reports" component={CEOTlEodReports} allowedRoles={["ceo"]} />
       <ProtectedRoute path="/ceo/tasks" component={CEOTasks} allowedRoles={["ceo"]} />
       <ProtectedRoute path="/ceo/daily-work" component={CEODailyWork} allowedRoles={["ceo"]} />
       <ProtectedRoute path="/ceo/training" component={CEOTraining} allowedRoles={["ceo"]} />
@@ -163,4 +167,3 @@ function App() {
 }
 
 export default App;
-

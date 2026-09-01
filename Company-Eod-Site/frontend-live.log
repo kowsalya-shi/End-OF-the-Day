@@ -1,32 +1,8 @@
 $ vite --config vite.config.ts --host 0.0.0.0
 
-  VITE v7.3.3  ready in 7448 ms
+  VITE v7.3.3  ready in 3955 ms
 
   ➜  Local:   http://localhost:23881/
-  ➜  Network: http://192.168.12.6:23881/
+  ➜  Network: http://192.168.12.200:23881/
   ➜  press h + enter to show help
-3:11:57 pm [vite] (client) hmr update /src/pages/manager/tasks.tsx, /src/index.css
-3:11:57 pm [vite] (client) hmr update /src/pages/ceo/tasks.tsx, /src/index.css
-3:11:58 pm [vite] (client) hmr update /src/pages/tl/tasks.tsx, /src/index.css
-3:14:40 pm [vite] (client) hmr update /src/pages/manager/tasks.tsx, /src/index.css
-3:14:40 pm [vite] (client) hmr update /src/pages/ceo/tasks.tsx, /src/index.css
-3:14:41 pm [vite] (client) hmr update /src/pages/tl/tasks.tsx, /src/index.css
-3:18:45 pm [vite] (client) hmr update /src/pages/manager/dashboard.tsx, /src/index.css
-3:18:46 pm [vite] (client) hmr update /src/pages/ceo/dashboard.tsx, /src/index.css
-3:22:32 pm [vite] (client) hmr update /src/pages/manager/dashboard.tsx, /src/index.css
-3:22:32 pm [vite] (client) hmr update /src/pages/ceo/dashboard.tsx, /src/index.css
-3:32:17 pm [vite] (client) hmr update /src/pages/tl/tasks.tsx, /src/index.css
-3:40:07 pm [vite] (client) page reload C:/Users/Shiny/Company-Eod-Site/Company-Eod-Site/lib/api-client-react/src/generated/api.ts
-3:40:07 pm [vite] (client) page reload C:/Users/Shiny/Company-Eod-Site/Company-Eod-Site/lib/api-client-react/src/generated/api.schemas.ts
-3:40:07 pm [vite] (client) Pre-transform error: Failed to load url /@fs/C:/Users/Shiny/Company-Eod-Site/Company-Eod-Site/lib/api-client-react/src/generated/api.schemas.ts (resolved id: C:/Users/Shiny/Company-Eod-Site/Company-Eod-Site/lib/api-client-react/src/generated/api.schemas.ts) in C:/Users/Shiny/Company-Eod-Site/Company-Eod-Site/lib/api-client-react/src/index.ts. Does the file exist?
-3:40:07 pm [vite] (client) Pre-transform error: Failed to load url /@fs/C:/Users/Shiny/Company-Eod-Site/Company-Eod-Site/lib/api-client-react/src/generated/api.ts (resolved id: C:/Users/Shiny/Company-Eod-Site/Company-Eod-Site/lib/api-client-react/src/generated/api.ts) in C:/Users/Shiny/Company-Eod-Site/Company-Eod-Site/lib/api-client-react/src/index.ts. Does the file exist?
-3:40:08 pm [vite] (client) page reload C:/Users/Shiny/Company-Eod-Site/Company-Eod-Site/lib/api-client-react/src/generated/api.schemas.ts
-3:40:08 pm [vite] (client) page reload C:/Users/Shiny/Company-Eod-Site/Company-Eod-Site/lib/api-client-react/src/generated/api.ts
-3:41:28 pm [vite] (client) hmr update /src/pages/employee/daily-work.tsx, /src/index.css
-3:41:28 pm [vite] (client) hmr update /src/pages/tl/daily-work.tsx, /src/index.css
-3:41:29 pm [vite] (client) hmr update /src/pages/employee/tasks.tsx, /src/index.css
-3:41:29 pm [vite] (client) hmr update /src/pages/tl/tasks.tsx, /src/index.css
-3:41:57 pm [vite] (client) hmr update /src/pages/employee/daily-work.tsx, /src/index.css
-3:41:57 pm [vite] (client) hmr update /src/pages/tl/daily-work.tsx, /src/index.css
-3:41:58 pm [vite] (client) hmr update /src/pages/tl/tasks.tsx, /src/index.css
-4:47:37 pm [vite] (client) page reload C:/Users/Shiny/Company-Eod-Site/Company-Eod-Site/lib/api-client-react/src/generated/api.schemas.ts
+[RUNTIME_ERROR]{"type":"runtime-error","timestamp":1788158445829,"name":"Error","message":"Cannot read properties of undefined (reading 'toLowerCase')","stack":"    at StatusBadge C:/Users/Shiny/Company-Eod-Site/Company-Eod-Site/artifacts/eod-portal/src/components/ui/status-badge.tsx:9:35\n\n\n\n\n\n\n\n\n","loc":{"line":9,"column":35,"file":"C:/Users/Shiny/Company-Eod-Site/Company-Eod-Site/artifacts/eod-portal/src/components/ui/status-badge.tsx"},"frame":"7  |  \n8  |  export function StatusBadge({ status, className }: StatusBadgeProps) {\n9  |    const normalizedStatus = status.toLowerCase();\n   |                                    ^\n10 |  \n11 |    const statusStyles: Record<string, string> = {"}

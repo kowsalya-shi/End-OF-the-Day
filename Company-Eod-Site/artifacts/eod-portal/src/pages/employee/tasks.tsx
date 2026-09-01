@@ -413,6 +413,7 @@ export default function EmployeeTasks() {
                 <TableHead>Assigned By</TableHead>
                 <TableHead>Priority</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Approval</TableHead>
                 <TableHead>Progress</TableHead>
                 <TableHead>Planned Start</TableHead>
                 <TableHead>Planned End</TableHead>
@@ -422,7 +423,7 @@ export default function EmployeeTasks() {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="h-32 text-center text-gray-500">
+                  <TableCell colSpan={10} className="h-32 text-center text-gray-500">
                     Loading tasks...
                   </TableCell>
                 </TableRow>
@@ -442,7 +443,9 @@ export default function EmployeeTasks() {
                     </TableCell>
                     <TableCell>
                       <StatusBadge status={task.status} />
+                      {(task as any).rejectionReason && <p className="mt-1 text-xs text-red-600">Reason: {(task as any).rejectionReason}</p>}
                     </TableCell>
+                    <TableCell><StatusBadge status={(task as any).approvalStatus || "pending"} /></TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -470,7 +473,7 @@ export default function EmployeeTasks() {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={9} className="h-32 text-center text-gray-500">
+                  <TableCell colSpan={10} className="h-32 text-center text-gray-500">
                     No tasks found matching your filters.
                   </TableCell>
                 </TableRow>

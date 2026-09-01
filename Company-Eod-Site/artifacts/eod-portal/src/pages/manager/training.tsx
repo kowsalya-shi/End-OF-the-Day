@@ -17,13 +17,15 @@ export default function ManagerTraining() {
   const { data: training, isLoading } = useListTraining(
     { 
       status: statusFilter !== "all" ? statusFilter : undefined,
-      teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined
-    },
+      teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined,
+      userRole: "employee",
+    } as any,
     { query: { 
       queryKey: getListTrainingQueryKey({ 
         status: statusFilter !== "all" ? statusFilter : undefined,
-        teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined
-      })
+        teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined,
+        userRole: "employee",
+      } as any)
     } }
   );
 

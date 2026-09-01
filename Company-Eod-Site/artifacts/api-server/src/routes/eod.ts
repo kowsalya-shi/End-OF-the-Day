@@ -64,7 +64,7 @@ router.get("/eod/pending", async (req, res) => {
   let users = await db
     .select()
     .from(usersTable)
-    .where(inArray(usersTable.role, ["employee", "tl"]));
+    .where(eq(usersTable.role, "employee"));
 
   // Filter by specific team
   if (teamId) {
@@ -110,12 +110,19 @@ router.get("/eod/pending", async (req, res) => {
 });
 
 router.get("/eod", async (req, res) => {
-  const { date, userId, teamId, month, year } = req.query;
+  const { date, userId, teamId, tlId, month, year, userRole } = req.query;
   let eods = await db.select().from(eodSubmissionsTable);
 
   if (date) eods = eods.filter(e => e.date === date);
   if (userId) eods = eods.filter(e => e.userId === parseInt(userId as string));
   if (teamId) eods = eods.filter(e => e.teamId === parseInt(teamId as string));
+  else if (tlId) {
+    const tlTeams = await db.select({ id: teamsTable.id }).from(teamsTable).where(eq(teamsTable.tlId, parseInt(tlId as string)));
+    const teamIds = tlTeams.map((team) => team.id);
+    const employees = await db.select({ id: usersTable.id }).from(usersTable).where(eq(usersTable.role, "employee"));
+    const employeeIds = new Set(employees.map((employee) => employee.id));
+    eods = eods.filter((eod) => eod.teamId !== null && teamIds.includes(eod.teamId) && employeeIds.has(eod.userId));
+  }
   if (month) {
     eods = eods.filter(e => {
       const d = new Date(e.date + "T00:00:00Z");
@@ -127,6 +134,12 @@ router.get("/eod", async (req, res) => {
       const d = new Date(e.date + "T00:00:00Z");
       return d.getUTCFullYear() === parseInt(year as string);
     });
+  }
+  // Leadership pages can request reports submitted by one role, such as Team Leads.
+  if (userRole) {
+    const users = await db.select({ id: usersTable.id }).from(usersTable).where(eq(usersTable.role, userRole as string));
+    const userIds = new Set(users.map((user) => user.id));
+    eods = eods.filter((eod) => userIds.has(eod.userId));
   }
 
   const enriched = await Promise.all(eods.map(enrichEod));
@@ -243,7 +256,11 @@ router.get("/eod/approvals/pending", async (req, res) => {
       )
     );
 
-  const enriched = await Promise.all(pendingEods.map(enrichEod));
+  const employees = await db.select({ id: usersTable.id }).from(usersTable).where(eq(usersTable.role, "employee"));
+  const employeeIds = new Set(employees.map((employee) => employee.id));
+  const employeePendingEods = pendingEods.filter((eod) => employeeIds.has(eod.userId));
+
+  const enriched = await Promise.all(employeePendingEods.map(enrichEod));
   res.json(enriched);
 });
 

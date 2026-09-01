@@ -25,7 +25,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Download, Plus, Edit2, Trash2, Filter } from "lucide-react";
+import { Download, Plus, Edit2, Trash2, Filter, CheckCircle, XCircle } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 const taskSchema = z.object({
@@ -77,6 +77,8 @@ export default function TLTasks() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<any>(null);
+  const [approvalTarget, setApprovalTarget] = useState<any>(null);
+  const [rejectionReason, setRejectionReason] = useState("");
   const [isMyTask, setIsMyTask] = useState(true); // Track which tab context we're in
 
   const { data: myTasks, isLoading: myLoading } = useListTasks(
@@ -264,6 +266,26 @@ export default function TLTasks() {
         }
       );
     }
+  };
+
+  const refreshTaskLists = () => queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
+  const handleApprove = async (task: any) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/tasks/${task.id}/approve`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("auth_token")}` }, body: JSON.stringify({ approvedBy: user?.id }) });
+      if (!response.ok) throw new Error();
+      refreshTaskLists();
+      toast({ title: "Task approved" });
+    } catch { toast({ title: "Unable to approve task", variant: "destructive" }); }
+  };
+  const handleReject = async () => {
+    if (!approvalTarget || !rejectionReason.trim()) return;
+    try {
+      const response = await fetch(`http://localhost:8080/api/tasks/${approvalTarget.id}/reject`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("auth_token")}` }, body: JSON.stringify({ approvedBy: user?.id, reason: rejectionReason.trim() }) });
+      if (!response.ok) throw new Error();
+      refreshTaskLists();
+      setApprovalTarget(null); setRejectionReason("");
+      toast({ title: "Task rejected" });
+    } catch { toast({ title: "Unable to reject task", variant: "destructive" }); }
   };
 
   const openEdit = (task: any) => {
@@ -518,6 +540,7 @@ export default function TLTasks() {
                       <TableHead>Assigned By</TableHead>
                       <TableHead>Priority</TableHead>
                       <TableHead>Status</TableHead>
+                      <TableHead>Approval</TableHead>
                       <TableHead>Progress</TableHead>
                       <TableHead>Start Date</TableHead>
                       <TableHead>End Date</TableHead>
@@ -528,7 +551,7 @@ export default function TLTasks() {
                   <TableBody>
                     {myLoading ? (
                       <TableRow>
-                        <TableCell colSpan={10} className="h-32 text-center text-gray-500">
+                        <TableCell colSpan={11} className="h-32 text-center text-gray-500">
                           Loading your tasks...
                         </TableCell>
                       </TableRow>
@@ -551,6 +574,7 @@ export default function TLTasks() {
                           <TableCell>
                             <StatusBadge status={task.status} />
                           </TableCell>
+                          <TableCell><StatusBadge status={(task as any).approvalStatus || "pending"} /></TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
                               <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -581,7 +605,7 @@ export default function TLTasks() {
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell colSpan={10} className="h-32 text-center text-gray-500">
+                        <TableCell colSpan={11} className="h-32 text-center text-gray-500">
                           No tasks found. Create your first task!
                         </TableCell>
                       </TableRow>
@@ -691,6 +715,7 @@ export default function TLTasks() {
                       <TableHead>Assigned By</TableHead>
                       <TableHead>Priority</TableHead>
                       <TableHead>Status</TableHead>
+                      <TableHead>Approval</TableHead>
                       <TableHead>Progress</TableHead>
                       <TableHead>Start Date</TableHead>
                       <TableHead>End Date</TableHead>
@@ -701,7 +726,7 @@ export default function TLTasks() {
                   <TableBody>
                     {teamLoading ? (
                       <TableRow>
-                        <TableCell colSpan={11} className="h-32 text-center text-gray-500">
+                        <TableCell colSpan={12} className="h-32 text-center text-gray-500">
                           Loading team tasks...
                         </TableCell>
                       </TableRow>
@@ -725,6 +750,7 @@ export default function TLTasks() {
                           <TableCell>
                             <StatusBadge status={task.status} />
                           </TableCell>
+                          <TableCell><StatusBadge status={(task as any).approvalStatus || "pending"} /></TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
                               <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -743,6 +769,10 @@ export default function TLTasks() {
                           </TableCell>
                           <TableCell className="text-right">
                             <div className="flex justify-end gap-2">
+                              {task.status === "completed" && (["pending", "resubmitted"].includes((task as any).approvalStatus || "pending")) && <>
+                                <Button title="Approve task" variant="ghost" size="icon" onClick={() => handleApprove(task)} className="h-8 w-8 text-green-600 hover:text-green-700"><CheckCircle className="h-4 w-4" /></Button>
+                                <Button title="Reject task" variant="ghost" size="icon" onClick={() => { setApprovalTarget(task); setRejectionReason(""); }} className="h-8 w-8 text-red-600 hover:text-red-700"><XCircle className="h-4 w-4" /></Button>
+                              </>}
                               <Button variant="ghost" size="icon" onClick={() => openEdit(task)} className="h-8 w-8 text-gray-500 hover:text-primary">
                                 <Edit2 className="h-4 w-4" />
                               </Button>
@@ -755,7 +785,7 @@ export default function TLTasks() {
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell colSpan={11} className="h-32 text-center text-gray-500">
+                        <TableCell colSpan={12} className="h-32 text-center text-gray-500">
                           No tasks found matching your filters.
                         </TableCell>
                       </TableRow>
@@ -803,6 +833,15 @@ export default function TLTasks() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={!!approvalTarget} onOpenChange={(open) => { if (!open) { setApprovalTarget(null); setRejectionReason(""); } }}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Reject Task</DialogTitle></DialogHeader>
+          <p className="text-sm text-muted-foreground">Give the employee a reason so they can correct and resubmit the task.</p>
+          <Input value={rejectionReason} onChange={(event) => setRejectionReason(event.target.value)} placeholder="Rejection reason" />
+          <div className="flex justify-end gap-2"><Button variant="outline" onClick={() => setApprovalTarget(null)}>Cancel</Button><Button variant="destructive" disabled={!rejectionReason.trim()} onClick={handleReject}>Reject Task</Button></div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

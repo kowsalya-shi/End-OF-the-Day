@@ -39,6 +39,10 @@ async function enrichTask(task: typeof internalTasksTable.$inferSelect) {
     etc: task.etc,
     userId: task.userId,
     teamId: task.teamId,
+    approvalStatus: task.approvalStatus,
+    approvedBy: task.approvedBy,
+    approvedAt: task.approvedAt?.toISOString(),
+    rejectionReason: task.rejectionReason,
     userName,
     teamName,
     createdAt: task.createdAt?.toISOString(),
@@ -108,7 +112,7 @@ router.get("/tasks/status-summary", async (req, res) => {
 });
 
 router.get("/tasks", async (req, res) => {
-  const { status, userId, teamId, tlId, month, year, priority, assignedBy } = req.query;
+  const { status, userId, teamId, tlId, month, year, priority, assignedBy, userRole } = req.query;
   let tasks = await db.select().from(internalTasksTable);
 
   if (status) tasks = tasks.filter(t => t.status === status);
@@ -122,10 +126,17 @@ router.get("/tasks", async (req, res) => {
   else if (tlId) {
     const tlTeams = await db.select().from(teamsTable).where(eq(teamsTable.tlId, parseInt(tlId as string)));
     const teamIds = tlTeams.map(t => t.id);
-    tasks = tasks.filter(t => t.teamId && teamIds.includes(t.teamId));
+    const employees = await db.select({ id: usersTable.id }).from(usersTable).where(eq(usersTable.role, "employee"));
+    const employeeIds = new Set(employees.map((employee) => employee.id));
+    tasks = tasks.filter(t => t.teamId && teamIds.includes(t.teamId) && t.userId && employeeIds.has(t.userId));
   }
   if (priority) tasks = tasks.filter(t => t.priority === priority);
   if (assignedBy) tasks = tasks.filter(t => t.assignedBy === assignedBy);
+  if (userRole) {
+    const users = await db.select({ id: usersTable.id }).from(usersTable).where(eq(usersTable.role, userRole as string));
+    const userIds = new Set(users.map((user) => user.id));
+    tasks = tasks.filter((task) => task.userId !== null && userIds.has(task.userId));
+  }
   if (month) {
     tasks = tasks.filter(t => {
       if (!t.plannedStartDate) return true;
@@ -167,6 +178,7 @@ router.post("/tasks", async (req, res) => {
     etc: rest.etc ?? null,
     userId: rest.userId ?? null,
     teamId: rest.teamId ?? null,
+    approvalStatus: "pending",
   }).returning();
 
   await notifyTaskChange(task, "created");
@@ -193,9 +205,49 @@ router.patch("/tasks/:id", async (req, res) => {
           : req.body[f];
     }
   }
+  // Editing a rejected item is the employee's resubmission, matching the EOD flow.
+  const [currentTask] = await db.select().from(internalTasksTable).where(eq(internalTasksTable.id, id));
+  if (currentTask?.approvalStatus === "rejected") {
+    updates.approvalStatus = "resubmitted";
+    updates.approvedBy = null;
+    updates.approvedAt = null;
+    updates.rejectionReason = null;
+  }
   const [task] = await db.update(internalTasksTable).set(updates).where(eq(internalTasksTable.id, id)).returning();
   if (!task) return res.status(404).json({ error: "Not found" });
   await notifyTaskChange(task, "updated");
+  res.json(await enrichTask(task));
+});
+
+router.post("/tasks/:id/approve", async (req, res) => {
+  const id = parseInt(req.params.id);
+  const [currentTask] = await db.select().from(internalTasksTable).where(eq(internalTasksTable.id, id));
+  if (!currentTask) return res.status(404).json({ error: "Not found" });
+  if (currentTask.status !== "completed") return res.status(400).json({ error: "Only completed tasks can be approved or rejected" });
+  const [task] = await db.update(internalTasksTable).set({
+    approvalStatus: "approved",
+    approvedBy: req.body.approvedBy ?? null,
+    approvedAt: new Date(),
+    rejectionReason: null,
+  }).where(eq(internalTasksTable.id, id)).returning();
+  if (!task) return res.status(404).json({ error: "Not found" });
+  res.json(await enrichTask(task));
+});
+
+router.post("/tasks/:id/reject", async (req, res) => {
+  const id = parseInt(req.params.id);
+  const reason = typeof req.body.reason === "string" ? req.body.reason.trim() : "";
+  if (!reason) return res.status(400).json({ error: "Rejection reason required" });
+  const [currentTask] = await db.select().from(internalTasksTable).where(eq(internalTasksTable.id, id));
+  if (!currentTask) return res.status(404).json({ error: "Not found" });
+  if (currentTask.status !== "completed") return res.status(400).json({ error: "Only completed tasks can be approved or rejected" });
+  const [task] = await db.update(internalTasksTable).set({
+    approvalStatus: "rejected",
+    approvedBy: req.body.approvedBy ?? null,
+    approvedAt: new Date(),
+    rejectionReason: reason,
+  }).where(eq(internalTasksTable.id, id)).returning();
+  if (!task) return res.status(404).json({ error: "Not found" });
   res.json(await enrichTask(task));
 });
 

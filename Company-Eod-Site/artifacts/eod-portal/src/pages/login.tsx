@@ -72,7 +72,7 @@ export default function Login() {
 
         <div>
           <h1 className="text-3xl font-bold text-white leading-snug mb-4">
-            EOD Management<br />& Operations Portal
+            Task Management<br />& Operations Portal
           </h1>
           <p className="text-white/55 text-sm leading-relaxed mb-10">
             A centralised platform for daily end-of-day reports, task tracking, attendance, and team management.

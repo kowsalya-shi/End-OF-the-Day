@@ -37,7 +37,7 @@ async function enrichTraining(record: typeof trainingRecordsTable.$inferSelect) 
 }
 
 router.get("/training", async (req, res) => {
-  const { userId, teamId, tlId, status, month, year, trainer, topic } = req.query;
+  const { userId, teamId, tlId, status, month, year, trainer, topic, userRole } = req.query;
   let records = await db.select().from(trainingRecordsTable);
 
   if (userId) records = records.filter(r => r.userId === parseInt(userId as string));
@@ -50,11 +50,18 @@ router.get("/training", async (req, res) => {
   else if (tlId) {
     const tlTeams = await db.select().from(teamsTable).where(eq(teamsTable.tlId, parseInt(tlId as string)));
     const teamIds = tlTeams.map(t => t.id);
-    records = records.filter(r => r.teamId && teamIds.includes(r.teamId));
+    const employees = await db.select({ id: usersTable.id }).from(usersTable).where(eq(usersTable.role, "employee"));
+    const employeeIds = new Set(employees.map((employee) => employee.id));
+    records = records.filter(r => r.teamId && teamIds.includes(r.teamId) && r.userId && employeeIds.has(r.userId));
   }
   if (status) records = records.filter(r => r.status === status);
   if (trainer) records = records.filter(r => r.trainer?.toLowerCase().includes((trainer as string).toLowerCase()));
   if (topic) records = records.filter(r => r.topic?.toLowerCase().includes((topic as string).toLowerCase()));
+  if (userRole) {
+    const users = await db.select({ id: usersTable.id }).from(usersTable).where(eq(usersTable.role, userRole as string));
+    const userIds = new Set(users.map((user) => user.id));
+    records = records.filter((record) => record.userId !== null && userIds.has(record.userId));
+  }
   if (month) {
     records = records.filter(r => {
       if (!r.startDate) return true;

@@ -16,9 +16,6 @@ import { sessions } from "./auth";
 
 const router = Router();
 
-const MANAGER_EMAIL = "shinydora753152@gmail.com";
-const CEO_EMAIL = "athishiny0@gmail.com";
-
 // Create transporter — configure via env vars if available
 function getTransporter() {
   if (process.env.SMTP_HOST) {
@@ -44,7 +41,7 @@ async function getPendingEmployees(date: string, teamId?: number) {
 
   const submittedIds = new Set(submitted.map(s => s.userId));
 
-  let employees = await db.select().from(usersTable).where(inArray(usersTable.role, ["employee", "tl"]));
+  let employees = await db.select().from(usersTable).where(eq(usersTable.role, "employee"));
   if (teamId) employees = employees.filter(e => e.teamId === teamId);
 
   return employees.filter(e => !submittedIds.has(e.id));
@@ -129,17 +126,65 @@ async function hasThreeConsecutiveMissedEods(employeeId: number, targetDate: str
   return submissions.length === 0;
 }
 
+async function emailMissingEodToLeadership(
+  employee: typeof usersTable.$inferSelect,
+  team: typeof teamsTable.$inferSelect,
+  targetDate: string,
+) {
+  const recipientIds = [...new Set([team.tlId, team.managerId].filter((id): id is number => id !== null))];
+  if (!recipientIds.length) return { sent: false, recipients: [] as string[] };
+
+  const recipients = await db.select({ email: usersTable.email }).from(usersTable).where(inArray(usersTable.id, recipientIds));
+  const emails = [...new Set(recipients.map((recipient) => recipient.email).filter((email): email is string => !!email))];
+  if (!emails.length) return { sent: false, recipients: emails };
+
+  const subject = `[EOD Missing] ${employee.name} has not submitted EOD for ${targetDate}`;
+  const html = `<p>Dear Team Lead / Manager,</p>
+    <p><strong>${employee.name}</strong> (${employee.email}) has not submitted their EOD report for <strong>${targetDate}</strong>.</p>
+    <p>Team: <strong>${team.name}</strong></p>
+    <p>Please follow up with the employee.</p>
+    <br/><p>Regards,<br/>Arraafi Task Management Portal</p>`;
+  const transporter = getTransporter();
+  if (!transporter) {
+    logger.info({ to: emails, subject, employeeId: employee.id }, "DEV: Would send missing EOD leadership email");
+    return { sent: true, recipients: emails };
+  }
+
+  try {
+    await transporter.sendMail({
+      from: `"Arraafi Task Management Portal" <${process.env.SMTP_USER ?? "noreply@arraafiinfotech.com"}>`,
+      to: emails.join(", "),
+      subject,
+      html,
+    });
+    return { sent: true, recipients: emails };
+  } catch (err) {
+    logger.error({ err, employeeId: employee.id, to: emails }, "Failed to send missing EOD leadership email");
+    return { sent: false, recipients: emails };
+  }
+}
+
 export async function processMissingEodNotifications(targetDate: string) {
   const pending = await getPendingEmployees(targetDate);
   let created = 0;
+  let emailsSent = 0;
 
   for (const employee of pending) {
     if (!employee.teamId) continue;
     const [team] = await db.select().from(teamsTable).where(eq(teamsTable.id, employee.teamId));
-    if (!team?.tlId) continue;
+    if (!team) continue;
 
     const message = `${employee.name} did not submit an EOD for ${targetDate}.`;
-    if (await createPortalNotification(team.tlId, employee.id, "missing_eod_tl", "Missing EOD", message, targetDate)) created++;
+    let isNewMissingEod = false;
+    if (team.tlId && await createPortalNotification(team.tlId, employee.id, "missing_eod_tl", "Missing EOD", message, targetDate)) {
+      created++;
+      isNewMissingEod = true;
+    }
+    if (team.managerId && await createPortalNotification(team.managerId, employee.id, "missing_eod_manager", "Missing EOD", message, targetDate)) {
+      created++;
+      isNewMissingEod = true;
+    }
+    if (isNewMissingEod && (await emailMissingEodToLeadership(employee, team, targetDate)).sent) emailsSent++;
 
     if (!(await hasThreeConsecutiveMissedEods(employee.id, targetDate))) continue;
 
@@ -151,7 +196,7 @@ export async function processMissingEodNotifications(targetDate: string) {
     }
   }
 
-  return { pending: pending.length, created };
+  return { pending: pending.length, created, emailsSent };
 }
 
 function isMoreThanOneWeekOld(itemDate: string | null, targetDate: string) {
@@ -285,7 +330,7 @@ router.post("/notifications/send-escalation", async (req, res) => {
 
     for (const emp of pending) {
       let tlEmail: string | null = null;
-      let managerEmail: string | null = MANAGER_EMAIL;
+      let managerEmail: string | null = null;
 
       if (emp.teamId) {
         const [team] = await db.select().from(teamsTable).where(eq(teamsTable.id, emp.teamId));
@@ -293,9 +338,14 @@ router.post("/notifications/send-escalation", async (req, res) => {
           const [tl] = await db.select().from(usersTable).where(eq(usersTable.id, team.tlId));
           tlEmail = tl?.email ?? null;
         }
+        if (team?.managerId) {
+          const [manager] = await db.select().from(usersTable).where(eq(usersTable.id, team.managerId));
+          managerEmail = manager?.email ?? null;
+        }
       }
 
-      const recipients = [emp.email, tlEmail, managerEmail, CEO_EMAIL].filter(Boolean).join(", ");
+      const recipients = [...new Set([tlEmail, managerEmail].filter((email): email is string => !!email))].join(", ");
+      if (!recipients) continue;
       const escalationBody = `<p>This is an automated escalation notification.</p>
         <p>Employee <strong>${emp.name}</strong> (${emp.email}) has <strong>not submitted</strong> their EOD report for <strong>${targetDate}</strong>.</p>
         <p>Please follow up with the employee accordingly.</p>

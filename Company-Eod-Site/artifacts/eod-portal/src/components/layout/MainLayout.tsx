@@ -25,6 +25,7 @@ interface MainLayoutProps {
 const navItems = [
   { title: "Dashboard", href: (r: string) => `/${r}/dashboard`, icon: LayoutDashboard, roles: ["employee", "tl", "manager", "ceo"] },
   { title: "Analytics", href: (r: string) => `/${r}/analytics`, icon: BarChart3, roles: ["manager", "ceo"] },
+  { title: "TL Reports", href: (r: string) => `/${r}/tl-eod-reports`, icon: FileText, roles: ["manager", "ceo"] },
   { title: "Daily EOD", href: (r: string) => `/${r}/eod`, icon: FileText, roles: ["employee", "tl", "manager", "ceo"] },
   { title: "Tasks", href: (r: string) => `/${r}/tasks`, icon: CheckSquare, roles: ["employee", "tl", "manager", "ceo"] },
   { title: "Daily Work", href: (r: string) => `/${r}/daily-work`, icon: ListTodo, roles: ["employee", "tl", "manager", "ceo"] },

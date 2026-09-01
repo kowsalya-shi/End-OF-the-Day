@@ -25,6 +25,10 @@ function toTaskValues(work: typeof dailyWorkTable.$inferSelect) {
     remarks: work.remarks,
     userId: work.userId,
     teamId: work.teamId,
+    approvalStatus: work.approvalStatus,
+    approvedBy: work.approvedBy,
+    approvedAt: work.approvedAt,
+    rejectionReason: work.rejectionReason,
   };
 }
 
@@ -69,6 +73,10 @@ async function enrichWork(item: typeof dailyWorkTable.$inferSelect) {
     remarks: item.remarks,
     userId: item.userId,
     teamId: item.teamId,
+    approvalStatus: item.approvalStatus,
+    approvedBy: item.approvedBy,
+    approvedAt: item.approvedAt?.toISOString(),
+    rejectionReason: item.rejectionReason,
     userName,
     teamName,
     createdAt: item.createdAt?.toISOString(),
@@ -76,7 +84,7 @@ async function enrichWork(item: typeof dailyWorkTable.$inferSelect) {
 }
 
 router.get("/daily-work", async (req, res) => {
-  const { userId, teamId, tlId, date, month, year, status, week } = req.query;
+  const { userId, teamId, tlId, date, month, year, status, week, userRole } = req.query;
   let items = await db.select().from(dailyWorkTable);
 
   if (userId) items = items.filter(i => i.userId === parseInt(userId as string));
@@ -89,11 +97,18 @@ router.get("/daily-work", async (req, res) => {
   else if (tlId) {
     const tlTeams = await db.select().from(teamsTable).where(eq(teamsTable.tlId, parseInt(tlId as string)));
     const teamIds = tlTeams.map(t => t.id);
-    items = items.filter(i => i.teamId && teamIds.includes(i.teamId));
+    const employees = await db.select({ id: usersTable.id }).from(usersTable).where(eq(usersTable.role, "employee"));
+    const employeeIds = new Set(employees.map((employee) => employee.id));
+    items = items.filter(i => i.teamId && teamIds.includes(i.teamId) && i.userId && employeeIds.has(i.userId));
   }
   
   if (date) items = items.filter(i => i.date === date);
   if (status) items = items.filter(i => i.status === status);
+  if (userRole) {
+    const users = await db.select({ id: usersTable.id }).from(usersTable).where(eq(usersTable.role, userRole as string));
+    const userIds = new Set(users.map((user) => user.id));
+    items = items.filter((item) => item.userId !== null && userIds.has(item.userId));
+  }
   if (month) {
     items = items.filter(i => {
       const d = new Date(i.date + "T00:00:00Z");
@@ -140,6 +155,7 @@ router.post("/daily-work", async (req, res) => {
       remarks: rest.remarks ?? null,
       userId: rest.userId ?? null,
       teamId: rest.teamId ?? null,
+      approvalStatus: "pending",
     }).returning();
     await syncTaskFromDailyWork(tx, dailyWork);
     return dailyWork;
@@ -165,11 +181,45 @@ router.patch("/daily-work/:id", async (req, res) => {
     }
   }
   const item = await db.transaction(async (tx) => {
+    const [currentWork] = await tx.select().from(dailyWorkTable).where(eq(dailyWorkTable.id, id));
     const [dailyWork] = await tx.update(dailyWorkTable).set(updates).where(eq(dailyWorkTable.id, id)).returning();
-    if (dailyWork) await syncTaskFromDailyWork(tx, dailyWork);
+    if (dailyWork) {
+      if (currentWork?.approvalStatus === "rejected") {
+        await tx.update(dailyWorkTable).set({ approvalStatus: "resubmitted", approvedBy: null, approvedAt: null, rejectionReason: null }).where(eq(dailyWorkTable.id, id));
+        dailyWork.approvalStatus = "resubmitted";
+        dailyWork.approvedBy = null;
+        dailyWork.approvedAt = null;
+        dailyWork.rejectionReason = null;
+      }
+      await syncTaskFromDailyWork(tx, dailyWork);
+    }
     return dailyWork;
   });
   if (!item) return res.status(404).json({ error: "Not found" });
+  res.json(await enrichWork(item));
+});
+
+router.post("/daily-work/:id/approve", async (req, res) => {
+  const id = parseInt(req.params.id);
+  const [currentWork] = await db.select().from(dailyWorkTable).where(eq(dailyWorkTable.id, id));
+  if (!currentWork) return res.status(404).json({ error: "Not found" });
+  if (currentWork.status !== "completed") return res.status(400).json({ error: "Only completed daily work can be approved or rejected" });
+  const [item] = await db.update(dailyWorkTable).set({ approvalStatus: "approved", approvedBy: req.body.approvedBy ?? null, approvedAt: new Date(), rejectionReason: null }).where(eq(dailyWorkTable.id, id)).returning();
+  if (!item) return res.status(404).json({ error: "Not found" });
+  await syncTaskFromDailyWork(db, item);
+  res.json(await enrichWork(item));
+});
+
+router.post("/daily-work/:id/reject", async (req, res) => {
+  const id = parseInt(req.params.id);
+  const reason = typeof req.body.reason === "string" ? req.body.reason.trim() : "";
+  if (!reason) return res.status(400).json({ error: "Rejection reason required" });
+  const [currentWork] = await db.select().from(dailyWorkTable).where(eq(dailyWorkTable.id, id));
+  if (!currentWork) return res.status(404).json({ error: "Not found" });
+  if (currentWork.status !== "completed") return res.status(400).json({ error: "Only completed daily work can be approved or rejected" });
+  const [item] = await db.update(dailyWorkTable).set({ approvalStatus: "rejected", approvedBy: req.body.approvedBy ?? null, approvedAt: new Date(), rejectionReason: reason }).where(eq(dailyWorkTable.id, id)).returning();
+  if (!item) return res.status(404).json({ error: "Not found" });
+  await syncTaskFromDailyWork(db, item);
   res.json(await enrichWork(item));
 });
 

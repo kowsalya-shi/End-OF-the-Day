@@ -85,13 +85,15 @@ export default function ManagerTasks() {
   const { data: tasks, isLoading } = useListTasks(
     { 
       status: statusFilter !== "all" ? statusFilter : undefined,
-      teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined
-    },
+      teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined,
+      userRole: "employee",
+    } as any,
     { query: { 
       queryKey: getListTasksQueryKey({ 
         status: statusFilter !== "all" ? statusFilter : undefined,
-        teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined
-      })
+        teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined,
+        userRole: "employee",
+      } as any)
     } }
   );
 

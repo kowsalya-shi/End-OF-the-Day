@@ -24,13 +24,15 @@ export default function HREod() {
     {
       date: dateFilter || undefined,
       teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined,
-    },
+      userRole: "employee",
+    } as any,
     {
       query: {
         queryKey: getListEodQueryKey({
           date: dateFilter || undefined,
           teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined,
-        }),
+          userRole: "employee",
+        } as any),
       },
     },
   );

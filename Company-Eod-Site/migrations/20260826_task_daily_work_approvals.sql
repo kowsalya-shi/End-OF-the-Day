@@ -1,0 +1,9 @@
+ALTER TABLE internal_tasks ADD COLUMN IF NOT EXISTS approval_status TEXT NOT NULL DEFAULT 'pending';
+ALTER TABLE internal_tasks ADD COLUMN IF NOT EXISTS approved_by INTEGER;
+ALTER TABLE internal_tasks ADD COLUMN IF NOT EXISTS approved_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE internal_tasks ADD COLUMN IF NOT EXISTS rejection_reason TEXT;
+
+ALTER TABLE daily_work ADD COLUMN IF NOT EXISTS approval_status TEXT NOT NULL DEFAULT 'pending';
+ALTER TABLE daily_work ADD COLUMN IF NOT EXISTS approved_by INTEGER;
+ALTER TABLE daily_work ADD COLUMN IF NOT EXISTS approved_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE daily_work ADD COLUMN IF NOT EXISTS rejection_reason TEXT;

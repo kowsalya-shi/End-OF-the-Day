@@ -18,13 +18,15 @@ export default function ManagerDailyWork() {
   const { data: dailyWork, isLoading } = useListDailyWork(
     { 
       date: dateFilter || undefined,
-      teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined
-    },
+      teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined,
+      userRole: "employee",
+    } as any,
     { query: { 
       queryKey: getListDailyWorkQueryKey({ 
         date: dateFilter || undefined,
-        teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined
-      })
+        teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined,
+        userRole: "employee",
+      } as any)
     } }
   );
 

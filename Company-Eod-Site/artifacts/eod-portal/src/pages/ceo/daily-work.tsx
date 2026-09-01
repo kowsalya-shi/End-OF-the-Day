@@ -23,14 +23,16 @@ export default function HRDailyWork() {
       date: dateFilter || undefined,
       teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined,
       status: statusFilter !== "all" ? statusFilter : undefined,
-    },
+      userRole: "employee",
+    } as any,
     {
       query: {
         queryKey: getListDailyWorkQueryKey({
           date: dateFilter || undefined,
           teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined,
           status: statusFilter !== "all" ? statusFilter : undefined,
-        }),
+          userRole: "employee",
+        } as any),
       },
     },
   );

@@ -10,6 +10,8 @@ import {
   getGetDashboardStatsQueryKey,
   getGetTeamSummaryQueryKey,
   getGetMonthlyTrendQueryKey,
+  getListUsersQueryKey,
+  useListUsers,
 } from "@workspace/api-client-react";
 import {
   Select,
@@ -64,6 +66,8 @@ export default function ManagerAnalytics() {
     { year: new Date().getFullYear() },
     { query: { queryKey: getGetMonthlyTrendQueryKey({ year: new Date().getFullYear() }) } }
   );
+  const { data: portalUsers } = useListUsers({}, { query: { queryKey: getListUsersQueryKey({}) } });
+  const selectablePeople = (portalUsers ?? []).filter((person) => person.role === "employee" || person.role === "tl").sort((a, b) => a.name.localeCompare(b.name));
 
   // Fetch real-time data from new endpoints
   const { data: topPerformers } = useAnalyticsData("top-performers?limit=5");
@@ -171,33 +175,7 @@ export default function ManagerAnalytics() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Employees</SelectItem>
-                <SelectItem value="soubhgya">SOUBHGYA (TL)</SelectItem>
-                <SelectItem value="waseem">Waseem (TL)</SelectItem>
-                <SelectItem value="javeed">Javeed (TL)</SelectItem>
-                <SelectItem value="rajshekar">Rajshekar (TL)</SelectItem>
-                <SelectItem value="vishal-koni">Vishal Koni (FICO)</SelectItem>
-                <SelectItem value="altaf-hussain">Altaf Hussain (FICO)</SelectItem>
-                <SelectItem value="mohd-ibrahim">Mohd Ibrahim</SelectItem>
-                <SelectItem value="disha">Disha</SelectItem>
-                <SelectItem value="manjunath">Manjunath</SelectItem>
-                <SelectItem value="roop">Roop</SelectItem>
-                <SelectItem value="ashitosh">Ashitosh</SelectItem>
-                <SelectItem value="sharath">Sharath</SelectItem>
-                <SelectItem value="shabbir">Shabbir</SelectItem>
-                <SelectItem value="shubham">Shubham</SelectItem>
-                <SelectItem value="amita">Amita</SelectItem>
-                <SelectItem value="yogesh">Yogesh</SelectItem>
-                <SelectItem value="vickram">Vickram</SelectItem>
-                <SelectItem value="anuja">Anuja</SelectItem>
-                <SelectItem value="pradeep">Pradeep</SelectItem>
-                <SelectItem value="ayesha">Ayesha</SelectItem>
-                <SelectItem value="aaron">Aaron</SelectItem>
-                <SelectItem value="kowsalya">Kowsalya</SelectItem>
-                <SelectItem value="giri">Giri</SelectItem>
-                <SelectItem value="ankita">Ankita</SelectItem>
-                <SelectItem value="akanksha">Akanksha</SelectItem>
-                <SelectItem value="sanjay">Sanjay</SelectItem>
-                <SelectItem value="priya">Priya</SelectItem>
+                {selectablePeople.map((person) => <SelectItem key={person.id} value={person.name.toLowerCase().replace(/\s+/g, "-")}>{person.name}{person.role === "tl" ? " (TL)" : person.department ? ` (${person.department})` : ""}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>

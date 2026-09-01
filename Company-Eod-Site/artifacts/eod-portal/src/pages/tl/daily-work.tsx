@@ -26,7 +26,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Download, Plus, Edit2, Trash2, Filter, Copy } from "lucide-react";
+import { Download, Plus, Edit2, Trash2, Filter, Copy, CheckCircle, XCircle } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 const dailyWorkSchema = z.object({
@@ -73,6 +73,8 @@ export default function TLDailyWork() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedWork, setSelectedWork] = useState<any>(null);
+  const [approvalTarget, setApprovalTarget] = useState<any>(null);
+  const [rejectionReason, setRejectionReason] = useState("");
 
   const { data: myWork, isLoading: myLoading } = useListDailyWork(
     { 
@@ -241,6 +243,26 @@ export default function TLDailyWork() {
         }
       );
     }
+  };
+
+  const refreshWorkLists = () => queryClient.invalidateQueries({ queryKey: getListDailyWorkQueryKey() });
+  const handleApprove = async (work: any) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/daily-work/${work.id}/approve`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("auth_token")}` }, body: JSON.stringify({ approvedBy: user?.id }) });
+      if (!response.ok) throw new Error();
+      refreshWorkLists(); queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
+      toast({ title: "Daily work approved" });
+    } catch { toast({ title: "Unable to approve daily work", variant: "destructive" }); }
+  };
+  const handleReject = async () => {
+    if (!approvalTarget || !rejectionReason.trim()) return;
+    try {
+      const response = await fetch(`http://localhost:8080/api/daily-work/${approvalTarget.id}/reject`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("auth_token")}` }, body: JSON.stringify({ approvedBy: user?.id, reason: rejectionReason.trim() }) });
+      if (!response.ok) throw new Error();
+      refreshWorkLists(); queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
+      setApprovalTarget(null); setRejectionReason("");
+      toast({ title: "Daily work rejected" });
+    } catch { toast({ title: "Unable to reject daily work", variant: "destructive" }); }
   };
 
   const openEdit = (work: any) => {
@@ -464,6 +486,7 @@ export default function TLDailyWork() {
                       <TableHead>Who</TableHead>
                       <TableHead>Assigned By</TableHead>
                       <TableHead>Status</TableHead>
+                      <TableHead>Approval</TableHead>
                       <TableHead>Progress</TableHead>
                       <TableHead>Remarks</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
@@ -472,7 +495,7 @@ export default function TLDailyWork() {
                   <TableBody>
                     {myLoading ? (
                       <TableRow>
-                        <TableCell colSpan={8} className="h-32 text-center text-gray-500">
+                        <TableCell colSpan={9} className="h-32 text-center text-gray-500">
                           Loading daily work...
                         </TableCell>
                       </TableRow>
@@ -489,6 +512,7 @@ export default function TLDailyWork() {
                           <TableCell>
                             <StatusBadge status={work.status} />
                           </TableCell>
+                          <TableCell><StatusBadge status={(work as any).approvalStatus || "pending"} /></TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
                               <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -517,7 +541,7 @@ export default function TLDailyWork() {
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell colSpan={8} className="h-32 text-center text-gray-500">
+                        <TableCell colSpan={9} className="h-32 text-center text-gray-500">
                           No daily work records found.
                         </TableCell>
                       </TableRow>
@@ -592,14 +616,16 @@ export default function TLDailyWork() {
                       <TableHead>Assigned By</TableHead>
                       <TableHead className="min-w-[200px]">Action</TableHead>
                       <TableHead>Status</TableHead>
+                      <TableHead>Approval</TableHead>
                       <TableHead>Progress</TableHead>
                       <TableHead>Remarks</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {teamLoading ? (
                       <TableRow>
-                        <TableCell colSpan={7} className="h-32 text-center text-gray-500">
+                        <TableCell colSpan={9} className="h-32 text-center text-gray-500">
                           Loading daily work...
                         </TableCell>
                       </TableRow>
@@ -616,6 +642,7 @@ export default function TLDailyWork() {
                           <TableCell>
                             <StatusBadge status={work.status} />
                           </TableCell>
+                          <TableCell><StatusBadge status={(work as any).approvalStatus || "pending"} /></TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
                               <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -627,11 +654,17 @@ export default function TLDailyWork() {
                           <TableCell className="text-sm max-w-[200px] truncate" title={work.remarks || ""}>
                             {work.remarks || "-"}
                           </TableCell>
+                          <TableCell className="text-right">
+                            {work.status === "completed" && (["pending", "resubmitted"].includes((work as any).approvalStatus || "pending")) && <div className="flex justify-end gap-1">
+                              <Button title="Approve daily work" variant="ghost" size="icon" onClick={() => handleApprove(work)} className="h-8 w-8 text-green-600 hover:text-green-700"><CheckCircle className="h-4 w-4" /></Button>
+                              <Button title="Reject daily work" variant="ghost" size="icon" onClick={() => { setApprovalTarget(work); setRejectionReason(""); }} className="h-8 w-8 text-red-600 hover:text-red-700"><XCircle className="h-4 w-4" /></Button>
+                            </div>}
+                          </TableCell>
                         </TableRow>
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell colSpan={7} className="h-32 text-center text-gray-500">
+                        <TableCell colSpan={9} className="h-32 text-center text-gray-500">
                           No daily work records found matching filters.
                         </TableCell>
                       </TableRow>
@@ -679,6 +712,15 @@ export default function TLDailyWork() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={!!approvalTarget} onOpenChange={(open) => { if (!open) { setApprovalTarget(null); setRejectionReason(""); } }}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Reject Daily Work</DialogTitle></DialogHeader>
+          <p className="text-sm text-muted-foreground">Give the employee a reason so they can correct and resubmit the work.</p>
+          <Input value={rejectionReason} onChange={(event) => setRejectionReason(event.target.value)} placeholder="Rejection reason" />
+          <div className="flex justify-end gap-2"><Button variant="outline" onClick={() => setApprovalTarget(null)}>Cancel</Button><Button variant="destructive" disabled={!rejectionReason.trim()} onClick={handleReject}>Reject Daily Work</Button></div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -400,6 +400,7 @@ export default function EmployeeDailyWork() {
                 <TableHead>Who</TableHead>
                 <TableHead>Assigned By</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Approval</TableHead>
                 <TableHead>Progress</TableHead>
                 <TableHead>Remarks</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
@@ -408,7 +409,7 @@ export default function EmployeeDailyWork() {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="h-32 text-center text-gray-500">
+                  <TableCell colSpan={9} className="h-32 text-center text-gray-500">
                     Loading daily work...
                   </TableCell>
                 </TableRow>
@@ -424,7 +425,9 @@ export default function EmployeeDailyWork() {
                     <TableCell>{work.assignedBy || "-"}</TableCell>
                     <TableCell>
                       <StatusBadge status={work.status} />
+                      {(work as any).rejectionReason && <p className="mt-1 text-xs text-red-600">Reason: {(work as any).rejectionReason}</p>}
                     </TableCell>
+                    <TableCell><StatusBadge status={(work as any).approvalStatus || "pending"} /></TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -453,7 +456,7 @@ export default function EmployeeDailyWork() {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={8} className="h-32 text-center text-gray-500">
+                  <TableCell colSpan={9} className="h-32 text-center text-gray-500">
                     No daily work records found.
                   </TableCell>
                 </TableRow>
