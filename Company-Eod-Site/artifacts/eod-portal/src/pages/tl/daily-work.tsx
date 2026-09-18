@@ -400,7 +400,7 @@ export default function TLDailyWork() {
         <p className="text-gray-500 mt-1">Track your own daily work and view your team's progress.</p>
       </div>
 
-      <Tabs defaultValue="my-work">
+      <Tabs defaultValue="team-work">
         <TabsList className="mb-4">
           <TabsTrigger value="my-work">My Work</TabsTrigger>
           <TabsTrigger value="team-work">Team Work</TabsTrigger>

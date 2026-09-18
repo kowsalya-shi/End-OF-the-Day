@@ -397,7 +397,7 @@ export default function TLEod() {
         </DialogContent>
       </Dialog>
 
-      <Tabs defaultValue="my-eod">
+      <Tabs defaultValue="team-eods">
         <TabsList className="mb-4">
           <TabsTrigger value="my-eod" className="relative">
             My EOD

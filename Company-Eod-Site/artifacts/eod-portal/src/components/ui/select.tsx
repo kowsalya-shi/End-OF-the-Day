@@ -88,7 +88,9 @@ const SelectContent = React.forwardRef<
         className={cn(
           "p-1",
           position === "popper" &&
-            "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]"
+            // Keep long option lists inside a scrollable menu instead of
+            // constraining them to the height of the select trigger.
+            "max-h-80 w-full min-w-[var(--radix-select-trigger-width)] overflow-y-auto"
         )}
       >
         {children}

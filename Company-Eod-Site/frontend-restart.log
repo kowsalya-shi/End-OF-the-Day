@@ -1,0 +1,11 @@
+$ vite --config vite.config.ts --host 0.0.0.0
+
+  VITE v7.3.3  ready in 914 ms
+
+  ➜  Local:   http://localhost:23881/
+  ➜  Network: http://192.168.12.200:23881/
+  ➜  press h + enter to show help
+5:00:35 pm [vite] (client) hmr update /src/index.css, /src/components/portal-notifications.tsx
+5:00:35 pm [vite] (client) hmr update /src/index.css, /src/components/portal-notifications.tsx
+5:00:36 pm [vite] (client) hmr update /src/components/layout/MainLayout.tsx, /src/index.css
+5:00:37 pm [vite] (client) hmr update /src/pages/manager/users.tsx, /src/index.css

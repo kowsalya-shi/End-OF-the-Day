@@ -1,4 +1,5 @@
 import { useLocation } from "wouter";
+import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Building2, ShieldCheck, ClipboardList, BarChart3 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -20,6 +22,12 @@ export default function Login() {
   const [_, setLocation] = useLocation();
   const { login: authenticate } = useAuth();
   const { toast } = useToast();
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [resetRequested, setResetRequested] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetCode, setResetCode] = useState("");
+  const [resetPassword, setResetPassword] = useState("");
+  const [resetLoading, setResetLoading] = useState(false);
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -46,6 +54,27 @@ export default function Login() {
       }
     );
   }
+
+  const requestReset = async () => {
+    if (!resetEmail) return;
+    setResetLoading(true);
+    try {
+      await fetch("http://localhost:8080/api/auth/forgot-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: resetEmail }) });
+      setResetRequested(true);
+      toast({ title: "Reset code requested", description: "If the email is registered, a code has been sent." });
+    } finally { setResetLoading(false); }
+  };
+
+  const completeReset = async () => {
+    setResetLoading(true);
+    try {
+      const response = await fetch("http://localhost:8080/api/auth/reset-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: resetEmail, code: resetCode, password: resetPassword }) });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Unable to reset password");
+      toast({ title: "Password reset successful", description: "You can now sign in with your new password." });
+      setForgotOpen(false); setResetRequested(false); setResetEmail(""); setResetCode(""); setResetPassword("");
+    } catch (error) { toast({ title: error instanceof Error ? error.message : "Unable to reset password", variant: "destructive" }); } finally { setResetLoading(false); }
+  };
 
   return (
     <div className="min-h-screen flex">
@@ -171,10 +200,14 @@ export default function Login() {
               >
                 {loginMutation.isPending ? "Signing in…" : "Sign in"}
               </Button>
+              <button type="button" className="w-full text-center text-sm font-medium text-primary hover:underline" onClick={() => setForgotOpen(true)}>Forgot password?</button>
             </form>
           </Form>
         </div>
       </div>
+      <Dialog open={forgotOpen} onOpenChange={(open) => { setForgotOpen(open); if (!open) setResetRequested(false); }}>
+        <DialogContent><DialogHeader><DialogTitle>{resetRequested ? "Set a new password" : "Forgot password"}</DialogTitle></DialogHeader>{!resetRequested ? <div className="space-y-3"><Label>Registered email</Label><Input type="email" value={resetEmail} onChange={(event) => setResetEmail(event.target.value)} placeholder="name@arraafiinfotech.com" /><p className="text-sm text-muted-foreground">We will send a verification code to your registered email.</p><DialogFooter><Button disabled={!resetEmail || resetLoading} onClick={requestReset}>{resetLoading ? "Sending…" : "Send reset code"}</Button></DialogFooter></div> : <div className="space-y-3"><Label>Verification code</Label><Input value={resetCode} onChange={(event) => setResetCode(event.target.value)} inputMode="numeric" /><Label>New password</Label><Input type="password" value={resetPassword} onChange={(event) => setResetPassword(event.target.value)} autoComplete="new-password" /><p className="text-sm text-muted-foreground">Use at least 8 characters.</p><DialogFooter><Button disabled={!resetCode || resetPassword.length < 8 || resetLoading} onClick={completeReset}>{resetLoading ? "Saving…" : "Reset password"}</Button></DialogFooter></div>}</DialogContent>
+      </Dialog>
     </div>
   );
 }

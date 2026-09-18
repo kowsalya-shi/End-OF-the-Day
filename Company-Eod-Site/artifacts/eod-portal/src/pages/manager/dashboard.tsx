@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import {
   useGetDashboardStats, getGetDashboardStatsQueryKey,
@@ -6,7 +7,9 @@ import {
 } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Users, FileText, CheckSquare, Clock, Download, AlertTriangle } from "lucide-react";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Users, FileText, CheckSquare, Clock, Download, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 import { exportToCsv } from "@/lib/export-csv";
 import { useAuth } from "@/lib/auth";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -15,6 +18,61 @@ import { EodEmployeeActivityDashboard } from "@/components/eod-employee-activity
 export default function ManagerDashboard() {
   const { user } = useAuth();
   const today = format(new Date(), "yyyy-MM-dd");
+  const [ageingTasks, setAgeingTasks] = useState<any[]>([]);
+  const [pendingEods, setPendingEods] = useState<any[]>([]);
+  const [pendingTaskApprovals, setPendingTaskApprovals] = useState<any[]>([]);
+  const [reviewLoading, setReviewLoading] = useState(true);
+  const [rejectionTarget, setRejectionTarget] = useState<{ kind: "eod" | "task"; item: any } | null>(null);
+  const [rejectionReason, setRejectionReason] = useState("");
+
+  const reviewPendingEod = async (eod: any, approved: boolean) => {
+    if (!approved) { setRejectionTarget({ kind: "eod", item: eod }); setRejectionReason(""); return; }
+    try {
+      const response = await fetch(`http://localhost:8080/api/eod/${eod.id}/${approved ? "approve" : "reject"}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("auth_token") || ""}` },
+        body: JSON.stringify({ approvedBy: user?.id }),
+      });
+      if (!response.ok) throw new Error();
+      setPendingEods((items) => items.filter((item) => item.id !== eod.id));
+    } catch {
+      window.alert("Unable to review this EOD. Please try again.");
+    }
+  };
+
+  const reviewPendingTask = async (task: any, approved: boolean) => {
+    if (!approved) { setRejectionTarget({ kind: "task", item: task }); setRejectionReason(""); return; }
+    try {
+      const response = await fetch(`http://localhost:8080/api/tasks/${task.id}/${approved ? "approve" : "reject"}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("auth_token") || ""}` },
+        body: JSON.stringify({ approvedBy: user?.id }),
+      });
+      if (!response.ok) throw new Error();
+      setPendingTaskApprovals((items) => items.filter((item) => item.id !== task.id));
+    } catch {
+      window.alert("Unable to review this task. Please try again.");
+    }
+  };
+
+  const submitRejection = async () => {
+    if (!rejectionTarget || !rejectionReason.trim()) return;
+    const { kind, item } = rejectionTarget;
+    try {
+      const response = await fetch(`http://localhost:8080/api/${kind === "eod" ? "eod" : "tasks"}/${item.id}/reject`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("auth_token") || ""}` },
+        body: JSON.stringify({ approvedBy: user?.id, reason: rejectionReason.trim() }),
+      });
+      if (!response.ok) throw new Error();
+      if (kind === "eod") setPendingEods((items) => items.filter((entry) => entry.id !== item.id));
+      else setPendingTaskApprovals((items) => items.filter((entry) => entry.id !== item.id));
+      setRejectionTarget(null);
+      setRejectionReason("");
+    } catch {
+      window.alert("Unable to reject this item. Please try again.");
+    }
+  };
 
   const { data: stats, isLoading: statsLoading } = useGetDashboardStats(
     { date: today },
@@ -31,6 +89,22 @@ export default function ManagerDashboard() {
     { query: { queryKey: getListTasksQueryKey() } },
   );
   const activeTasks = tasks?.filter((task) => task.status !== "completed" && task.status !== "cancelled") ?? [];
+
+  useEffect(() => {
+    if (!user?.role) return;
+    const roleToReview = user.role === "it_manager" ? "tl" : "it_manager";
+    const token = localStorage.getItem("auth_token") || "";
+    setReviewLoading(true);
+    Promise.all([
+      fetch("http://localhost:8080/api/dashboard/task-ageing", { headers: { Authorization: `Bearer ${token}` } }).then((response) => response.ok ? response.json() : []),
+      fetch(`http://localhost:8080/api/eod?userRole=${roleToReview}`, { headers: { Authorization: `Bearer ${token}` } }).then((response) => response.ok ? response.json() : []),
+      fetch(`http://localhost:8080/api/tasks?userRole=${roleToReview}&status=completed`, { headers: { Authorization: `Bearer ${token}` } }).then((response) => response.ok ? response.json() : []),
+    ]).then(([ageing, eods, tasksForReview]) => {
+      setAgeingTasks(ageing);
+      setPendingEods(eods.filter((eod: any) => ["pending", "resubmitted"].includes(eod.approvalStatus || "pending")));
+      setPendingTaskApprovals(tasksForReview.filter((task: any) => ["pending", "resubmitted"].includes(task.approvalStatus || "pending")));
+    }).catch(() => { setAgeingTasks([]); setPendingEods([]); setPendingTaskApprovals([]); }).finally(() => setReviewLoading(false));
+  }, [user?.role]);
 
   const handleExport = () => {
     if (!teamSummary) return;
@@ -119,6 +193,14 @@ export default function ManagerDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      <Card className="border-amber-200">
+        <CardHeader className="flex flex-row items-start justify-between gap-4 space-y-0">
+          <div><CardTitle className="text-base">AGEING REPORT</CardTitle><p className="mt-1 text-sm text-muted-foreground">Tasks in YTS/WIP/Holding for 5 or more days. Take action to move them forward.</p></div>
+          <Button variant="outline" size="sm" disabled={!ageingTasks.length} onClick={() => exportToCsv("ageing_report.csv", ageingTasks.map((task) => ({ Employee: task.userName, Task: task.taskName, Priority: task.priority, Started: task.plannedStartDate || "", "Age (Days)": task.ageDays, Status: task.status })))}><Download className="mr-2 h-4 w-4" /> Export CSV</Button>
+        </CardHeader>
+        <CardContent>{reviewLoading ? <div className="h-24 animate-pulse rounded bg-gray-100" /> : ageingTasks.length ? <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b text-left text-gray-500"><th className="px-2 py-2">Employee</th><th className="px-2 py-2">Task</th><th className="px-2 py-2">Priority</th><th className="px-2 py-2">Started</th><th className="px-2 py-2">Age</th></tr></thead><tbody>{ageingTasks.map((task) => <tr key={task.id} className="border-b"><td className="px-2 py-2 font-medium">{task.userName}</td><td className="px-2 py-2">{task.taskName}</td><td className="px-2 py-2 capitalize">{task.priority}</td><td className="px-2 py-2">{task.plannedStartDate || "-"}</td><td className="px-2 py-2 font-semibold text-amber-700">{task.ageDays} days</td></tr>)}</tbody></table></div> : <p className="py-6 text-center text-sm font-medium text-green-600">No tasks are ageing.</p>}</CardContent>
+      </Card>
 
       {/* Task Overview */}
       <Card className="bg-gray-50 border-gray-200">
@@ -248,6 +330,14 @@ export default function ManagerDashboard() {
           </CardContent>
         </Card>
       )}
+      <Dialog open={!!rejectionTarget} onOpenChange={(open) => { if (!open) { setRejectionTarget(null); setRejectionReason(""); } }}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Reject {rejectionTarget?.kind === "eod" ? "EOD" : "Completed Task"}</DialogTitle></DialogHeader>
+          <p className="text-sm text-muted-foreground">Enter the reason for rejecting {rejectionTarget?.item?.userName}'s {rejectionTarget?.kind === "eod" ? "EOD" : "completed task"}. This reason will be sent to them.</p>
+          <Textarea value={rejectionReason} onChange={(event) => setRejectionReason(event.target.value)} placeholder="Enter rejection reason" autoFocus />
+          <DialogFooter><Button variant="outline" onClick={() => setRejectionTarget(null)}>Cancel</Button><Button variant="destructive" disabled={!rejectionReason.trim()} onClick={submitRejection}>Reject</Button></DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

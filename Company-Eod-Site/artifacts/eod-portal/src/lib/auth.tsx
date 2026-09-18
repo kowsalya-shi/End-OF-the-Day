@@ -49,6 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (newUser.role === "employee") setLocation("/employee/dashboard");
     else if (newUser.role === "tl") setLocation("/tl/dashboard");
     else if (newUser.role === "manager") setLocation("/manager/dashboard");
+    else if (newUser.role === "it_manager") setLocation("/it_manager/dashboard");
     else if (newUser.role === "ceo") setLocation("/ceo/dashboard");
   };
 

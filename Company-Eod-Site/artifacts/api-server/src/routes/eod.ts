@@ -1,9 +1,48 @@
 import { Router } from "express";
 import { db, eodSubmissionsTable, usersTable, teamsTable } from "@workspace/db";
 import { eq, and, sql, inArray } from "drizzle-orm";
-import { notifyEmployeeRecordDeleted } from "./notifications";
+import { createPortalNotification, notifyEmployeeRecordDeleted, notifyRoleScopedEvent } from "./notifications";
+import { sessions } from "./auth";
+import { logEodDeletion } from "../lib/audit";
 
 const router = Router();
+const EOD_SUBMISSION_START_HOUR = 17; // 5:00 PM
+const EOD_SUBMISSION_START_MINUTE = 30; // 5:30 PM
+const EOD_SUBMISSION_END_HOUR = 21; // 9:00 PM
+
+function getSession(req: import("express").Request) {
+  const authHeader = req.headers.authorization;
+  return authHeader?.startsWith("Bearer ") ? sessions.get(authHeader.slice(7)) : undefined;
+}
+
+function isWithinEodSubmissionWindow(userRole?: string) {
+  // TL, Manager, IT Manager, and CEO can access anytime
+  if (userRole && ["tl", "manager", "it_manager", "ceo"].includes(userRole)) {
+    return true;
+  }
+
+  // Employees can only submit between 5:30 PM and 9:00 PM
+  const now = new Date();
+  const hour = now.getHours();
+  const minute = now.getMinutes();
+  
+  // Before 5:30 PM
+  if (hour < EOD_SUBMISSION_START_HOUR) return false;
+  if (hour === EOD_SUBMISSION_START_HOUR && minute < EOD_SUBMISSION_START_MINUTE) return false;
+  
+  // After 9:00 PM
+  if (hour >= EOD_SUBMISSION_END_HOUR) return false;
+  
+  return true;
+}
+
+// Before the 9 PM deadline, follow up on the previous workday's EOD.
+// At and after 9 PM, today's missing EOD becomes the pending item.
+function pendingEodDate() {
+  const now = new Date();
+  if (now.getHours() < EOD_SUBMISSION_END_HOUR) now.setDate(now.getDate() - 1);
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+}
 
 async function enrichEod(eod: typeof eodSubmissionsTable.$inferSelect) {
   let userName: string | null = null;
@@ -51,7 +90,7 @@ async function enrichEod(eod: typeof eodSubmissionsTable.$inferSelect) {
 
 router.get("/eod/pending", async (req, res) => {
   const { date, teamId, tlId } = req.query;
-  const targetDate = (date as string) || new Date().toISOString().split("T")[0];
+  const targetDate = (date as string) || pendingEodDate();
 
   // Get submitted user IDs for this date
   const submitted = await db
@@ -147,24 +186,39 @@ router.get("/eod", async (req, res) => {
 });
 
 router.post("/eod", async (req, res) => {
-  const { date, attendanceStatus, remarks, tasksCompleted, trainingAttended, trainingTopic, internalWork, challenges, tomorrowPlan } = req.body;
-  if (!date || !attendanceStatus) {
-    return res.status(400).json({ error: "date and attendanceStatus required" });
-  }
-
   // Get userId from auth header
   const authHeader = req.headers.authorization;
   let userId = req.body.userId;
+  let userRole: string | undefined;
+  
   if (!userId && authHeader?.startsWith("Bearer ")) {
     const { sessions } = await import("./auth");
     const token = authHeader.slice(7);
     const session = sessions.get(token);
     userId = session?.userId;
+    userRole = session?.role;
   }
 
   if (!userId) return res.status(401).json({ error: "Not authenticated" });
 
+  // Get user details to check role
   const [user] = await db.select().from(usersTable).where(eq(usersTable.id, userId));
+  if (!user) return res.status(401).json({ error: "User not found" });
+  
+  userRole = userRole || user.role;
+
+  // Check if user can submit EOD at this time
+  if (!isWithinEodSubmissionWindow(userRole)) {
+    if (userRole === "employee") {
+      return res.status(403).json({ error: "EOD submission is available from 5:30 PM until 9:00 PM for employees." });
+    }
+    return res.status(403).json({ error: "EOD submission is not available at this time." });
+  }
+  
+  const { date, attendanceStatus, remarks, tasksCompleted, trainingAttended, trainingTopic, internalWork, challenges, tomorrowPlan } = req.body;
+  if (!date || !attendanceStatus) {
+    return res.status(400).json({ error: "date and attendanceStatus required" });
+  }
 
   const [eod] = await db.insert(eodSubmissionsTable).values({
     userId,
@@ -192,6 +246,22 @@ router.get("/eod/:id", async (req, res) => {
 
 router.patch("/eod/:id", async (req, res) => {
   const id = parseInt(req.params.id);
+  
+  // Get session to check user role
+  const session = getSession(req);
+  if (!session) return res.status(401).json({ error: "Not authenticated" });
+  
+  const [user] = await db.select().from(usersTable).where(eq(usersTable.id, session.userId));
+  if (!user) return res.status(401).json({ error: "User not found" });
+  
+  // Check if user can update EOD at this time
+  if (!isWithinEodSubmissionWindow(user.role)) {
+    if (user.role === "employee") {
+      return res.status(403).json({ error: "EOD updates are available from 5:30 PM until 9:00 PM for employees." });
+    }
+    return res.status(403).json({ error: "EOD updates are not available at this time." });
+  }
+  
   const updates: Partial<typeof eodSubmissionsTable.$inferInsert> = {};
   const fields = ["attendanceStatus", "remarks", "tasksCompleted", "trainingAttended", "trainingTopic", "internalWork", "challenges", "tomorrowPlan"];
   for (const f of fields) {
@@ -215,8 +285,59 @@ router.patch("/eod/:id", async (req, res) => {
 
 router.delete("/eod/:id", async (req, res) => {
   const id = parseInt(req.params.id);
+  const session = getSession(req);
+  
+  if (!session) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  // Get user details
+  const [user] = await db.select().from(usersTable).where(eq(usersTable.id, session.userId));
+  if (!user) {
+    return res.status(401).json({ error: "User not found" });
+  }
+
   const [eod] = await db.select().from(eodSubmissionsTable).where(eq(eodSubmissionsTable.id, id));
   if (!eod) return res.status(404).json({ error: "Not found" });
+
+  // Get EOD submitter name for audit log
+  let eodUserName = null;
+  if (eod.userId) {
+    const [eodUser] = await db.select().from(usersTable).where(eq(usersTable.id, eod.userId));
+    eodUserName = eodUser?.name;
+  }
+
+  // Permission check: Only allow deletion if:
+  // 1. User is the EOD owner (employee can delete their own EOD)
+  // 2. User is TL and EOD belongs to their team member
+  // 3. User is IT Manager, Manager, or CEO (can delete any EOD)
+  const canDelete = 
+    eod.userId === session.userId || // Own EOD
+    ["it_manager", "manager", "ceo"].includes(user.role); // Admin roles
+
+  if (!canDelete && user.role === "tl") {
+    // TL can delete EODs of their team members
+    if (eod.teamId) {
+      const [team] = await db.select().from(teamsTable).where(eq(teamsTable.id, eod.teamId));
+      if (team && team.tlId === session.userId) {
+        // TL owns this team
+      } else {
+        return res.status(403).json({ error: "You don't have permission to delete this EOD" });
+      }
+    } else {
+      return res.status(403).json({ error: "You don't have permission to delete this EOD" });
+    }
+  } else if (!canDelete) {
+    return res.status(403).json({ error: "You don't have permission to delete this EOD" });
+  }
+
+  // Log to audit before deletion
+  await logEodDeletion(
+    { ...eod, userName: eodUserName },
+    { id: user.id, name: user.name },
+    req
+  );
+
   await db.delete(eodSubmissionsTable).where(eq(eodSubmissionsTable.id, id));
   await notifyEmployeeRecordDeleted(eod.userId, eod.teamId, "EOD Report", `EOD for ${eod.date}`, eod.id);
   res.status(204).send();
@@ -291,6 +412,14 @@ router.post("/eod/:id/approve", async (req, res) => {
     return res.status(404).json({ error: "EOD not found" });
   }
 
+  const [approver] = await db.select().from(usersTable).where(eq(usersTable.id, approvedBy));
+  await notifyRoleScopedEvent(eod.userId, eod.teamId, `eod_approved_${eod.id}`, "EOD Approved", {
+    self: `Your EOD for ${eod.date} was approved by ${approver?.name ?? "your reviewer"}.`,
+    team: `${approver?.name ?? "A reviewer"} approved this EOD.`,
+    management: `${approver?.name ?? "A reviewer"} approved this EOD.`,
+    actor: `You approved this EOD.`,
+  }, eod.date, undefined, approvedBy);
+
   // Log the approval action (you could create an approval history table)
   // For now, just return the updated EOD
 
@@ -328,6 +457,14 @@ router.post("/eod/:id/reject", async (req, res) => {
   if (!eod) {
     return res.status(404).json({ error: "EOD not found" });
   }
+
+  const [approver] = await db.select().from(usersTable).where(eq(usersTable.id, approvedBy));
+  await notifyRoleScopedEvent(eod.userId, eod.teamId, `eod_rejected_${eod.id}`, "EOD Rejected", {
+    self: `Your EOD for ${eod.date} was rejected by ${approver?.name ?? "your reviewer"}. Reason: ${reason}`,
+    team: `${approver?.name ?? "A reviewer"} rejected this EOD. Reason: ${reason}`,
+    management: `${approver?.name ?? "A reviewer"} rejected this EOD. Reason: ${reason}`,
+    actor: `You rejected this EOD.`,
+  }, eod.date, undefined, approvedBy);
 
   res.json(await enrichEod(eod));
 });
@@ -396,6 +533,37 @@ router.get("/eod/approvals/approved", async (req, res) => {
 
   const enriched = await Promise.all(approvedEods.map(enrichEod));
   res.json(enriched);
+});
+
+// Check if EOD submission is currently allowed for the authenticated user
+router.get("/eod/check-window", async (req, res) => {
+  const session = getSession(req);
+  if (!session) return res.status(401).json({ error: "Not authenticated" });
+  
+  const [user] = await db.select().from(usersTable).where(eq(usersTable.id, session.userId));
+  if (!user) return res.status(401).json({ error: "User not found" });
+  
+  const canSubmit = isWithinEodSubmissionWindow(user.role);
+  const now = new Date();
+  const hour = now.getHours();
+  const minute = now.getMinutes();
+  
+  let message = "";
+  if (!canSubmit && user.role === "employee") {
+    if (hour < 17 || (hour === 17 && minute < 30)) {
+      message = "EOD submission opens at 5:30 PM";
+    } else if (hour >= 21) {
+      message = "EOD submission window has closed for today (5:30 PM - 9:00 PM)";
+    }
+  }
+  
+  res.json({
+    canSubmit,
+    role: user.role,
+    currentTime: now.toISOString(),
+    message,
+    window: user.role === "employee" ? "5:30 PM - 9:00 PM" : "Anytime"
+  });
 });
 
 export default router;

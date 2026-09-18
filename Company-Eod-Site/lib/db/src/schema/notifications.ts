@@ -3,7 +3,9 @@ import { date, integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-
 export const portalNotificationsTable = pgTable("portal_notifications", {
   id: serial("id").primaryKey(),
   recipientUserId: integer("recipient_user_id").notNull(),
+  recipientRole: text("recipient_role").notNull(),
   employeeId: integer("employee_id").notNull(),
+  relatedTaskId: integer("related_task_id"),
   type: text("type").notNull(),
   title: text("title").notNull(),
   message: text("message").notNull(),

@@ -19,7 +19,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Plus, Edit2, Trash2, Shield } from "lucide-react";
+import { Plus, Edit2, Trash2, Shield, KeyRound } from "lucide-react";
 
 const userSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -29,6 +29,7 @@ const userSchema = z.object({
   teamId: z.coerce.number().optional().nullable(),
   employeeId: z.string().optional().nullable(),
   department: z.string().optional().nullable(),
+  status: z.enum(["active", "inactive"]).default("active"),
 });
 
 export default function ManagerUsers() {
@@ -39,6 +40,8 @@ export default function ManagerUsers() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [isResetOpen, setIsResetOpen] = useState(false);
+  const [temporaryPassword, setTemporaryPassword] = useState("");
 
   const { data: users, isLoading } = useListUsers({}, { query: { queryKey: getListUsersQueryKey() } });
   const { data: teams } = useListTeams({ query: { queryKey: getListTeamsQueryKey() } });
@@ -50,7 +53,7 @@ export default function ManagerUsers() {
   const form = useForm<z.infer<typeof userSchema>>({
     resolver: zodResolver(userSchema),
     defaultValues: {
-      name: "", email: "", password: "", role: "employee", teamId: null, employeeId: "", department: ""
+      name: "", email: "", password: "", role: "employee", teamId: null, employeeId: "", department: "", status: "active"
     },
   });
 
@@ -117,8 +120,16 @@ export default function ManagerUsers() {
       teamId: u.teamId,
       employeeId: u.employeeId || "",
       department: u.department || ""
+      , status: u.status || "active"
     });
     setIsEditOpen(true);
+  };
+
+  const resetPassword = async () => {
+    if (!selectedUser || temporaryPassword.length < 8) return;
+    const response = await fetch(`http://localhost:8080/api/users/${selectedUser.id}/reset-password`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("auth_token") || ""}` }, body: JSON.stringify({ password: temporaryPassword }) });
+    if (!response.ok) { toast({ title: "Unable to reset password", variant: "destructive" }); return; }
+    setIsResetOpen(false); setTemporaryPassword(""); toast({ title: "Temporary password saved", description: `Give the new password securely to ${selectedUser.name}.` });
   };
 
   const RoleBadge = ({ role }: { role: string }) => {
@@ -185,6 +196,9 @@ export default function ManagerUsers() {
                     </Select></FormItem>
                   )} />
                 </div>
+                <FormField control={form.control} name="status" render={({ field }) => (
+                  <FormItem><FormLabel>Status</FormLabel><Select onValueChange={field.onChange} value={field.value}><FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl><SelectContent><SelectItem value="active">Active</SelectItem><SelectItem value="inactive">Inactive</SelectItem></SelectContent></Select></FormItem>
+                )} />
                 <div className="flex justify-end pt-4"><Button type="submit">Save User</Button></div>
               </form>
             </Form>
@@ -214,6 +228,7 @@ export default function ManagerUsers() {
                 <TableCell>{u.teamName || "-"}</TableCell>
                 <TableCell className="text-right">
                   <Button variant="ghost" size="icon" onClick={() => openEdit(u)}><Edit2 className="h-4 w-4" /></Button>
+                  <Button variant="ghost" size="icon" title="Reset password" onClick={() => { setSelectedUser(u); setTemporaryPassword(""); setIsResetOpen(true); }}><KeyRound className="h-4 w-4" /></Button>
                   <Button variant="ghost" size="icon" className="text-red-500" onClick={() => {setSelectedUser(u); setIsDeleteOpen(true);}}><Trash2 className="h-4 w-4" /></Button>
                 </TableCell>
               </TableRow>
@@ -235,7 +250,7 @@ export default function ManagerUsers() {
                   <FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" {...field} /></FormControl></FormItem>
                 )} />
                 <FormField control={form.control} name="password" render={({ field }) => (
-                  <FormItem><FormLabel>New Password (leave blank to keep current)</FormLabel><FormControl><Input type="password" {...field} /></FormControl></FormItem>
+                  <FormItem><FormLabel>New Password (leave blank to keep current)</FormLabel><FormControl><Input type="password" autoComplete="new-password" {...field} /></FormControl></FormItem>
                 )} />
                 <div className="grid grid-cols-2 gap-4">
                   <FormField control={form.control} name="role" render={({ field }) => (
@@ -261,10 +276,17 @@ export default function ManagerUsers() {
                     </Select></FormItem>
                   )} />
                 </div>
+                <FormField control={form.control} name="status" render={({ field }) => (
+                  <FormItem><FormLabel>Status</FormLabel><Select onValueChange={field.onChange} value={field.value}><FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl><SelectContent><SelectItem value="active">Active</SelectItem><SelectItem value="inactive">Inactive</SelectItem></SelectContent></Select></FormItem>
+                )} />
                 <div className="flex justify-end pt-4"><Button type="submit">Update User</Button></div>
               </form>
             </Form>
         </DialogContent>
+      </Dialog>
+
+      <Dialog open={isResetOpen} onOpenChange={setIsResetOpen}>
+        <DialogContent><DialogHeader><DialogTitle>Reset Password</DialogTitle></DialogHeader><p className="text-sm text-muted-foreground">Set a temporary password for {selectedUser?.name}. The existing password is never shown.</p><Input type="password" autoComplete="new-password" value={temporaryPassword} onChange={(event) => setTemporaryPassword(event.target.value)} placeholder="Temporary password (minimum 8 characters)" /><div className="flex justify-end gap-2"><Button variant="outline" onClick={() => setIsResetOpen(false)}>Cancel</Button><Button disabled={temporaryPassword.length < 8} onClick={resetPassword}>Save Temporary Password</Button></div></DialogContent>
       </Dialog>
 
       {/* Delete Dialog */}

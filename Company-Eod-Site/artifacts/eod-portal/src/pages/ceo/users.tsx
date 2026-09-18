@@ -18,7 +18,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Download, Plus, Edit2, Trash2, Filter } from "lucide-react";
+import { Download, Plus, Edit2, Trash2, Filter, KeyRound } from "lucide-react";
 
 const userSchema = z.object({
   name: z.string().min(1, "Name required"),
@@ -28,6 +28,7 @@ const userSchema = z.object({
   teamId: z.coerce.number().optional(),
   employeeId: z.string().optional(),
   department: z.string().optional(),
+  status: z.enum(["active", "inactive"]).default("active"),
 });
 
 type UserFormData = z.infer<typeof userSchema>;
@@ -41,6 +42,8 @@ export default function HRUsers() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [isResetOpen, setIsResetOpen] = useState(false);
+  const [temporaryPassword, setTemporaryPassword] = useState("");
 
   const { data: users, isLoading } = useListUsers(
     { role: roleFilter !== "all" ? roleFilter : undefined, teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined },
@@ -54,7 +57,7 @@ export default function HRUsers() {
 
   const form = useForm<UserFormData>({
     resolver: zodResolver(userSchema),
-    defaultValues: { name: "", email: "", role: "employee", password: "", teamId: undefined, employeeId: "", department: "" },
+    defaultValues: { name: "", email: "", role: "employee", password: "", teamId: undefined, employeeId: "", department: "", status: "active" },
   });
 
   const handleExport = () => {
@@ -98,7 +101,7 @@ export default function HRUsers() {
 
   const openEdit = (user: any) => {
     setSelectedUser(user);
-    form.reset({ name: user.name, email: user.email, role: user.role, teamId: user.teamId || undefined, employeeId: user.employeeId || "", department: user.department || "" });
+    form.reset({ name: user.name, email: user.email, role: user.role, teamId: user.teamId || undefined, employeeId: user.employeeId || "", department: user.department || "", status: user.status || "active" });
     setIsEditOpen(true);
   };
 
@@ -115,6 +118,13 @@ export default function HRUsers() {
         },
       },
     );
+  };
+
+  const resetPassword = async () => {
+    if (!selectedUser || temporaryPassword.length < 8) return;
+    const response = await fetch(`http://localhost:8080/api/users/${selectedUser.id}/reset-password`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("auth_token") || ""}` }, body: JSON.stringify({ password: temporaryPassword }) });
+    if (!response.ok) { toast({ title: "Unable to reset password", variant: "destructive" }); return; }
+    setIsResetOpen(false); setTemporaryPassword(""); toast({ title: "Temporary password saved", description: `Give the new password securely to ${selectedUser.name}.` });
   };
 
   const UserFormFields = ({ isEdit = false }: { isEdit?: boolean }) => (
@@ -170,6 +180,9 @@ export default function HRUsers() {
       )} />
       <FormField control={form.control} name="department" render={({ field }) => (
         <FormItem><FormLabel>Department</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+      )} />
+      <FormField control={form.control} name="status" render={({ field }) => (
+        <FormItem><FormLabel>Account Status</FormLabel><Select onValueChange={field.onChange} value={field.value}><FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl><SelectContent><SelectItem value="active">Active</SelectItem><SelectItem value="inactive">Inactive</SelectItem></SelectContent></Select><FormMessage /></FormItem>
       )} />
     </div>
   );
@@ -285,6 +298,7 @@ export default function HRUsers() {
                         <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-primary" onClick={() => openEdit(user)}>
                           <Edit2 className="h-4 w-4" />
                         </Button>
+                        <Button variant="ghost" size="icon" title="Reset password" className="h-8 w-8 text-gray-400 hover:text-primary" onClick={() => { setSelectedUser(user); setTemporaryPassword(""); setIsResetOpen(true); }}><KeyRound className="h-4 w-4" /></Button>
                         <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-red-600"
                           onClick={() => { setSelectedUser(user); setIsDeleteOpen(true); }}>
                           <Trash2 className="h-4 w-4" />
@@ -315,6 +329,8 @@ export default function HRUsers() {
           </Form>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={isResetOpen} onOpenChange={setIsResetOpen}><DialogContent><DialogHeader><DialogTitle>Reset Password</DialogTitle></DialogHeader><p className="text-sm text-muted-foreground">Set a temporary password for {selectedUser?.name}. The existing password is never shown.</p><Input type="password" autoComplete="new-password" value={temporaryPassword} onChange={(event) => setTemporaryPassword(event.target.value)} placeholder="Temporary password (minimum 8 characters)" /><div className="flex justify-end gap-2"><Button variant="outline" onClick={() => setIsResetOpen(false)}>Cancel</Button><Button disabled={temporaryPassword.length < 8} onClick={resetPassword}>Save Temporary Password</Button></div></DialogContent></Dialog>
 
       <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
         <AlertDialogContent>

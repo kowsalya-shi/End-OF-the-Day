@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
 import {
@@ -13,6 +13,8 @@ import {
   LogOut,
   Menu,
   BarChart3,
+  Shield,
+  TrendingUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -23,22 +25,30 @@ interface MainLayoutProps {
 }
 
 const navItems = [
-  { title: "Dashboard", href: (r: string) => `/${r}/dashboard`, icon: LayoutDashboard, roles: ["employee", "tl", "manager", "ceo"] },
-  { title: "Analytics", href: (r: string) => `/${r}/analytics`, icon: BarChart3, roles: ["manager", "ceo"] },
+  { title: "Dashboard", href: (r: string) => `/${r}/dashboard`, icon: LayoutDashboard, roles: ["employee", "tl", "manager", "it_manager", "ceo"] },
+  { title: "MIS Report", href: (r: string) => `/${r}/mis`, icon: TrendingUp, roles: ["tl", "manager", "it_manager", "ceo"] },
+  { title: "Analytics", href: (r: string) => `/${r}/analytics`, icon: BarChart3, roles: ["manager", "it_manager", "ceo"] },
+  { title: "IT Manager Reports", href: (r: string) => `/${r}/it-manager-reports`, icon: FileText, roles: ["manager", "ceo"] },
+  { title: "My Reports", href: (r: string) => `/${r}/it-manager-reports`, icon: FileText, roles: ["it_manager"] },
   { title: "TL Reports", href: (r: string) => `/${r}/tl-eod-reports`, icon: FileText, roles: ["manager", "ceo"] },
-  { title: "Daily EOD", href: (r: string) => `/${r}/eod`, icon: FileText, roles: ["employee", "tl", "manager", "ceo"] },
-  { title: "Tasks", href: (r: string) => `/${r}/tasks`, icon: CheckSquare, roles: ["employee", "tl", "manager", "ceo"] },
-  { title: "Daily Work", href: (r: string) => `/${r}/daily-work`, icon: ListTodo, roles: ["employee", "tl", "manager", "ceo"] },
-  { title: "Training", href: (r: string) => `/${r}/training`, icon: GraduationCap, roles: ["employee", "tl", "manager", "ceo"] },
+  { title: "TL Reports", href: () => "/it_manager/tl-reports", icon: FileText, roles: ["it_manager"] },
+  { title: "Employee Reports", href: (r: string) => `/${r}/employee-reports`, icon: FileText, roles: ["manager", "it_manager", "ceo"] },
+  { title: "Daily EOD", href: (r: string) => `/${r}/eod`, icon: FileText, roles: ["employee", "tl"] },
+  { title: "Tasks", href: (r: string) => `/${r}/tasks`, icon: CheckSquare, roles: ["employee", "tl"] },
+  { title: "Daily Work", href: (r: string) => `/${r}/daily-work`, icon: ListTodo, roles: ["employee", "tl"] },
+  { title: "Training", href: (r: string) => `/${r}/training`, icon: GraduationCap, roles: ["employee", "tl"] },
   { title: "Users", href: (r: string) => `/${r}/users`, icon: Users, roles: ["manager", "ceo"] },
   { title: "Teams", href: (r: string) => `/${r}/teams`, icon: Building2, roles: ["manager", "ceo"] },
-  { title: "Notifications", href: (r: string) => `/${r}/notifications`, icon: Bell, roles: ["manager", "ceo"] },
+  { title: "Audit Log", href: (r: string) => `/${r}/audit`, icon: Shield, roles: ["manager", "it_manager", "ceo"] },
+  { title: "Activity Audit", href: (r: string) => `/${r}/activity-audit`, icon: FileText, roles: ["manager", "ceo"] },
+  { title: "Notifications", href: (r: string) => `/${r}/notifications`, icon: Bell, roles: ["employee", "tl", "manager", "it_manager", "ceo"] },
 ];
 
 const roleLabels: Record<string, string> = {
   employee: "Employee Portal",
   tl: "Team Leader Portal",
   manager: "Manager Portal",
+  it_manager: "IT Manager Portal",
   ceo: "CEO Portal",
 };
 
@@ -46,17 +56,30 @@ const roleSubtitle: Record<string, string> = {
   employee: "Employee",
   tl: "Team Leader",
   manager: "Manager",
+  it_manager: "IT Manager",
   ceo: "CEO",
 };
 
 export function MainLayout({ children }: MainLayoutProps) {
   const { user, logout } = useAuth();
   const [location] = useLocation();
+  const [notificationCount, setNotificationCount] = useState(0);
 
   if (!user) return null;
 
   const role = user.role;
   const filtered = navItems.filter(item => item.roles.includes(role));
+
+  useEffect(() => {
+    let active = true;
+    const loadNotifications = () => fetch("http://localhost:8080/api/notifications", {
+      headers: { Authorization: `Bearer ${localStorage.getItem("auth_token") || ""}` },
+    }).then((response) => response.ok ? response.json() : []).then((items) => { if (active) setNotificationCount(items.filter((item: { readAt?: string | null }) => !item.readAt).length); }).catch(() => { if (active) setNotificationCount(0); });
+    loadNotifications();
+    const timer = window.setInterval(loadNotifications, 30000);
+    window.addEventListener("portal-notifications-read", loadNotifications);
+    return () => { active = false; window.clearInterval(timer); window.removeEventListener("portal-notifications-read", loadNotifications); };
+  }, [user.id]);
 
   const NavLinks = () => (
     <nav className="mt-2 px-3 space-y-0.5">
@@ -78,6 +101,9 @@ export function MainLayout({ children }: MainLayoutProps) {
                 }`}
               />
               {item.title}
+              {item.title === "Notifications" && notificationCount > 0 && (
+                <span className="ml-auto inline-flex min-w-5 h-5 items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-bold text-white">{notificationCount > 99 ? "99+" : notificationCount}</span>
+              )}
               {isActive && (
                 <span className="ml-auto w-1 h-4 rounded-full bg-sky-400 flex-shrink-0" />
               )}

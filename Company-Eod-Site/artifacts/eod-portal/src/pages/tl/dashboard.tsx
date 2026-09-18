@@ -13,16 +13,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { Users, FileText, CheckCircle, Clock, XCircle } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { PortalNotifications } from "@/components/portal-notifications";
+import { exportToCsv } from "@/lib/export-csv";
 
 export default function TLDashboard() {
   const { user } = useAuth();
   const { toast } = useToast();
   const today = format(new Date(), "yyyy-MM-dd");
-  const [pendingApprovals, setPendingApprovals] = useState<any[]>([]);
-  const [approvalLoading, setApprovalLoading] = useState(true);
-  const [selectedEod, setSelectedEod] = useState<any>(null);
-  const [rejectionReason, setRejectionReason] = useState("");
+  const [pendingTaskApprovals, setPendingTaskApprovals] = useState<any[]>([]);
+  const [taskApprovalLoading, setTaskApprovalLoading] = useState(true);
+  const [selectedTask, setSelectedTask] = useState<any>(null);
+  const [taskRejectionReason, setTaskRejectionReason] = useState("");
+  const [ageingTasks, setAgeingTasks] = useState<any[]>([]);
+  const [ageingLoading, setAgeingLoading] = useState(true);
 
   const { data: teamSummary, isLoading: summaryLoading } = useGetTeamSummary(
     { date: today },
@@ -33,59 +35,72 @@ export default function TLDashboard() {
     { query: { queryKey: getListTeamsQueryKey() } },
   );
 
-  const loadPendingApprovals = async () => {
+  const loadPendingTaskApprovals = async () => {
     if (!user?.id) return;
-    setApprovalLoading(true);
+    setTaskApprovalLoading(true);
     try {
-      const token = localStorage.getItem("auth_token");
-      const response = await fetch(`http://localhost:8080/api/eod/approvals/pending?tlId=${user.id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const response = await fetch(`http://localhost:8080/api/tasks?tlId=${user.id}&status=completed`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("auth_token") || ""}` },
       });
-      if (!response.ok) throw new Error("Unable to load EOD approvals");
-      setPendingApprovals(await response.json());
+      if (!response.ok) throw new Error("Unable to load completed task approvals");
+      const tasks = await response.json();
+      setPendingTaskApprovals(tasks.filter((task: any) => ["pending", "resubmitted"].includes(task.approvalStatus || "pending")));
     } catch {
-      toast({ title: "Unable to load approvals", variant: "destructive" });
+      toast({ title: "Unable to load completed task approvals", variant: "destructive" });
     } finally {
-      setApprovalLoading(false);
+      setTaskApprovalLoading(false);
     }
   };
 
   useEffect(() => {
-    loadPendingApprovals();
+    loadPendingTaskApprovals();
   }, [user?.id]);
 
-  const handleApprove = async (eodId: number) => {
+  useEffect(() => {
+    if (!user?.id) return;
+    setAgeingLoading(true);
+    fetch(`http://localhost:8080/api/dashboard/task-ageing?tlId=${user.id}`, { headers: { Authorization: `Bearer ${localStorage.getItem("auth_token") || ""}` } })
+      .then((response) => response.ok ? response.json() : [])
+      .then(setAgeingTasks)
+      .catch(() => setAgeingTasks([]))
+      .finally(() => setAgeingLoading(false));
+  }, [user?.id]);
+
+  const reviewCompletedTask = async (task: any, approved: boolean) => {
+    if (!approved) {
+      setSelectedTask(task);
+      setTaskRejectionReason("");
+      return;
+    }
     try {
-      const token = localStorage.getItem("auth_token");
-      const response = await fetch(`http://localhost:8080/api/eod/${eodId}/approve`, {
+      const response = await fetch(`http://localhost:8080/api/tasks/${task.id}/approve`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("auth_token") || ""}` },
         body: JSON.stringify({ approvedBy: user?.id }),
       });
-      if (!response.ok) throw new Error("Unable to approve EOD");
-      toast({ title: "EOD approved" });
-      loadPendingApprovals();
+      if (!response.ok) throw new Error("Unable to review task");
+      toast({ title: "Task approved" });
+      loadPendingTaskApprovals();
     } catch {
-      toast({ title: "Approval failed", variant: "destructive" });
+      toast({ title: "Task approval failed", variant: "destructive" });
     }
   };
 
-  const handleReject = async () => {
-    if (!selectedEod || !rejectionReason.trim()) return;
+  const handleTaskReject = async () => {
+    if (!selectedTask || !taskRejectionReason.trim()) return;
     try {
-      const token = localStorage.getItem("auth_token");
-      const response = await fetch(`http://localhost:8080/api/eod/${selectedEod.id}/reject`, {
+      const response = await fetch(`http://localhost:8080/api/tasks/${selectedTask.id}/reject`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ approvedBy: user?.id, reason: rejectionReason.trim() }),
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("auth_token") || ""}` },
+        body: JSON.stringify({ approvedBy: user?.id, reason: taskRejectionReason.trim() }),
       });
-      if (!response.ok) throw new Error("Unable to reject EOD");
-      toast({ title: "EOD rejected" });
-      setSelectedEod(null);
-      setRejectionReason("");
-      loadPendingApprovals();
+      if (!response.ok) throw new Error("Unable to reject task");
+      toast({ title: "Task rejected" });
+      setSelectedTask(null);
+      setTaskRejectionReason("");
+      loadPendingTaskApprovals();
     } catch {
-      toast({ title: "Rejection failed", variant: "destructive" });
+      toast({ title: "Task rejection failed", variant: "destructive" });
     }
   };
 
@@ -173,52 +188,24 @@ export default function TLDashboard() {
         </Card>
       </div>
 
-      <PortalNotifications />
+      <Card className="border-amber-200">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0">
+          <div><CardTitle className="text-base">AGEING REPORT</CardTitle><p className="mt-1 text-sm text-muted-foreground">Tasks in YTS/WIP/Holding for 5 or more days. Take action to move them forward.</p></div>
+          <Button variant="outline" size="sm" disabled={!ageingTasks.length} onClick={() => exportToCsv("ageing_report.csv", ageingTasks.map((task) => ({ Task: task.taskName, Code: task.taskCode || "", Employee: task.userName, Team: task.teamName, Priority: task.priority, "Planned Start": task.plannedStartDate || "", "Age (Days)": task.ageDays, Status: task.status })))}>Export CSV</Button>
+        </CardHeader>
+        <CardContent>{ageingLoading ? <div className="h-20 animate-pulse rounded bg-gray-100" /> : ageingTasks.length ? <div className="overflow-x-auto"><Table><TableHeader><TableRow><TableHead>Employee</TableHead><TableHead>Task</TableHead><TableHead>Priority</TableHead><TableHead>Started</TableHead><TableHead>Age</TableHead></TableRow></TableHeader><TableBody>{ageingTasks.map((task) => <TableRow key={task.id}><TableCell>{task.userName}</TableCell><TableCell>{task.taskName}</TableCell><TableCell className="capitalize">{task.priority}</TableCell><TableCell>{task.plannedStartDate || "-"}</TableCell><TableCell className="font-semibold text-amber-700">{task.ageDays} days</TableCell></TableRow>)}</TableBody></Table></div> : <p className="py-3 text-sm text-green-700">No ageing tasks.</p>}</CardContent>
+      </Card>
 
       <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
         <Card className="col-span-1">
-          <CardHeader>
-            <CardTitle>Awaiting EOD Approval</CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle>Awaiting Completed Task Approval</CardTitle></CardHeader>
           <CardContent>
-            {approvalLoading ? (
-              <div className="space-y-3">
-                {[1, 2, 3].map(i => <div key={i} className="h-12 bg-gray-100 rounded animate-pulse"></div>)}
-              </div>
-            ) : pendingApprovals.length > 0 ? (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Team Member</TableHead>
-                      <TableHead>Submitted</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {pendingApprovals.map((eod) => (
-                      <TableRow key={eod.id}>
-                        <TableCell className="font-medium">{eod.userName}</TableCell>
-                        <TableCell className="text-sm text-gray-500">{new Date(eod.submittedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => handleApprove(eod.id)}>
-                              <CheckCircle className="mr-1 h-4 w-4" /> Approve
-                            </Button>
-                            <Button size="sm" variant="destructive" onClick={() => setSelectedEod(eod)}>
-                              <XCircle className="mr-1 h-4 w-4" /> Reject
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+            {taskApprovalLoading ? (
+              <div className="space-y-3">{[1, 2].map((item) => <div key={item} className="h-12 animate-pulse rounded bg-gray-100" />)}</div>
+            ) : pendingTaskApprovals.length > 0 ? (
+              <div className="overflow-x-auto"><Table><TableHeader><TableRow><TableHead>Team Member</TableHead><TableHead>Task</TableHead><TableHead>Progress</TableHead><TableHead className="text-right">Actions</TableHead></TableRow></TableHeader><TableBody>{pendingTaskApprovals.map((task) => <TableRow key={task.id}><TableCell className="font-medium">{task.userName}</TableCell><TableCell>{task.taskName}</TableCell><TableCell>{task.completionPct || 100}%</TableCell><TableCell className="text-right"><div className="flex justify-end gap-2"><Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => reviewCompletedTask(task, true)}><CheckCircle className="mr-1 h-4 w-4" /> Approve</Button><Button size="sm" variant="destructive" onClick={() => reviewCompletedTask(task, false)}><XCircle className="mr-1 h-4 w-4" /> Reject</Button></div></TableCell></TableRow>)}</TableBody></Table></div>
             ) : (
-              <div className="text-center py-6 text-green-600 font-medium">
-                No EOD submissions are awaiting approval.
-              </div>
+              <div className="py-6 text-center font-medium text-green-600">No completed tasks are awaiting approval.</div>
             )}
           </CardContent>
         </Card>
@@ -262,19 +249,20 @@ export default function TLDashboard() {
         </Card>
       </div>
 
-      <Dialog open={!!selectedEod} onOpenChange={(open) => { if (!open) { setSelectedEod(null); setRejectionReason(""); } }}>
+      <Dialog open={!!selectedTask} onOpenChange={(open) => { if (!open) { setSelectedTask(null); setTaskRejectionReason(""); } }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Reject EOD</DialogTitle>
+            <DialogTitle>Reject Completed Task</DialogTitle>
           </DialogHeader>
+          {selectedTask && <p className="text-sm text-muted-foreground">Rejecting: <span className="font-medium text-foreground">{selectedTask.taskName}</span> — {selectedTask.userName}</p>}
           <Textarea
-            value={rejectionReason}
-            onChange={(event) => setRejectionReason(event.target.value)}
-            placeholder="Reason for rejection"
+            value={taskRejectionReason}
+            onChange={(event) => setTaskRejectionReason(event.target.value)}
+            placeholder="Enter the reason for rejection"
           />
           <DialogFooter>
-            <Button variant="outline" onClick={() => { setSelectedEod(null); setRejectionReason(""); }}>Cancel</Button>
-            <Button variant="destructive" disabled={!rejectionReason.trim()} onClick={handleReject}>Reject EOD</Button>
+            <Button variant="outline" onClick={() => { setSelectedTask(null); setTaskRejectionReason(""); }}>Cancel</Button>
+            <Button variant="destructive" disabled={!taskRejectionReason.trim()} onClick={handleTaskReject}>Reject Task</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

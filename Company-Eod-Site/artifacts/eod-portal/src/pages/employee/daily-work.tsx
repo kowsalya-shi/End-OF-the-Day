@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { exportToCsv } from "@/lib/export-csv";
+import { parseCsvFile, downloadCsvTemplate } from "@/lib/import-csv";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,7 +24,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/hooks/use-toast";
-import { Download, Plus, Edit2, Trash2, Filter, Copy } from "lucide-react";
+import { Download, Plus, Edit2, Trash2, Filter, Copy, Upload, FileDown } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 const dailyWorkSchema = z.object({
@@ -133,6 +134,75 @@ export default function EmployeeDailyWork() {
       })));
       toast({ title: "Export successful", description: "Daily work exported to CSV" });
     }
+  };
+
+  const handleDownloadTemplate = () => {
+    downloadCsvTemplate(
+      "daily_work_template.csv",
+      ["Date", "Action", "How", "Who", "Assigned By", "Start Date", "Completion Date", "Status", "Completion %", "Remarks"],
+      [
+        [today, "Sample Task", "Method description", "Responsible person", "Manager", today, "", "yts", "0", "Optional remarks"],
+        [today, "Another Task", "", "", "", "", "", "wip", "50", ""],
+      ]
+    );
+    toast({ title: "Template downloaded", description: "Use this template to import daily work" });
+  };
+
+  const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const data = await parseCsvFile(file);
+      
+      if (data.length === 0) {
+        toast({ title: "Import failed", description: "CSV file is empty", variant: "destructive" });
+        return;
+      }
+
+      let successCount = 0;
+      let errorCount = 0;
+
+      for (const row of data) {
+        try {
+          const workData: DailyWorkFormData = {
+            action: row.Action || "",
+            how: row.How || undefined,
+            who: row.Who || undefined,
+            assignedBy: row["Assigned By"] || undefined,
+            date: row.Date || today,
+            startDate: row["Start Date"] || undefined,
+            completionDate: row["Completion Date"] || undefined,
+            status: row.Status?.toLowerCase() || "yts",
+            completionPct: parseInt(row["Completion %"] || "0"),
+            remarks: row.Remarks || undefined,
+          };
+
+          await createMutation.mutateAsync({ data: workData });
+          successCount++;
+        } catch (error) {
+          errorCount++;
+          console.error("Failed to import row:", row, error);
+        }
+      }
+
+      queryClient.invalidateQueries({ queryKey: getListDailyWorkQueryKey({ userId: user?.id }) });
+      
+      if (successCount > 0) {
+        toast({ 
+          title: "Import completed", 
+          description: `Successfully imported ${successCount} records${errorCount > 0 ? `, ${errorCount} failed` : ""}` 
+        });
+      } else {
+        toast({ title: "Import failed", description: "No records were imported", variant: "destructive" });
+      }
+    } catch (error) {
+      console.error("Import error:", error);
+      toast({ title: "Import failed", description: "Failed to parse CSV file", variant: "destructive" });
+    }
+
+    // Reset file input
+    event.target.value = "";
   };
 
   const copyPreviousDay = () => {
@@ -326,6 +396,19 @@ export default function EmployeeDailyWork() {
           <Button variant="outline" onClick={copyPreviousDay}>
             <Copy className="mr-2 h-4 w-4" /> Copy Previous Day
           </Button>
+          <Button variant="outline" onClick={handleDownloadTemplate}>
+            <FileDown className="mr-2 h-4 w-4" /> Template
+          </Button>
+          <Button variant="outline" onClick={() => document.getElementById('import-daily-work')?.click()}>
+            <Upload className="mr-2 h-4 w-4" /> Import
+          </Button>
+          <input
+            id="import-daily-work"
+            type="file"
+            accept=".csv"
+            className="hidden"
+            onChange={handleImport}
+          />
           <Button variant="outline" onClick={handleExport}>
             <Download className="mr-2 h-4 w-4" /> Export
           </Button>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { format } from "date-fns";
+import { format, subDays } from "date-fns";
 import {
   useSendReminder, useSendEscalation, useListTeams, getListTeamsQueryKey,
   useListPendingEod, getListPendingEodQueryKey,
@@ -15,6 +15,7 @@ import { AttendanceBadge } from "@/components/ui/status-badge";
 export default function HRNotifications() {
   const { toast } = useToast();
   const today = format(new Date(), "yyyy-MM-dd");
+  const pendingDate = format(new Date().getHours() >= 21 ? new Date() : subDays(new Date(), 1), "yyyy-MM-dd");
   const [targetTeam, setTargetTeam] = useState<string>("all");
 
   const { data: teams } = useListTeams({ query: { queryKey: getListTeamsQueryKey() } });
@@ -25,11 +26,11 @@ export default function HRNotifications() {
   ) || [];
   
   const { data: pendingList, isLoading: pendingLoading } = useListPendingEod(
-    { date: today, teamId: targetTeam !== "all" ? parseInt(targetTeam) : undefined },
+    { date: pendingDate, teamId: targetTeam !== "all" ? parseInt(targetTeam) : undefined },
     {
       query: {
         queryKey: getListPendingEodQueryKey({
-          date: today,
+          date: pendingDate,
           teamId: targetTeam !== "all" ? parseInt(targetTeam) : undefined,
         }),
       },
@@ -41,7 +42,7 @@ export default function HRNotifications() {
 
   const handleRemind = () => {
     reminderMutation.mutate(
-      { data: { date: today, teamId: targetTeam === "all" ? null : parseInt(targetTeam) } },
+      { data: { date: pendingDate, teamId: targetTeam === "all" ? null : parseInt(targetTeam) } },
       {
         onSuccess: res => {
           toast({
@@ -55,7 +56,7 @@ export default function HRNotifications() {
 
   const handleEscalate = () => {
     escalationMutation.mutate(
-      { data: { date: today, teamId: targetTeam === "all" ? null : parseInt(targetTeam) } },
+      { data: { date: pendingDate, teamId: targetTeam === "all" ? null : parseInt(targetTeam) } },
       {
         onSuccess: res => {
           toast({
@@ -88,7 +89,7 @@ export default function HRNotifications() {
               <Mail className="h-5 w-5 text-violet-600" /> Manual Triggers
             </CardTitle>
             <CardDescription>
-              Optional email reminders for pending EODs &mdash; {today}
+              Optional email reminders for pending EODs &mdash; {pendingDate}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
@@ -133,9 +134,9 @@ export default function HRNotifications() {
             <div className="bg-violet-50 border border-violet-200 rounded-md p-3">
               <p className="text-xs font-semibold text-violet-700 mb-1">Automated Schedule</p>
               <ul className="text-xs text-violet-600 space-y-1">
-                <li><strong>5:30 PM to 9:00 PM</strong> — EOD submission remains open</li>
-                <li><strong>9:00 PM</strong> — Missing EOD alert in the Team Leader portal</li>
-                <li><strong>Third missed day</strong> — Escalation in the Manager and CEO portals</li>
+                <li><strong>8:00 AM to 9:00 PM</strong> — EOD submission remains open</li>
+                <li><strong>9:00 PM</strong> — Missing EOD alert and email to the TL, Manager, CEO, and IT Manager</li>
+                <li><strong>Third consecutive missed day</strong> — Escalation alert for all of the same recipients</li>
               </ul>
               <p className="text-xs text-violet-500 mt-2">Portal alerts are visible in the alert panel below.</p>
             </div>
@@ -145,10 +146,10 @@ export default function HRNotifications() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-violet-600" /> Pending Today
+              <Users className="h-5 w-5 text-violet-600" /> Pending EOD
             </CardTitle>
             <CardDescription>
-              Employees who have not submitted EOD for {today}
+              Employees who have not submitted EOD for {pendingDate}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -178,7 +179,7 @@ export default function HRNotifications() {
                   <Bell className="h-6 w-6 text-green-600" />
                 </div>
                 <p className="text-sm font-medium text-gray-900">All caught up!</p>
-                <p className="text-xs text-gray-500">No pending EODs for today.</p>
+                <p className="text-xs text-gray-500">No pending EODs for {pendingDate}.</p>
               </div>
             )}
           </CardContent>

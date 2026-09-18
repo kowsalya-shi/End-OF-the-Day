@@ -79,7 +79,7 @@ export default function TLTasks() {
   const [selectedTask, setSelectedTask] = useState<any>(null);
   const [approvalTarget, setApprovalTarget] = useState<any>(null);
   const [rejectionReason, setRejectionReason] = useState("");
-  const [isMyTask, setIsMyTask] = useState(true); // Track which tab context we're in
+  const [isMyTask, setIsMyTask] = useState(false); // Team view is the default for a Team Lead
 
   const { data: myTasks, isLoading: myLoading } = useListTasks(
     { 
@@ -448,7 +448,7 @@ export default function TLTasks() {
         <p className="text-gray-500 mt-1">Manage your own tasks and assign tasks to your team.</p>
       </div>
 
-      <Tabs defaultValue="my-tasks" onValueChange={(val) => setIsMyTask(val === "my-tasks")}>
+      <Tabs defaultValue="team-tasks" onValueChange={(val) => setIsMyTask(val === "my-tasks")}>
         <TabsList className="mb-4">
           <TabsTrigger value="my-tasks">My Tasks</TabsTrigger>
           <TabsTrigger value="team-tasks">Team Tasks</TabsTrigger>

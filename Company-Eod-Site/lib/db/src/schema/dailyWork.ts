@@ -16,6 +16,8 @@ export const dailyWorkTable = pgTable("daily_work", {
   remarks: text("remarks"),
   userId: integer("user_id"),
   teamId: integer("team_id"),
+  // Set only for Daily Work automatically created from a Task. This keeps the two records synchronized.
+  sourceTaskId: integer("source_task_id"),
   approvalStatus: text("approval_status").notNull().default("pending"),
   approvedBy: integer("approved_by"),
   approvedAt: timestamp("approved_at", { withTimezone: true }),

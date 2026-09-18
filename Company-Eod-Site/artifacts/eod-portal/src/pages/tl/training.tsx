@@ -342,7 +342,7 @@ export default function TLTraining() {
         <p className="text-gray-500 mt-1">Track your own training and monitor your team's professional development.</p>
       </div>
 
-      <Tabs defaultValue="my-training">
+      <Tabs defaultValue="team-training">
         <TabsList className="mb-4">
           <TabsTrigger value="my-training">My Training</TabsTrigger>
           <TabsTrigger value="team-training">Team Training</TabsTrigger>
@@ -627,4 +627,3 @@ export default function TLTraining() {
     </div>
   );
 }
-

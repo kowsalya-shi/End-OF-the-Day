@@ -1,9 +1,16 @@
 import { Router } from "express";
 import { db, dailyWorkTable, internalTasksTable, usersTable, teamsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
-import { notifyEmployeeRecordDeleted } from "./notifications";
+import { createPortalNotification, notifyEmployeeRecordDeleted } from "./notifications";
+import { sessions } from "./auth";
+import { logDailyWorkDeletion } from "../lib/audit";
 
 const router = Router();
+
+function getSession(req: import("express").Request) {
+  const authHeader = req.headers.authorization;
+  return authHeader?.startsWith("Bearer ") ? sessions.get(authHeader.slice(7)) : undefined;
+}
 
 // Daily Work is shown in the Task module as a regular task, using the task-style code.
 const dailyWorkTaskCode = (dailyWorkId: number) => `TASK-${dailyWorkId}`;
@@ -46,6 +53,20 @@ async function syncTaskFromDailyWork(database: Pick<typeof db, "select" | "inser
   }
 }
 
+async function backfillTaskLinks() {
+  const dailyWork = await db.select().from(dailyWorkTable);
+  let linked = 0;
+  for (const work of dailyWork) {
+    const taskCode = dailyWorkTaskCode(work.id);
+    const [existingTask] = await db.select({ id: internalTasksTable.id }).from(internalTasksTable).where(eq(internalTasksTable.taskCode, taskCode));
+    if (!existingTask) {
+      await syncTaskFromDailyWork(db, work);
+      linked += 1;
+    }
+  }
+  return linked;
+}
+
 async function enrichWork(item: typeof dailyWorkTable.$inferSelect) {
   let userName: string | null = null;
   let teamName: string | null = null;
@@ -73,6 +94,7 @@ async function enrichWork(item: typeof dailyWorkTable.$inferSelect) {
     remarks: item.remarks,
     userId: item.userId,
     teamId: item.teamId,
+    sourceTaskId: item.sourceTaskId,
     approvalStatus: item.approvalStatus,
     approvedBy: item.approvedBy,
     approvedAt: item.approvedAt?.toISOString(),
@@ -81,6 +103,21 @@ async function enrichWork(item: typeof dailyWorkTable.$inferSelect) {
     teamName,
     createdAt: item.createdAt?.toISOString(),
   };
+}
+
+async function notifyDailyWorkDecision(item: typeof dailyWorkTable.$inferSelect, approved: boolean, approverId: number | null) {
+  if (!item.userId) return;
+  const [approver] = approverId ? await db.select({ name: usersTable.name }).from(usersTable).where(eq(usersTable.id, approverId)) : [undefined];
+  await createPortalNotification(
+    item.userId,
+    item.userId,
+    `daily_work_${approved ? "approved" : "rejected"}_${item.id}`,
+    approved ? "Daily Work Approved" : "Daily Work Rejected",
+    approved
+      ? `${approver?.name ?? "Your reviewer"} approved your completed daily work "${item.action}".`
+      : `${approver?.name ?? "Your reviewer"} rejected your completed daily work "${item.action}". Reason: ${item.rejectionReason ?? "Please review and resubmit."}`,
+    item.date,
+  );
 }
 
 router.get("/daily-work", async (req, res) => {
@@ -135,6 +172,12 @@ router.get("/daily-work", async (req, res) => {
 
   const enriched = await Promise.all(items.map(enrichWork));
   res.json(enriched);
+});
+
+// One-time repair endpoint for Daily Work records created before task synchronization was introduced.
+router.post("/daily-work/sync-tasks", async (_req, res) => {
+  const linked = await backfillTaskLinks();
+  res.json({ linked });
 });
 
 router.post("/daily-work", async (req, res) => {
@@ -207,6 +250,7 @@ router.post("/daily-work/:id/approve", async (req, res) => {
   const [item] = await db.update(dailyWorkTable).set({ approvalStatus: "approved", approvedBy: req.body.approvedBy ?? null, approvedAt: new Date(), rejectionReason: null }).where(eq(dailyWorkTable.id, id)).returning();
   if (!item) return res.status(404).json({ error: "Not found" });
   await syncTaskFromDailyWork(db, item);
+  await notifyDailyWorkDecision(item, true, req.body.approvedBy ?? null);
   res.json(await enrichWork(item));
 });
 
@@ -220,13 +264,65 @@ router.post("/daily-work/:id/reject", async (req, res) => {
   const [item] = await db.update(dailyWorkTable).set({ approvalStatus: "rejected", approvedBy: req.body.approvedBy ?? null, approvedAt: new Date(), rejectionReason: reason }).where(eq(dailyWorkTable.id, id)).returning();
   if (!item) return res.status(404).json({ error: "Not found" });
   await syncTaskFromDailyWork(db, item);
+  await notifyDailyWorkDecision(item, false, req.body.approvedBy ?? null);
   res.json(await enrichWork(item));
 });
 
 router.delete("/daily-work/:id", async (req, res) => {
   const id = parseInt(req.params.id);
+  const session = getSession(req);
+  
+  if (!session) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  // Get user details
+  const [user] = await db.select().from(usersTable).where(eq(usersTable.id, session.userId));
+  if (!user) {
+    return res.status(401).json({ error: "User not found" });
+  }
+
   const [item] = await db.select().from(dailyWorkTable).where(eq(dailyWorkTable.id, id));
   if (!item) return res.status(404).json({ error: "Not found" });
+
+  // Get daily work submitter name for audit log
+  let workUserName = null;
+  if (item.userId) {
+    const [workUser] = await db.select().from(usersTable).where(eq(usersTable.id, item.userId));
+    workUserName = workUser?.name;
+  }
+
+  // Permission check: Only allow deletion if:
+  // 1. User is the daily work owner (employee can delete their own work)
+  // 2. User is TL and work belongs to their team member
+  // 3. User is IT Manager, Manager, or CEO (can delete any work)
+  const canDelete = 
+    item.userId === session.userId || // Own work
+    ["it_manager", "manager", "ceo"].includes(user.role); // Admin roles
+
+  if (!canDelete && user.role === "tl") {
+    // TL can delete daily work of their team members
+    if (item.teamId) {
+      const [team] = await db.select().from(teamsTable).where(eq(teamsTable.id, item.teamId));
+      if (team && team.tlId === session.userId) {
+        // TL owns this team
+      } else {
+        return res.status(403).json({ error: "You don't have permission to delete this daily work" });
+      }
+    } else {
+      return res.status(403).json({ error: "You don't have permission to delete this daily work" });
+    }
+  } else if (!canDelete) {
+    return res.status(403).json({ error: "You don't have permission to delete this daily work" });
+  }
+
+  // Log to audit before deletion
+  await logDailyWorkDeletion(
+    { ...item, userName: workUserName },
+    { id: user.id, name: user.name },
+    req
+  );
+
   await db.transaction(async (tx) => {
     await tx.delete(internalTasksTable).where(eq(internalTasksTable.taskCode, dailyWorkTaskCode(id)));
     await tx.delete(dailyWorkTable).where(eq(dailyWorkTable.id, id));

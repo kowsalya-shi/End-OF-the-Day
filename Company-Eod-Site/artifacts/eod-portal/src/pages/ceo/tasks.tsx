@@ -86,13 +86,11 @@ export default function CEOTasks() {
     { 
       status: statusFilter !== "all" ? statusFilter : undefined,
       teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined,
-      userRole: "employee",
     } as any,
     { query: { 
       queryKey: getListTasksQueryKey({ 
         status: statusFilter !== "all" ? statusFilter : undefined,
         teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined,
-        userRole: "employee",
       } as any)
     } }
   );
@@ -234,7 +232,7 @@ export default function CEOTasks() {
       
       <FormField control={form.control} name="userId" render={({ field }) => (
         <FormItem>
-          <FormLabel>Assign To Employee</FormLabel>
+          <FormLabel>Assign To</FormLabel>
           <Select 
             onValueChange={(val) => {
               if (val === "none") {
@@ -245,12 +243,12 @@ export default function CEOTasks() {
             }} 
             value={field.value ? field.value.toString() : "none"}
           >
-            <FormControl><SelectTrigger><SelectValue placeholder="Select employee" /></SelectTrigger></FormControl>
+            <FormControl><SelectTrigger><SelectValue placeholder="Select person" /></SelectTrigger></FormControl>
             <SelectContent className="max-h-[300px] overflow-y-auto">
-              <SelectItem value="none">-- Select Employee --</SelectItem>
-              {allEmployees?.filter(e => e.role === "employee" || e.role === "tl").map(emp => (
+              <SelectItem value="none">-- Select Person --</SelectItem>
+              {allEmployees?.filter(e => e.role === "employee" || e.role === "tl" || e.role === "it_manager").map(emp => (
                 <SelectItem key={emp.id} value={emp.id.toString()}>
-                  {emp.name} ({emp.department || 'No Dept'})
+                  {emp.name} ({emp.role === "it_manager" ? "IT Manager" : emp.role === "tl" ? "Team Lead" : emp.department || "Employee"})
                 </SelectItem>
               ))}
             </SelectContent>
@@ -511,7 +509,7 @@ export default function CEOTasks() {
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
           <DialogHeader>
-            <DialogTitle>Edit Task</DialogTitle>
+            <DialogTitle>Reassign / Edit Task</DialogTitle>
           </DialogHeader>
           <div className="overflow-y-auto flex-1 pr-2">
             <Form {...form}>
@@ -519,7 +517,7 @@ export default function CEOTasks() {
                 <TaskFormFields />
                 <div className="flex justify-end pt-4 border-t mt-4">
                   <Button type="button" variant="outline" onClick={() => setIsEditOpen(false)} className="mr-2">Cancel</Button>
-                  <Button type="submit" disabled={updateMutation.isPending}>Update Task</Button>
+                  <Button type="submit" disabled={updateMutation.isPending}>Update / Reassign Task</Button>
                 </div>
               </form>
             </Form>

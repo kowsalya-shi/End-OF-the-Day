@@ -86,13 +86,11 @@ export default function ManagerTasks() {
     { 
       status: statusFilter !== "all" ? statusFilter : undefined,
       teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined,
-      userRole: "employee",
     } as any,
     { query: { 
       queryKey: getListTasksQueryKey({ 
         status: statusFilter !== "all" ? statusFilter : undefined,
         teamId: teamFilter !== "all" ? parseInt(teamFilter) : undefined,
-        userRole: "employee",
       } as any)
     } }
   );
@@ -234,7 +232,7 @@ export default function ManagerTasks() {
       
       <FormField control={form.control} name="userId" render={({ field }) => (
         <FormItem>
-          <FormLabel>Assign To Employee</FormLabel>
+          <FormLabel>Assign To</FormLabel>
           <Select 
             onValueChange={(val) => {
               if (val === "none") {
@@ -245,12 +243,12 @@ export default function ManagerTasks() {
             }} 
             value={field.value ? field.value.toString() : "none"}
           >
-            <FormControl><SelectTrigger><SelectValue placeholder="Select employee" /></SelectTrigger></FormControl>
+            <FormControl><SelectTrigger><SelectValue placeholder="Select person" /></SelectTrigger></FormControl>
             <SelectContent className="max-h-[300px] overflow-y-auto">
-              <SelectItem value="none">-- Select Employee --</SelectItem>
-              {allEmployees?.filter(e => e.role === "employee" || e.role === "tl").map(emp => (
+              <SelectItem value="none">-- Select Person --</SelectItem>
+              {allEmployees?.filter(e => user?.role === "it_manager" ? (e.role === "employee" || e.role === "tl") : (e.role === "employee" || e.role === "tl" || e.role === "it_manager")).map(emp => (
                 <SelectItem key={emp.id} value={emp.id.toString()}>
-                  {emp.name} ({emp.department || 'No Dept'})
+                  {emp.name} ({emp.role === "it_manager" ? "IT Manager" : emp.role === "tl" ? "Team Lead" : emp.department || "Employee"})
                 </SelectItem>
               ))}
             </SelectContent>
@@ -351,8 +349,8 @@ export default function ManagerTasks() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">All Company Tasks</h1>
-          <p className="text-gray-500 mt-1">Manage and assign tasks for all employees.</p>
+          <h1 className="text-2xl font-bold text-gray-900">{user?.role === "it_manager" ? "Tasks" : "All Company Tasks"}</h1>
+          <p className="text-gray-500 mt-1">{user?.role === "it_manager" ? "Assign tasks to a Team Lead or employee, then monitor progress." : "Manage and assign tasks for all employees."}</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={handleExport}>
@@ -511,7 +509,7 @@ export default function ManagerTasks() {
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
           <DialogHeader>
-            <DialogTitle>Edit Task</DialogTitle>
+            <DialogTitle>Reassign / Edit Task</DialogTitle>
           </DialogHeader>
           <div className="overflow-y-auto flex-1 pr-2">
             <Form {...form}>
@@ -519,7 +517,7 @@ export default function ManagerTasks() {
                 <TaskFormFields />
                 <div className="flex justify-end pt-4 border-t mt-4">
                   <Button type="button" variant="outline" onClick={() => setIsEditOpen(false)} className="mr-2">Cancel</Button>
-                  <Button type="submit" disabled={updateMutation.isPending}>Update Task</Button>
+                  <Button type="submit" disabled={updateMutation.isPending}>Update / Reassign Task</Button>
                 </div>
               </form>
             </Form>

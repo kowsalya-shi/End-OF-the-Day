@@ -4,3 +4,4 @@ export * from "./tasks";
 export * from "./dailyWork";
 export * from "./training";
 export * from "./notifications";
+export * from "./audit";

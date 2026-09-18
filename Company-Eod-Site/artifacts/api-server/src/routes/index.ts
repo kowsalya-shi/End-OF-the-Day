@@ -9,6 +9,8 @@ import dailyWorkRouter from "./dailyWork";
 import trainingRouter from "./training";
 import dashboardRouter from "./dashboard";
 import notificationsRouter from "./notifications";
+import auditRouter from "./audit";
+import misRouter from "./mis";
 
 const router: IRouter = Router();
 
@@ -22,5 +24,7 @@ router.use(dailyWorkRouter);
 router.use(trainingRouter);
 router.use(dashboardRouter);
 router.use(notificationsRouter);
+router.use(auditRouter);
+router.use(misRouter);
 
 export default router;

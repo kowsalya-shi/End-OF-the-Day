@@ -48,6 +48,8 @@ export default function EmployeeEod() {
 
   const [showReminder, setShowReminder] = useState(false);
   const [reminderDismissed, setReminderDismissed] = useState(false);
+  const [canSubmitEod, setCanSubmitEod] = useState(true);
+  const [submissionMessage, setSubmissionMessage] = useState("");
 
   const { data: eods, isLoading } = useListEod(
     { date: today, userId: user?.id },
@@ -57,6 +59,29 @@ export default function EmployeeEod() {
   const existingEod = eods?.[0];
   const createMutation = useCreateEod();
   const updateMutation = useUpdateEod();
+
+  // Check EOD submission window
+  useEffect(() => {
+    const checkSubmissionWindow = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/api/eod/check-window", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("auth_token") || ""}` },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setCanSubmitEod(data.canSubmit);
+          setSubmissionMessage(data.message || "");
+        }
+      } catch (error) {
+        console.error("Failed to check submission window:", error);
+      }
+    };
+
+    checkSubmissionWindow();
+    // Check every minute
+    const interval = setInterval(checkSubmissionWindow, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   const form = useForm<EodFormData>({
     resolver: zodResolver(eodSchema),
@@ -155,6 +180,15 @@ export default function EmployeeEod() {
           <p className="text-gray-500 mt-1">
             Submit your End-of-Day report for {format(new Date(), "MMMM d, yyyy")}
           </p>
+          {!canSubmitEod && submissionMessage && (
+            <div className="mt-2 flex items-center gap-2 text-sm font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-3 py-2">
+              <Clock className="w-4 h-4" />
+              {submissionMessage}
+            </div>
+          )}
+          {canSubmitEod && (
+            <p className="mt-2 text-sm font-medium text-green-700">✅ EOD submission window: 5:30 PM to 9:00 PM</p>
+          )}
         </div>
         {existingEod && (
           <div className={`flex items-center px-4 py-2 rounded-md border text-sm font-medium ${approvalInfo.className}`}>
@@ -401,7 +435,7 @@ export default function EmployeeEod() {
                 )}
 
                 <div className="flex justify-end pt-2">
-                  <Button type="submit" size="lg" disabled={isPending}>
+                  <Button type="submit" size="lg" disabled={isPending || !canSubmitEod}>
                     {isPending
                       ? "Submitting..."
                       : existingEod

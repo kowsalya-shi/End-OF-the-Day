@@ -1,12 +1,13 @@
 import { cn } from "@/lib/utils";
 
 interface StatusBadgeProps {
-  status: string;
+  status?: string | null;
   className?: string;
 }
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
-  const normalizedStatus = status.toLowerCase();
+  const displayStatus = status?.trim() || "Not set";
+  const normalizedStatus = displayStatus.toLowerCase();
 
   const statusStyles: Record<string, string> = {
     completed: "bg-green-100 text-green-800",
@@ -32,18 +33,19 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
         className
       )}
     >
-      {status}
+      {displayStatus}
     </span>
   );
 }
 
 interface AttendanceBadgeProps {
-  status: string;
+  status?: string | null;
   className?: string;
 }
 
 export function AttendanceBadge({ status, className }: AttendanceBadgeProps) {
-  const normalizedStatus = status.toLowerCase();
+  const displayStatus = status?.trim() || "Not set";
+  const normalizedStatus = displayStatus.toLowerCase();
 
   const statusStyles: Record<string, string> = {
     present: "bg-green-100 text-green-800",
@@ -62,7 +64,7 @@ export function AttendanceBadge({ status, className }: AttendanceBadgeProps) {
         className
       )}
     >
-      {status.replace("-", " ")}
+      {displayStatus.replace("-", " ")}
     </span>
   );
 }

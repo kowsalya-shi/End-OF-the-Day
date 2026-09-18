@@ -164,7 +164,7 @@ export default function HRAnalytics() {
               <SelectContent>
                 <SelectItem value="all">All Team Leaders</SelectItem>
                 <SelectItem value="SOUBHGYA">SOUBHGYA (FICO)</SelectItem>
-                <SelectItem value="Waseem">Waseem (MM)</SelectItem>
+                <SelectItem value="Amitha">Amitha (MM)</SelectItem>
                 <SelectItem value="Javeed">Javeed (SD)</SelectItem>
                 <SelectItem value="Rajshekar">Rajshekar (Developer)</SelectItem>
               </SelectContent>

@@ -1,8 +1,14 @@
 $ vite --config vite.config.ts --host 0.0.0.0
 
-  VITE v7.3.3  ready in 3955 ms
+  VITE v7.3.3  ready in 1918 ms
 
   ➜  Local:   http://localhost:23881/
-  ➜  Network: http://192.168.12.200:23881/
+  ➜  Network: http://192.168.0.123:23881/
   ➜  press h + enter to show help
-[RUNTIME_ERROR]{"type":"runtime-error","timestamp":1788158445829,"name":"Error","message":"Cannot read properties of undefined (reading 'toLowerCase')","stack":"    at StatusBadge C:/Users/Shiny/Company-Eod-Site/Company-Eod-Site/artifacts/eod-portal/src/components/ui/status-badge.tsx:9:35\n\n\n\n\n\n\n\n\n","loc":{"line":9,"column":35,"file":"C:/Users/Shiny/Company-Eod-Site/Company-Eod-Site/artifacts/eod-portal/src/components/ui/status-badge.tsx"},"frame":"7  |  \n8  |  export function StatusBadge({ status, className }: StatusBadgeProps) {\n9  |    const normalizedStatus = status.toLowerCase();\n   |                                    ^\n10 |  \n11 |    const statusStyles: Record<string, string> = {"}
+8:55:48 pm [vite] (client) hmr update /src/index.css, /src/components/ui/select.tsx
+9:04:25 pm [vite] (client) hmr update /src/index.css, /src/pages/login.tsx
+9:05:23 pm [vite] (client) hmr update /src/index.css, /src/pages/manager/users.tsx
+9:05:37 pm [vite] (client) hmr update /src/index.css, /src/pages/manager/users.tsx
+9:05:53 pm [vite] (client) hmr update /src/index.css, /src/pages/manager/users.tsx
+9:06:32 pm [vite] (client) hmr update /src/index.css, /src/pages/ceo/users.tsx
+9:07:02 pm [vite] (client) hmr update /src/index.css, /src/pages/ceo/users.tsx

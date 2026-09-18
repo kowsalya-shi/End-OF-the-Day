@@ -77,12 +77,14 @@ export default function EmployeeTasks() {
     { 
       userId: user?.id,
       status: statusFilter !== "all" ? statusFilter : undefined,
-      priority: priorityFilter !== "all" ? priorityFilter : undefined
+      priority: priorityFilter !== "all" ? priorityFilter : undefined,
+      assignmentStatus: "accepted" // Only show accepted tasks in My Tasks
     },
     { query: { queryKey: getListTasksQueryKey({ 
       userId: user?.id,
       status: statusFilter !== "all" ? statusFilter : undefined,
-      priority: priorityFilter !== "all" ? priorityFilter : undefined
+      priority: priorityFilter !== "all" ? priorityFilter : undefined,
+      assignmentStatus: "accepted"
     }) } }
   );
 

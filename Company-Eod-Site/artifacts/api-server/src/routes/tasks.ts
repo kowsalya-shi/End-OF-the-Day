@@ -1,11 +1,88 @@
 import { Router } from "express";
-import { db, internalTasksTable, usersTable, teamsTable } from "@workspace/db";
-import { eq, inArray } from "drizzle-orm";
-import { createPortalNotification } from "./notifications";
+import { db, dailyWorkTable, internalTasksTable, taskReassignmentsTable, usersTable, teamsTable } from "@workspace/db";
+import { and, eq, inArray } from "drizzle-orm";
+import { createPortalNotification, notifyRoleScopedEvent } from "./notifications";
+import { sessions } from "./auth";
+import { logTaskDeletion } from "../lib/audit";
 
 const router = Router();
 
 const optionalDate = (value: unknown) => typeof value === "string" && value.trim() === "" ? null : value;
+
+function getSession(req: import("express").Request) {
+  const authHeader = req.headers.authorization;
+  return authHeader?.startsWith("Bearer ") ? sessions.get(authHeader.slice(7)) : undefined;
+}
+
+async function canReassignTask(actorId: number, actorRole: string, task: typeof internalTasksTable.$inferSelect, nextAssignee: typeof usersTable.$inferSelect) {
+  if (["ceo", "it_manager"].includes(actorRole)) return true;
+  if (actorRole === "employee") return false;
+  if (actorRole === "tl") {
+    const teams = await db.select().from(teamsTable).where(eq(teamsTable.tlId, actorId));
+    const teamIds = teams.map((team) => team.id);
+    return nextAssignee.role === "employee" && !!nextAssignee.teamId && teamIds.includes(nextAssignee.teamId) && (!task.teamId || teamIds.includes(task.teamId));
+  }
+  if (actorRole === "manager") {
+    const teams = await db.select().from(teamsTable).where(eq(teamsTable.managerId, actorId));
+    const teamIds = teams.map((team) => team.id);
+    return !!nextAssignee.teamId && teamIds.includes(nextAssignee.teamId) && (!task.teamId || teamIds.includes(task.teamId));
+  }
+  return false;
+}
+
+function taskToDailyWorkValues(task: typeof internalTasksTable.$inferSelect) {
+  return {
+    action: task.taskName,
+    how: task.how,
+    who: task.who,
+    assignedBy: task.assignedBy,
+    date: task.plannedStartDate || todayLocal(),
+    startDate: task.actualStartDate,
+    completionDate: task.actualEndDate,
+    status: task.status,
+    completionPct: task.completionPct,
+    remarks: task.remarks,
+    userId: task.userId,
+    teamId: task.teamId,
+    sourceTaskId: task.id,
+    approvalStatus: task.approvalStatus,
+    approvedBy: task.approvedBy,
+    approvedAt: task.approvedAt,
+    rejectionReason: task.rejectionReason,
+  };
+}
+
+async function syncDailyWorkFromTask(database: Pick<typeof db, "select" | "insert" | "update">, task: typeof internalTasksTable.$inferSelect) {
+  if (!task.userId) return;
+  const [existingWork] = await database.select({ id: dailyWorkTable.id }).from(dailyWorkTable).where(eq(dailyWorkTable.sourceTaskId, task.id));
+  if (existingWork) {
+    await database.update(dailyWorkTable).set(taskToDailyWorkValues(task)).where(eq(dailyWorkTable.id, existingWork.id));
+  } else {
+    await database.insert(dailyWorkTable).values(taskToDailyWorkValues(task));
+  }
+}
+
+async function backfillDailyWorkFromTasks() {
+  const [tasks, dailyWork] = await Promise.all([
+    db.select().from(internalTasksTable),
+    db.select().from(dailyWorkTable),
+  ]);
+  let linked = 0;
+  for (const task of tasks) {
+    if (!task.userId) continue;
+    // Skip the legacy Task copy that was created from an existing Daily Work record.
+    const isLegacyDailyWorkTask = dailyWork.some((work) =>
+      task.taskCode === `TASK-${work.id}` && work.userId === task.userId && work.action === task.taskName,
+    );
+    if (isLegacyDailyWorkTask) continue;
+    const hasLinkedWork = dailyWork.some((work) => work.sourceTaskId === task.id);
+    if (!hasLinkedWork) {
+      await syncDailyWorkFromTask(db, task);
+      linked += 1;
+    }
+  }
+  return linked;
+}
 
 async function enrichTask(task: typeof internalTasksTable.$inferSelect) {
   let userName: string | null = null;
@@ -43,6 +120,11 @@ async function enrichTask(task: typeof internalTasksTable.$inferSelect) {
     approvedBy: task.approvedBy,
     approvedAt: task.approvedAt?.toISOString(),
     rejectionReason: task.rejectionReason,
+    assignmentStatus: task.assignmentStatus,
+    assignedAt: task.assignedAt?.toISOString(),
+    acceptedAt: task.acceptedAt?.toISOString(),
+    declinedAt: task.declinedAt?.toISOString(),
+    declineReason: task.declineReason,
     userName,
     teamName,
     createdAt: task.createdAt?.toISOString(),
@@ -58,17 +140,21 @@ async function notifyTaskChange(task: typeof internalTasksTable.$inferSelect, ac
   if (!task.userId) return;
 
   const recipientIds = new Set<number>();
+  const [assignee] = await db.select({ name: usersTable.name, role: usersTable.role }).from(usersTable).where(eq(usersTable.id, task.userId));
   if (task.teamId) {
     const [team] = await db.select().from(teamsTable).where(eq(teamsTable.id, task.teamId));
-    if (team?.tlId) recipientIds.add(team.tlId);
-    if (team?.managerId) recipientIds.add(team.managerId);
+    if (assignee?.role === "employee" && team?.tlId) recipientIds.add(team.tlId);
   }
-  const leadership = await db.select({ id: usersTable.id }).from(usersTable)
-    .where(inArray(usersTable.role, ["manager", "ceo"]));
-  leadership.forEach((user) => recipientIds.add(user.id));
+  if (assignee?.role === "tl") {
+    const itManagers = await db.select({ id: usersTable.id }).from(usersTable).where(eq(usersTable.role, "it_manager"));
+    itManagers.forEach((user) => recipientIds.add(user.id));
+  }
+  if (assignee?.role === "it_manager") {
+    const managers = await db.select({ id: usersTable.id }).from(usersTable).where(eq(usersTable.role, "manager"));
+    managers.forEach((user) => recipientIds.add(user.id));
+  }
 
-  const [employee] = await db.select({ name: usersTable.name }).from(usersTable).where(eq(usersTable.id, task.userId));
-  const actorName = employee?.name ?? "An employee";
+  const actorName = assignee?.name ?? "A user";
   const title = action === "deleted" ? "Task Deleted" : action === "updated" ? "Task Updated" : "Task Created";
   const message = `${actorName} ${action} the task "${task.taskName}". The shared task list has been updated.`;
   const type = `task_${action}_${task.id}`;
@@ -77,6 +163,53 @@ async function notifyTaskChange(task: typeof internalTasksTable.$inferSelect, ac
   await Promise.all([...recipientIds]
     .filter((recipientId) => recipientId !== task.userId)
     .map((recipientId) => createPortalNotification(recipientId, task.userId!, type, title, message, targetDate)));
+}
+
+async function notifyCompletedTaskForReview(task: typeof internalTasksTable.$inferSelect) {
+  if (!task.userId) return;
+  const [submitter] = await db.select().from(usersTable).where(eq(usersTable.id, task.userId));
+  if (!submitter) return;
+
+  const recipients = new Set<number>();
+  if (submitter.role === "employee" && task.teamId) {
+    const [team] = await db.select().from(teamsTable).where(eq(teamsTable.id, task.teamId));
+    if (team?.tlId) recipients.add(team.tlId);
+  } else if (submitter.role === "tl") {
+    const itManagers = await db.select({ id: usersTable.id }).from(usersTable).where(eq(usersTable.role, "it_manager"));
+    itManagers.forEach((manager) => recipients.add(manager.id));
+  } else if (submitter.role === "it_manager") {
+    const managers = await db.select({ id: usersTable.id }).from(usersTable).where(eq(usersTable.role, "manager"));
+    managers.forEach((manager) => recipients.add(manager.id));
+  }
+
+  await Promise.all([...recipients].map((recipientId) => createPortalNotification(
+    recipientId,
+    task.userId!,
+    `task_review_${task.id}`,
+    "Completed Task Awaiting Approval",
+    `${submitter.name} completed the task "${task.taskName}". Please review it.`,
+    todayLocal(),
+  )));
+}
+
+async function notifyTaskDecision(task: typeof internalTasksTable.$inferSelect, approved: boolean, approverId: number | null) {
+  if (!task.userId) return;
+  const [approver] = approverId ? await db.select().from(usersTable).where(eq(usersTable.id, approverId)) : [undefined];
+  const decision = approved ? "approved" : "rejected";
+  const employeeMessage = approved
+    ? `Your completed task "${task.taskName}" was approved by ${approver?.name ?? "your reviewer"}.`
+    : `Your completed task "${task.taskName}" was rejected by ${approver?.name ?? "your reviewer"}. Reason: ${task.rejectionReason ?? "Please review and resubmit."}`;
+  const managementMessage = `${approver?.name ?? "A reviewer"} ${decision} ${task.userId}'s task "${task.taskName}".`;
+  await notifyRoleScopedEvent(
+    task.userId,
+    task.teamId,
+    `task_${approved ? "approved" : "rejected"}_${task.id}`,
+    approved ? "Task Approved" : "Task Rejected",
+    { self: employeeMessage, team: managementMessage, management: managementMessage, actor: `You ${decision} the task "${task.taskName}".` },
+    todayLocal(),
+    task.id,
+    approverId,
+  );
 }
 
 router.get("/tasks/status-summary", async (req, res) => {
@@ -111,12 +244,22 @@ router.get("/tasks/status-summary", async (req, res) => {
   res.json(summary);
 });
 
+// One-time repair for tasks created before Task-to-Daily-Work synchronization was added.
+router.post("/tasks/sync-daily-work", async (_req, res) => {
+  res.json({ linked: await backfillDailyWorkFromTasks() });
+});
+
 router.get("/tasks", async (req, res) => {
-  const { status, userId, teamId, tlId, month, year, priority, assignedBy, userRole } = req.query;
+  const { status, userId, teamId, tlId, month, year, priority, assignedBy, userRole, assignmentStatus } = req.query;
   let tasks = await db.select().from(internalTasksTable);
 
   if (status) tasks = tasks.filter(t => t.status === status);
   if (userId) tasks = tasks.filter(t => t.userId === parseInt(userId as string));
+  
+  // Filter by assignment status if provided
+  if (assignmentStatus) {
+    tasks = tasks.filter(t => t.assignmentStatus === assignmentStatus);
+  }
   
   // Filter by specific team
   if (teamId) {
@@ -160,7 +303,8 @@ router.post("/tasks", async (req, res) => {
   const { taskName, status, ...rest } = req.body;
   if (!taskName) return res.status(400).json({ error: "taskName required" });
 
-  const [task] = await db.insert(internalTasksTable).values({
+  const task = await db.transaction(async (tx) => {
+    const [createdTask] = await tx.insert(internalTasksTable).values({
     taskName,
     status: status ?? "yts",
     taskCode: typeof rest.taskCode === "string" && rest.taskCode.trim() === "" ? null : rest.taskCode ?? null,
@@ -179,7 +323,26 @@ router.post("/tasks", async (req, res) => {
     userId: rest.userId ?? null,
     teamId: rest.teamId ?? null,
     approvalStatus: "pending",
-  }).returning();
+    assignmentStatus: rest.userId ? "pending" : "accepted",
+    assignedAt: rest.userId ? new Date() : null,
+    }).returning();
+    await syncDailyWorkFromTask(tx, createdTask);
+    return createdTask;
+  });
+
+  // Create notification for assigned user if task is assigned to someone
+  if (task.userId) {
+    const targetDate = task.plannedStartDate || todayLocal();
+    await createPortalNotification(
+      task.userId,
+      task.userId,
+      `task_assigned_${task.id}`,
+      "New Task Assigned",
+      `${task.assignedBy || "Your manager"} has assigned you the task "${task.taskName}".`,
+      targetDate,
+      task.id
+    );
+  }
 
   await notifyTaskChange(task, "created");
   res.status(201).json(await enrichTask(task));
@@ -190,6 +353,47 @@ router.get("/tasks/:id", async (req, res) => {
   const [task] = await db.select().from(internalTasksTable).where(eq(internalTasksTable.id, id));
   if (!task) return res.status(404).json({ error: "Not found" });
   res.json(await enrichTask(task));
+});
+
+router.get("/tasks/:id/reassignments", async (req, res) => {
+  const session = getSession(req);
+  if (!session) return res.status(401).json({ error: "Not authenticated" });
+  const taskId = parseInt(req.params.id, 10);
+  const history = await db.select().from(taskReassignmentsTable).where(eq(taskReassignmentsTable.taskId, taskId));
+  const users = await db.select({ id: usersTable.id, name: usersTable.name }).from(usersTable);
+  const names = new Map(users.map((user) => [user.id, user.name]));
+  res.json(history.map((entry) => ({ ...entry, reassignedByName: names.get(entry.reassignedByUserId), fromUserName: entry.fromUserId ? names.get(entry.fromUserId) : null, toUserName: names.get(entry.toUserId) })));
+});
+
+router.post("/tasks/:id/reassign", async (req, res) => {
+  const session = getSession(req);
+  if (!session) return res.status(401).json({ error: "Not authenticated" });
+  const taskId = parseInt(req.params.id, 10);
+  const assigneeId = Number(req.body?.assigneeId);
+  const note = typeof req.body?.note === "string" ? req.body.note.trim() || null : null;
+  if (!Number.isInteger(assigneeId)) return res.status(400).json({ error: "assigneeId is required" });
+
+  const [task, actor, assignee] = await Promise.all([
+    db.select().from(internalTasksTable).where(eq(internalTasksTable.id, taskId)).then((rows) => rows[0]),
+    db.select().from(usersTable).where(eq(usersTable.id, session.userId)).then((rows) => rows[0]),
+    db.select().from(usersTable).where(eq(usersTable.id, assigneeId)).then((rows) => rows[0]),
+  ]);
+  if (!task) return res.status(404).json({ error: "Task not found" });
+  if (!actor || !assignee || assignee.status === "inactive") return res.status(400).json({ error: "Choose an active assignee" });
+  if (task.userId === assignee.id) return res.status(400).json({ error: "Task is already assigned to this user" });
+  if (!(await canReassignTask(actor.id, actor.role, task, assignee))) return res.status(403).json({ error: "You do not have permission to reassign this task" });
+
+  const [updated] = await db.transaction(async (tx) => {
+    await tx.insert(taskReassignmentsTable).values({ taskId, reassignedByUserId: actor.id, fromUserId: task.userId, toUserId: assignee.id, fromTeamId: task.teamId, toTeamId: assignee.teamId, note });
+    return tx.update(internalTasksTable).set({ userId: assignee.id, teamId: assignee.teamId, assignedBy: actor.name, status: "yts", completionPct: 0, approvalStatus: "pending", approvedBy: null, approvedAt: null, rejectionReason: null, assignmentStatus: "pending", assignedAt: new Date(), acceptedAt: null, declinedAt: null, declineReason: null }).where(eq(internalTasksTable.id, taskId)).returning();
+  });
+  await syncDailyWorkFromTask(db, updated);
+  const targetDate = todayLocal();
+  await Promise.all([
+    createPortalNotification(assignee.id, assignee.id, `task_assigned_${task.id}_${Date.now()}`, "New Task Assigned", `${actor.name} assigned you the task "${task.taskName}".`, targetDate, task.id),
+    createPortalNotification(actor.id, assignee.id, `task_reassigned_${task.id}_${Date.now()}`, "Task Assigned", `You assigned "${task.taskName}" to ${assignee.name}.`, targetDate, task.id),
+  ]);
+  res.json(await enrichTask(updated));
 });
 
 router.patch("/tasks/:id", async (req, res) => {
@@ -213,9 +417,14 @@ router.patch("/tasks/:id", async (req, res) => {
     updates.approvedAt = null;
     updates.rejectionReason = null;
   }
-  const [task] = await db.update(internalTasksTable).set(updates).where(eq(internalTasksTable.id, id)).returning();
+  const task = await db.transaction(async (tx) => {
+    const [updatedTask] = await tx.update(internalTasksTable).set(updates).where(eq(internalTasksTable.id, id)).returning();
+    if (updatedTask) await syncDailyWorkFromTask(tx, updatedTask);
+    return updatedTask;
+  });
   if (!task) return res.status(404).json({ error: "Not found" });
   await notifyTaskChange(task, "updated");
+  if (task.status === "completed" && currentTask?.status !== "completed") await notifyCompletedTaskForReview(task);
   res.json(await enrichTask(task));
 });
 
@@ -231,6 +440,116 @@ router.post("/tasks/:id/approve", async (req, res) => {
     rejectionReason: null,
   }).where(eq(internalTasksTable.id, id)).returning();
   if (!task) return res.status(404).json({ error: "Not found" });
+  await notifyTaskDecision(task, true, req.body.approvedBy ?? null);
+  res.json(await enrichTask(task));
+});
+
+router.post("/tasks/:id/accept", async (req, res) => {
+  const session = getSession(req);
+  if (!session) return res.status(401).json({ error: "Not authenticated" });
+  
+  const id = parseInt(req.params.id);
+  const [currentTask] = await db.select().from(internalTasksTable).where(eq(internalTasksTable.id, id));
+  if (!currentTask) return res.status(404).json({ error: "Task not found" });
+  
+  // Debug logging
+  console.log('Accept task request:', {
+    taskId: id,
+    taskUserId: currentTask.userId,
+    sessionUserId: session.userId,
+    taskAssignedTo: currentTask.who,
+    match: currentTask.userId === session.userId
+  });
+  
+  // Only the assigned user can accept
+  if (currentTask.userId !== session.userId) {
+    return res.status(403).json({ 
+      error: "Only the assigned user can accept this task",
+      debug: {
+        taskAssignedToUserId: currentTask.userId,
+        yourUserId: session.userId,
+        taskAssignedToName: currentTask.who
+      }
+    });
+  }
+  
+  if (currentTask.assignmentStatus === "accepted") {
+    return res.status(400).json({ error: "Task already accepted" });
+  }
+  
+  const [task] = await db.update(internalTasksTable).set({
+    assignmentStatus: "accepted",
+    acceptedAt: new Date(),
+  }).where(eq(internalTasksTable.id, id)).returning();
+  
+  if (!task) return res.status(404).json({ error: "Not found" });
+  
+  // Mark the task assignment notification as read
+  await db.update(portalNotificationsTable)
+    .set({ readAt: new Date() })
+    .where(and(
+      eq(portalNotificationsTable.recipientUserId, session.userId),
+      eq(portalNotificationsTable.type, `task_assigned_${task.id}`)
+    ));
+  
+  res.json(await enrichTask(task));
+});
+
+router.post("/tasks/:id/decline", async (req, res) => {
+  const session = getSession(req);
+  if (!session) return res.status(401).json({ error: "Not authenticated" });
+  
+  const id = parseInt(req.params.id);
+  const reason = typeof req.body.reason === "string" ? req.body.reason.trim() : "";
+  
+  if (!reason) {
+    return res.status(400).json({ error: "Decline reason is required" });
+  }
+  
+  const [currentTask] = await db.select().from(internalTasksTable).where(eq(internalTasksTable.id, id));
+  if (!currentTask) return res.status(404).json({ error: "Task not found" });
+  
+  // Only the assigned user can decline
+  if (currentTask.userId !== session.userId) {
+    return res.status(403).json({ error: "Only the assigned user can decline this task" });
+  }
+  
+  if (currentTask.assignmentStatus === "declined") {
+    return res.status(400).json({ error: "Task already declined" });
+  }
+  
+  const [task] = await db.update(internalTasksTable).set({
+    assignmentStatus: "declined",
+    declinedAt: new Date(),
+    declineReason: reason,
+  }).where(eq(internalTasksTable.id, id)).returning();
+  
+  if (!task) return res.status(404).json({ error: "Not found" });
+  
+  // Mark the task assignment notification as read
+  await db.update(portalNotificationsTable)
+    .set({ readAt: new Date() })
+    .where(and(
+      eq(portalNotificationsTable.recipientUserId, session.userId),
+      eq(portalNotificationsTable.type, `task_assigned_${task.id}`)
+    ));
+  
+  // Notify the person who assigned the task
+  const [assignedByUser] = await db.select().from(usersTable).where(eq(usersTable.name, task.assignedBy ?? ""));
+  if (assignedByUser) {
+    const targetDate = task.plannedStartDate || todayLocal();
+    const [assignee] = await db.select().from(usersTable).where(eq(usersTable.id, task.userId!));
+    await createPortalNotification(
+      assignedByUser.id,
+      task.userId!,
+      `task_declined_${task.id}`,
+      "Task Assignment Declined",
+      `${assignee?.name || "An employee"} has declined the task "${task.taskName}". Reason: ${reason}`,
+      targetDate,
+      task.id
+    );
+  }
+  
   res.json(await enrichTask(task));
 });
 
@@ -248,14 +567,78 @@ router.post("/tasks/:id/reject", async (req, res) => {
     rejectionReason: reason,
   }).where(eq(internalTasksTable.id, id)).returning();
   if (!task) return res.status(404).json({ error: "Not found" });
+  await notifyTaskDecision(task, false, req.body.approvedBy ?? null);
   res.json(await enrichTask(task));
 });
 
 router.delete("/tasks/:id", async (req, res) => {
   const id = parseInt(req.params.id);
+  const session = getSession(req);
+  
+  if (!session) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  // Get user details
+  const [user] = await db.select().from(usersTable).where(eq(usersTable.id, session.userId));
+  if (!user) {
+    return res.status(401).json({ error: "User not found" });
+  }
+
+  // Get task with enriched data
   const [task] = await db.select().from(internalTasksTable).where(eq(internalTasksTable.id, id));
   if (!task) return res.status(404).json({ error: "Not found" });
-  await db.delete(internalTasksTable).where(eq(internalTasksTable.id, id));
+
+  // Get task assignee name for audit log
+  let taskUserName = null;
+  if (task.userId) {
+    const [taskUser] = await db.select().from(usersTable).where(eq(usersTable.id, task.userId));
+    taskUserName = taskUser?.name;
+  }
+
+  // Permission check: Only allow deletion if:
+  // 1. User is the task owner (employee can delete their own tasks)
+  // 2. User is TL and task belongs to their team member
+  // 3. User is IT Manager, Manager, or CEO (can delete any task)
+  const canDelete = 
+    task.userId === session.userId || // Own task
+    ["it_manager", "manager", "ceo"].includes(user.role); // Admin roles
+
+  if (!canDelete && user.role === "tl") {
+    // TL can delete tasks of their team members
+    if (task.teamId) {
+      const [team] = await db.select().from(teamsTable).where(eq(teamsTable.id, task.teamId));
+      if (team && team.tlId === session.userId) {
+        // TL owns this team
+      } else {
+        return res.status(403).json({ error: "You don't have permission to delete this task" });
+      }
+    } else {
+      return res.status(403).json({ error: "You don't have permission to delete this task" });
+    }
+  } else if (!canDelete) {
+    return res.status(403).json({ error: "You don't have permission to delete this task" });
+  }
+
+  // Log to audit before deletion
+  await logTaskDeletion(
+    { ...task, userName: taskUserName },
+    { id: user.id, name: user.name },
+    req
+  );
+
+  // Older Daily Work records were represented by a TASK-<dailyWorkId> task.
+  // Deleting that task must remove the matching Daily Work row as well.
+  const legacyMatch = /^TASK-(\d+)$/.exec(task.taskCode ?? "");
+  const [legacyWork] = legacyMatch
+    ? await db.select().from(dailyWorkTable).where(eq(dailyWorkTable.id, parseInt(legacyMatch[1], 10)))
+    : [undefined];
+  const shouldDeleteLegacyWork = !!legacyWork && legacyWork.userId === task.userId && legacyWork.action === task.taskName;
+  await db.transaction(async (tx) => {
+    await tx.delete(dailyWorkTable).where(eq(dailyWorkTable.sourceTaskId, id));
+    if (shouldDeleteLegacyWork && legacyWork) await tx.delete(dailyWorkTable).where(eq(dailyWorkTable.id, legacyWork.id));
+    await tx.delete(internalTasksTable).where(eq(internalTasksTable.id, id));
+  });
   await notifyTaskChange(task, "deleted");
   res.status(204).send();
 });

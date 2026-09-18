@@ -253,6 +253,46 @@ router.get("/dashboard/task-status-summary", async (req, res) => {
   }
 });
 
+// Tasks in YTS/WIP/Holding that have remained unchanged for at least 5 days.
+router.get("/dashboard/task-ageing", async (req, res) => {
+  const { tlId } = req.query;
+  const now = new Date();
+  const cutoff = new Date(now);
+  cutoff.setDate(cutoff.getDate() - 5);
+
+  let tasks = await db.select().from(internalTasksTable);
+  if (tlId) {
+    const teams = await db.select({ id: teamsTable.id }).from(teamsTable).where(eq(teamsTable.tlId, parseInt(tlId as string)));
+    const teamIds = teams.map((team) => team.id);
+    tasks = tasks.filter((task) => task.teamId !== null && teamIds.includes(task.teamId));
+  }
+
+  const users = await db.select({ id: usersTable.id, name: usersTable.name }).from(usersTable);
+  const teams = await db.select({ id: teamsTable.id, name: teamsTable.name }).from(teamsTable);
+  const report = tasks
+    .filter((task) => ["yts", "wip", "holding"].includes(task.status))
+    .map((task) => {
+      const startedOn = task.plannedStartDate ? new Date(`${task.plannedStartDate}T00:00:00`) : task.createdAt;
+      const ageDays = Math.floor((now.getTime() - startedOn.getTime()) / (24 * 60 * 60 * 1000));
+      return { task, startedOn, ageDays };
+    })
+    .filter(({ startedOn }) => startedOn <= cutoff)
+    .map(({ task, ageDays }) => ({
+      id: task.id,
+      taskCode: task.taskCode,
+      taskName: task.taskName,
+      userName: users.find((user) => user.id === task.userId)?.name ?? "Unassigned",
+      teamName: teams.find((team) => team.id === task.teamId)?.name ?? "-",
+      priority: task.priority ?? "medium",
+      plannedStartDate: task.plannedStartDate,
+      ageDays,
+      status: task.status,
+    }))
+    .sort((a, b) => b.ageDays - a.ageDays);
+
+  res.json(report);
+});
+
 // Weekly heatmap data
 router.get("/dashboard/weekly-heatmap", async (req, res) => {
   const today = new Date();

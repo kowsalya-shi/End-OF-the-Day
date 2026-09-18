@@ -23,6 +23,7 @@ export const usersTable = pgTable("users", {
   teamId: integer("team_id"),
   employeeId: text("employee_id"),
   department: text("department"),
+  status: text("status").notNull().default("active"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
